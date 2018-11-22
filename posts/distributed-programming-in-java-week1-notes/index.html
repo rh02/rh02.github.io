@@ -154,7 +154,7 @@ Finally, when a user-specified reduce function, g, is applied on two or more gro
 
 <p><strong>Lecture Summary:</strong> In this lecture, we discussed an important statistic used in information retrieval and document mining, called Term Frequency – Inverse Document Frequency (TF-IDF). The motivation for computing TF-IDF statistics is to efficiently identify documents that are most similar to each other within a large corpus.</p>
 
-<p>Assume that we have a set of $N$ documents $D1,D2,…,DN$, and a set of terms $TERM1,TERM2,…$ that can appear in these documents. We can then compute total frequencies TFi,j for each term TERMi in each document Dj . We can also compute the document frequencies $DF1,DF2,&hellip;$ for each term, indicating how many documents contain that particular term, and the inverse document frequencies (IDF):$IDF_i=N/DF<em>i$. The motivation for computing inverse document frequencies is to determine which terms are common and which ones are rare, and give higher weights to the rarer terms when searching for similar documents. The weights are computed as: $Weight(TERM</em>{a_i},D<em>j)=TF</em>{i,j} + x log(N/DF_i)$.</p>
+<p>Assume that we have a set of $N$ documents $D1,D2,…,DN$, and a set of terms $TERM1,TERM2,…$ that can appear in these documents. We can then compute total frequencies TFi,j for each term TERMi in each document Dj . We can also compute the document frequencies $DF1,DF2,&hellip;$ for each term, indicating how many documents contain that particular term, and the inverse document frequencies (IDF):$IDF_i=N/DF<em>i$. The motivation for computing inverse document frequencies is to determine which terms are common and which ones are rare, and give higher weights to the rarer terms when searching for similar documents. The weights are computed as:$Weight(TERM</em>{a_i},D<em>j)=TF</em>{i,j} + x log(N/DF_i)$.</p>
 
 <p>Using MapReduce, we can compute the $TF_{i,j}$ values by using a MAP operation to find all the occurrences of TERMi in document Dj, followed by a REDUCE operation to add up all the occurrences of TERMi as key-value pairs of the form, $((D_j,TERM<em>i),TF</em>{i,j})$ (as in the Word Count example studied earlier). These key-value pairs can also be used to compute DFi values by using a MAP operation to identify all the documents that contain TERMi and a REDUCE operation to count the number of documents that TERMi appears in. The final weights can then be easily computed from the $TF_{i,j}$ and $DF_i$ values. Since the $TF−IDF$ computation uses a fixed (not iterative) number of MAP and REDUCE operations, it is a good candidat_e for both Hadoop and Spark frameworks.</p>
 
@@ -223,13 +223,13 @@ where $SRC(B)$ is the set of pages that contain a link to B, while $DEST_COUNT(A
         
         <li><a href="/posts/distributed-programming-in-java-week2-notes/">分布式编程第二周课堂笔记</a></li>
         
-        <li><a href="/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/">R实战-决策树</a></li>
-        
         <li><a href="/posts/r-kmeans/">R实战-Kmeans</a></li>
+        
+        <li><a href="/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/">R实战-决策树</a></li>
         
         <li><a href="/posts/hmm/">隐马尔可夫模型</a></li>
         
-        <li><a href="/posts/polynomial-regression/">多项式回归</a></li>
+        <li><a href="/posts/logistic-regression/">逻辑回归</a></li>
         
     </ul>
 </div>

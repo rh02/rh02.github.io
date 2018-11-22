@@ -21,39 +21,6 @@
     </item>
     
     <item>
-      <title>Scala CheatSheet</title>
-      <link>http://shenheng.xyz/posts/scala-cheatsheet/</link>
-      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/scala-cheatsheet/</guid>
-      <description>This cheat sheet originated from the forum, credits to Laurent Poulain. We copied it and changed or added a few things. There are certainly a lot of things that can be improved! If you would like to contribute, you have two options:
- Click the &amp;ldquo;Edit&amp;rdquo; button on this file on GitHub:
-https://github.com/lampepfl/progfun-wiki/blob/gh-pages/CheatSheet.md
-You can submit a pull request directly from there without checking out the git repository to your local machine.</description>
-    </item>
-    
-    <item>
-      <title>Scala Learning Resources</title>
-      <link>http://shenheng.xyz/posts/scala-learning-resources/</link>
-      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/scala-learning-resources/</guid>
-      <description>#Quick References  Scala Standard Library API Scala School!: A Scala tutorial by Twitter A Tour of Scala: Tutorial indroducing the main concepts of Scala Scala Overview on StackOverflow: A list of useful questions sorted by topic  #Week 1  Martin&amp;rsquo;s talk at OSCON 2011: Working Hard to Keep it Simple (slides) Books:
- Structure and Interpretation of Computer Programs. Harold Abelson and Gerald J. Sussman. 2nd edition. MIT Press 1996.</description>
-    </item>
-    
-    <item>
-      <title>Scala Style Guide</title>
-      <link>http://shenheng.xyz/posts/scala-style/</link>
-      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/scala-style/</guid>
-      <description>On this page you can find a list of common issues that we detected while looking at some submissions.
-Some of the style issues can be detected by the automated style checker that we also use for the grading process. The style checker, which is based on Scalastyle, can be executed locally in sbt by running the styleCheck task.
-Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstanceOf - there&amp;rsquo;s always a better solution, both for the assignments, and also for any real-world Scala project.</description>
-    </item>
-    
-    <item>
       <title>解决sbt更新scala速度慢</title>
       <link>http://shenheng.xyz/posts/solve-sbt-update-scala-slow/</link>
       <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
@@ -81,39 +48,12 @@ Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstance
     </item>
     
     <item>
-      <title>隐马尔可夫模型</title>
-      <link>http://shenheng.xyz/posts/hmm/</link>
-      <pubDate>Sat, 23 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/hmm/</guid>
-      <description>很早就想写一篇关于隐马尔可夫模型的文章了，这次刻意的将模型及其有关算法复习了一下，才有了这个信心去写了这篇文章.这篇文章主要参考了李航老师的</description>
-    </item>
-    
-    <item>
-      <title>单变量线性回归</title>
-      <link>http://shenheng.xyz/posts/single-variable-linear-regression/</link>
-      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/single-variable-linear-regression/</guid>
-      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:单变量线性回归的课堂记录，主要讲解了以下几个内容: 代价函数 梯度下降算法 模型表达 还是上一个关于房屋价格预</description>
-    </item>
-    
-    <item>
       <title>在树莓派上配置AP</title>
       <link>http://shenheng.xyz/posts/aphot-rpi/</link>
       <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/aphot-rpi/</guid>
       <description>有了一个新的树莓派之后，如果不将它配置成AP热点，你就失去了他的其中的一个优势，如果你的家里面没有无限路由器或者你的家里信号不能遍及，树莓派</description>
-    </item>
-    
-    <item>
-      <title>多项式回归</title>
-      <link>http://shenheng.xyz/posts/polynomial-regression/</link>
-      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/polynomial-regression/</guid>
-      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多项式回归的课堂记录，有了合适的特征之后，我们发现线性回归并不适用于所有数据，有时我们需要曲线来适应我们</description>
     </item>
     
     <item>
@@ -135,15 +75,6 @@ Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstance
     </item>
     
     <item>
-      <title>过拟合和正则化</title>
-      <link>http://shenheng.xyz/posts/overfitting/</link>
-      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/overfitting/</guid>
-      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第三周:多分类和过拟合技术的课堂记录，过拟合是机器学习优化的部分，主要讲解了以下几个内容: 多类别的分类问题 过/欠</description>
-    </item>
-    
-    <item>
       <title>在树莓派上搭建OpenCV环境</title>
       <link>http://shenheng.xyz/posts/opencv-rpi/</link>
       <pubDate>Wed, 20 Dec 2017 00:00:00 +0000</pubDate>
@@ -159,42 +90,6 @@ Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstance
       
       <guid>http://shenheng.xyz/posts/mail-server-rpi/</guid>
       <description>上篇文章介绍了利用树莓派搭建AP，那么有了AP之后，由于小编是一名在校的学生，将我的树莓派和我宿舍的路由器连接上网之后，我的树莓派就拥有了全</description>
-    </item>
-    
-    <item>
-      <title>Display Image Using R</title>
-      <link>http://shenheng.xyz/posts/2017-12-19-example/</link>
-      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/2017-12-19-example/</guid>
-      <description>{r fig-margin, echo=FALSE, fig.cap=&amp;quot;这是一个神经网络的图。&amp;quot;, fig.height=3.5, fig.margin=TRUE, warning=FALSE, background=&amp;quot;#f5f5d5&amp;quot;, cache=FALSE} # need png package library(png) #Replace the directory and file information with your info ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima) library(png) par(bg = &amp;quot;#f5f5d5&amp;quot;) ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima)</description>
-    </item>
-    
-    <item>
-      <title>CTeX样式</title>
-      <link>http://shenheng.xyz/posts/ctex-template-for-rstudio/</link>
-      <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/ctex-template-for-rstudio/</guid>
-      <description>引言 中文LaTeX文档并非难题。当然这句话得站在巨人 CTeX 的肩膀上才能说，它让我们只需要一句 \documentclass{ctexart} % 或者ctexrep/ctexbook 或者 \usepackage{ctex} 就轻松</description>
-    </item>
-    
-    <item>
-      <title>Rmarkdown模板</title>
-      <link>http://shenheng.xyz/posts/template-of-rmarkdown/</link>
-      <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/template-of-rmarkdown/</guid>
-      <description>knitr::opts_chunk$set(echo = TRUE) GitHub Documents This is an R Markdown format used for publishing markdown documents to GitHub. When you click the Knit button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated. Including Code You can include R code in the document as follows: summary(cars) Including Plots You can also embed plots, for example: plot(pressure) Note that the echo =</description>
-    </item>
-    
-    <item>
-      <title>Tufte样式</title>
-      <link>http://shenheng.xyz/posts/tufte-template-for-blog/</link>
-      <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/tufte-template-for-blog/</guid>
-      <description>library(tufte) # tufte版本变化之后更新knitr缓存 knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion(&#39;tufte&#39;)) options(htmltools.dir.version = FALSE) 引言 Tufte样式在Edward Tufte的书以及物理学家费曼的教科书很常见，</description>
     </item>
     
     <item>

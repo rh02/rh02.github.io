@@ -6,28 +6,10 @@
     <description>Recent content in matrix on Gopher&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>shenheng.xyz &amp;copy; 2018</copyright>
-    <lastBuildDate>Thu, 21 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 15 Dec 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://shenheng.xyz/tags/matrix/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>多项式回归</title>
-      <link>http://shenheng.xyz/posts/polynomial-regression/</link>
-      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/polynomial-regression/</guid>
-      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多项式回归的课堂记录，有了合适的特征之后，我们发现线性回归并不适用于所有数据，有时我们需要曲线来适应我们</description>
-    </item>
-    
-    <item>
-      <title>Display Image Using R</title>
-      <link>http://shenheng.xyz/posts/2017-12-19-example/</link>
-      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/2017-12-19-example/</guid>
-      <description>{r fig-margin, echo=FALSE, fig.cap=&amp;quot;这是一个神经网络的图。&amp;quot;, fig.height=3.5, fig.margin=TRUE, warning=FALSE, background=&amp;quot;#f5f5d5&amp;quot;, cache=FALSE} # need png package library(png) #Replace the directory and file information with your info ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima) library(png) par(bg = &amp;quot;#f5f5d5&amp;quot;) ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima)</description>
-    </item>
     
     <item>
       <title>利用python从头实现矩阵分解算法</title>

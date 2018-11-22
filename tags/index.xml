@@ -32,36 +32,18 @@
     <item>
       <title>blog</title>
       <link>http://shenheng.xyz/tags/blog/</link>
-      <pubDate>Sat, 23 Dec 2017 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/blog/</guid>
       <description></description>
     </item>
     
     <item>
-      <title>cheatsheet</title>
-      <link>http://shenheng.xyz/tags/cheatsheet/</link>
-      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/tags/cheatsheet/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>disqus</title>
       <link>http://shenheng.xyz/tags/disqus/</link>
-      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/disqus/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>gitalk</title>
-      <link>http://shenheng.xyz/tags/gitalk/</link>
-      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/tags/gitalk/</guid>
       <description></description>
     </item>
     
@@ -71,15 +53,6 @@
       <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/gittalk/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>hmm</title>
-      <link>http://shenheng.xyz/tags/hmm/</link>
-      <pubDate>Sat, 23 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/tags/hmm/</guid>
       <description></description>
     </item>
     
@@ -104,7 +77,7 @@
     <item>
       <title>matrix</title>
       <link>http://shenheng.xyz/tags/matrix/</link>
-      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/matrix/</guid>
       <description></description>
@@ -129,15 +102,6 @@
     </item>
     
     <item>
-      <title>rmarkdown</title>
-      <link>http://shenheng.xyz/tags/rmarkdown/</link>
-      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/tags/rmarkdown/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>rpi</title>
       <link>http://shenheng.xyz/tags/rpi/</link>
       <pubDate>Wed, 20 Dec 2017 00:00:00 +0000</pubDate>
@@ -158,18 +122,9 @@
     <item>
       <title>scala</title>
       <link>http://shenheng.xyz/tags/scala/</link>
-      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/scala/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>scala style</title>
-      <link>http://shenheng.xyz/tags/scala-style/</link>
-      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/tags/scala-style/</guid>
       <description></description>
     </item>
     

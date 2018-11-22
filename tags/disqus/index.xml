@@ -6,19 +6,10 @@
     <description>Recent content in disqus on Gopher&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>shenheng.xyz &amp;copy; 2018</copyright>
-    <lastBuildDate>Tue, 19 Dec 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 14 Dec 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://shenheng.xyz/tags/disqus/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Display Image Using R</title>
-      <link>http://shenheng.xyz/posts/2017-12-19-example/</link>
-      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/2017-12-19-example/</guid>
-      <description>{r fig-margin, echo=FALSE, fig.cap=&amp;quot;这是一个神经网络的图。&amp;quot;, fig.height=3.5, fig.margin=TRUE, warning=FALSE, background=&amp;quot;#f5f5d5&amp;quot;, cache=FALSE} # need png package library(png) #Replace the directory and file information with your info ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima) library(png) par(bg = &amp;quot;#f5f5d5&amp;quot;) ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima)</description>
-    </item>
     
     <item>
       <title>为我的博客安装评论插件</title>

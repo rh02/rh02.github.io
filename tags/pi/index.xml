@@ -29,14 +29,5 @@
       <description>本文主要介绍如何在树莓派上配置和安装OpenCV，本文原文出处1. 扩大文件系统 由于编译安装OpenCV需要的空间很大，所以应该做的第一件事是</description>
     </item>
     
-    <item>
-      <title>Display Image Using R</title>
-      <link>http://shenheng.xyz/posts/2017-12-19-example/</link>
-      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/2017-12-19-example/</guid>
-      <description>{r fig-margin, echo=FALSE, fig.cap=&amp;quot;这是一个神经网络的图。&amp;quot;, fig.height=3.5, fig.margin=TRUE, warning=FALSE, background=&amp;quot;#f5f5d5&amp;quot;, cache=FALSE} # need png package library(png) #Replace the directory and file information with your info ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima) library(png) par(bg = &amp;quot;#f5f5d5&amp;quot;) ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima)</description>
-    </item>
-    
   </channel>
 </rss>

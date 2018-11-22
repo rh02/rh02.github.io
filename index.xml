@@ -21,12 +21,12 @@
     </item>
     
     <item>
-      <title>关于我</title>
+      <title>笔记 &amp; 演讲</title>
       <link>http://shenheng.xyz/learning/</link>
       <pubDate>Wed, 21 Nov 2018 00:00:00 +0800</pubDate>
       
       <guid>http://shenheng.xyz/learning/</guid>
-      <description>申恒恒，学生，精通机器学习算法和深度学习算法，专注于大数据与机器学习方向，目前在大数据研究院负责工业互联网的研发工作。曾对基础架构，大数据、</description>
+      <description>笔记 以下多数笔记都是 LaTeX 文档输出的 pdf 格式 ；若需要查看 LaTeX 源文档，只需要在浏览器地址栏中将 .pdf 扩展名替换为 .tex 即可下载相应的 tex 文档。 #kubernet</description>
     </item>
     
     <item>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>matrix on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/matrix/</link>
+    <description>Recent content in matrix on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Thu, 21 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/matrix/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>多项式回归</title>
+      <link>http://shenheng.xyz/posts/polynomial-regression/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/polynomial-regression/</guid>
+      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多项式回归的课堂记录，有了合适的特征之后，我们发现线性回归并不适用于所有数据，有时我们需要曲线来适应我</description>
+    </item>
+    
+    <item>
+      <title>Display Image Using R</title>
+      <link>http://shenheng.xyz/posts/2017-12-19-example/</link>
+      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-19-example/</guid>
+      <description>{r fig-margin, echo=FALSE, fig.cap=&amp;quot;这是一个神经网络的图。&amp;quot;, fig.height=3.5, fig.margin=TRUE, warning=FALSE, background=&amp;quot;#f5f5d5&amp;quot;, cache=FALSE} # need png package library(png) #Replace the directory and file information with your info ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima) library(png) par(bg = &amp;quot;#f5f5d5&amp;quot;) ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima)</description>
+    </item>
+    
+    <item>
+      <title>利用python从头实现矩阵分解算法</title>
+      <link>http://shenheng.xyz/posts/%E5%88%A9%E7%94%A8python%E4%BB%8E%E5%A4%B4%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/%E5%88%A9%E7%94%A8python%E4%BB%8E%E5%A4%B4%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E7%AE%97%E6%B3%95/</guid>
+      <description>该程序主要是我的《矩阵分析与应用》课程的大作业的解决方案及程序说明。大作业的要求为： 要求完成课堂上讲的关于矩阵分解的LU、QR（Gram-S</description>
+    </item>
+    
+  </channel>
+</rss>

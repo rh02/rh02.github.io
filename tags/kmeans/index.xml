@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kmeans on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/kmeans/</link>
+    <description>Recent content in Kmeans on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Sat, 30 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/kmeans/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>R实战-Kmeans</title>
+      <link>http://shenheng.xyz/posts/r-kmeans/</link>
+      <pubDate>Sat, 30 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/r-kmeans/</guid>
+      <description>本次主要讲解Kmeans实做部分，假设读者有Kmeans算法的背景下，下面是R程序，本程序对iris数据进行建模。 安装并导入必要的程式套件 主</description>
+    </item>
+    
+  </channel>
+</rss>

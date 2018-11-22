@@ -1,0 +1,783 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>单变量线性回归 | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="单变量线性回归 - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2017-12-21T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2017-12-21T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="单变量线性回归">
+        <meta name="author" content="Heng-Heng Shen">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/single-variable-linear-regression/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [ ['$','$'] ],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    
+    
+        <link rel="stylesheet" href="/css/douban.css">
+    
+        <link rel="stylesheet" href="/css/other.css">
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">单变量线性回归</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2017年12月21日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/blog">blog</a>
+                            
+                                <a href="http://shenheng.xyz/categories/comment">comment</a>
+                            
+                                <a href="http://shenheng.xyz/categories/ml">ml</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<p>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:<strong>单变量线性回归</strong>的课堂记录，主要讲解了以下几个内容:</p>
+
+<ul>
+<li>代价函数</li>
+<li>梯度下降算法</li>
+</ul>
+
+<h1 id="模型表达">模型表达</h1>
+
+<p>还是上一个关于房屋价格预测的例子，给你一组房屋的大小和对应房屋的价格的数据，让你对数据进行建模，使得对于其他的房屋的大小更好的拟合出更准确的价格出来。如图1所示。
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{single_ex_1.png}
+  \caption{房屋价格预测模型}\label{figure:single_ex_1}
+\end{center}
+\end{figure}</p>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/50192377.jpg" alt="" />
+<p class="caption">
+图 1: 房屋价格预测模型
+</p></p>
+
+<p>题外话：首先数据是一组关于标准输入与标准答案的数据集，那么对该数据进行建模，是属于监督学习任务。又因为数据只含有一个变量（$size$）即一个特征，且找到一条直线来拟合数据集，所以该问题又被称为单变量线性回归问题。</p>
+
+<p>图2是部分的样本数据，其中$X$表示房屋的大小，$Y$表示对应房屋的价格。
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{s_data.png}
+  \caption{数据}\label{figure:s_data}
+\end{center}
+\end{figure}</p>
+
+<p><center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/25995934.jpg" alt="" />
+</center>
+<p class="caption">
+图 2: 数据
+</p></p>
+
+<p>为了后面更好的描述，所以对一些符号进行声明：</p>
+
+<ul>
+<li>$m$ 训练集中实例的数量</li>
+<li>$x&rsquo;s$ 输入变量或者特征</li>
+<li>$y&rsquo;s$ 输出变量或目标变量</li>
+<li>$(x,y)$ 一个训练样本</li>
+<li>$(x^{(i)},y^{(i)})$ 第$i$个训练样本
+\end{itemize}</li>
+</ul>
+
+<p>有了数据之后，可以用下图就可以描述房屋价格预测问题建模的过程。
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{procedure.png}
+  \caption{建模的过程}\label{figure:precedure}
+\end{center}
+\end{figure}
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/49786727.jpg" alt="" />
+</center>
+<p class="caption">
+图 3: 建模的过程
+</p></p>
+
+<p>图片描述：因而解决房屋价格预测问题，实际上就是要将训练集”喂给“我们的学习算法，进而学习到一个假设$h$，然后将要预测的房屋尺寸作为输入变量输入给$h$，预测出该房屋的交易价格作为输出结果。<strong>其实$h$就是一个我们要学习的函数</strong>。</p>
+
+<p>我们如何表示函数呢？对于单变量线性回归问题来说，$h<em>{\theta}(x) = \theta</em>{0} + \theta_{1} x$.</p>
+
+<h1 id="代价函数">代价函数</h1>
+
+<h2 id="引入代价函数">引入代价函数</h2>
+
+<p>有了训练数据，也有了模型的表示$h$，但是问题是如何选择 $\theta<em>{0}$ 和 $\theta</em>{1}$ ?</p>
+
+<p>基本想法是选择$\theta<em>{0}$，$\theta</em>{1}$以使得在训练集上$h<em>{\theta}(x)$接近$y$.用数学表达式表示出来，如下：
+$$minimize</em>{\theta{0},\theta<em>{1}}\frac{1}{2m}\sum</em>{i=1}^{m}(h_{\theta}(x^{(i)})- y^{(i)})^{2}$$</p>
+
+<p><strong>注意：</strong> 在学习的时候，有一个区别，$loss function$描述的是单个样本误差，而$cost$ $function$描述整个训练集的误差。</p>
+
+<p>同样地，为了更好的下文描述，将其简化：</p>
+
+<p>$$J(\theta<em>{0},\theta</em>{1}) = \frac{1}{2m}\sum<em>{i=1}^{m}(h</em>{\theta}(x^{(i)})- y^{(i)})^{2}$$</p>
+
+<p>Goals: <code>$$ minimize_{\theta{0},\theta{1}}J(\theta_{0}, \theta_{1})$$</code>
+其中$J(\theta<em>{0}, \theta</em>{1})$是平方误差（代价）函数，它是解决回归问题常用的手段。</p>
+
+<h2 id="代价函数-j-的工作原理">代价函数$J$的工作原理</h2>
+
+<ul>
+<li>假说函数: $h<em>{\theta}(x) = \theta</em>{0} + \theta_{1}x$</li>
+<li>参数：$\theta<em>{0}, \theta</em>{1}$</li>
+<li>代价函数：$J(\theta<em>{0},\theta</em>{1}) = frac{1}{2m}\sum<em>{i=1}^{m}(h</em>{\theta}(x^{(i)})- y^{(i)})^{2}$</li>
+<li>目标：$minimize<em>{\theta{0},\theta{1}}J(\theta</em>{0}, \theta_{1})$</li>
+</ul>
+
+<p>简化来讲，就是找到使得误差最小的那一对参数（$\theta<em>{0}, \theta</em>{1}$).</p>
+
+<p>\begin{figure}[htbp]
+    \begin{center}
+        \includegraphics[width=0.8\textwidth]{cost.png}
+        \caption{代价函数工作原理}\label{figure:cost}
+    \end{center}
+\end{figure}</p>
+
+<p class="caption">
+![](http://olrs8j04a.bkt.clouddn.com/17-12-21/26673069.jpg)
+图 4: 代价函数工作原理
+</p>
+
+<h2 id="代价函数的直观理解">代价函数的直观理解</h2>
+
+<p>引入一种表示方法：轮廓图。我们在三维空间来表示（$\theta<em>{0}, \theta</em>{1}, J(\theta<em>{0}, \theta</em>{1})$)，如图\ref{figure:contour}</p>
+
+<p>\begin{figure}[htbp]
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{contour.png}
+        \caption{轮廓图}\label{figure:contour}
+    \end{center}
+\end{figure}
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/12948998.jpg" alt="" />
+</center>
+<p class="caption"></p>
+
+<p>图 5: 轮廓图
+</p></p>
+
+<p>可以直观地得到以下结论：在曲面的最低的那个点对应的代价误差最小，对应的（$\theta<em>{0}, \theta</em>{1}$)是我们要找的参数组合。</p>
+
+<p>还有一种表示方法：等高线图，他的工作原理是，每一圈上的值都是相等的，即对应的代价误差是相同的。从外到里，代价不断减小，最里面的是最小的代价误差，也是我们算法要最终学习到的点。如图\ref{figure:contour_2}</p>
+
+<p>\begin{figure}[htbp]
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{contour_2.png}
+        \caption{等高线图}\label{figure:contour_2}
+    \end{center}
+\end{figure}
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/66180792.jpg" alt="" />
+</center>
+<p class="caption">
+图 6: 等高线图
+</p></p>
+
+<h1 id="梯度下降算法">梯度下降算法</h1>
+
+<h2 id="算法描述">算法描述</h2>
+
+<p>我们很迫切想求得最佳拟合参数（$\theta<em>{0}, \theta</em>{1}$），但是有不想通过枚举的方式求得，因此需要一个算法能够自动求出使得代价函数$J(\theta<em>{0}, \theta</em>{1})$取得最小值的参数$\theta<em>{0}, \theta</em>{1}$.</p>
+
+<p>所以在这里引入梯度下降算法。主要思想是想象你在一个山丘上，怎么样以最快的速度从山上到山脚下？在这里就引入了梯度的概念，即下降速度最快的方向，所以人没走一步就检查一下，当前是否为下降最快的方向？若不是则将重新求梯度，按照梯度指示的方向走，则为最快的方式！将这种思想应用到求使得代价误差函数最小，也是这么做的。但是这样往往带来几个问题？</p>
+
+<ol>
+<li>以多大的脚步往下走，因为如果脚步过大，则会造成错过最佳的下山路线。（学习速率选择问题）</li>
+<li>由于不一定你的目标函数是凸函数，所以每次走可能走到不同”的山脚“。（局部最小值，凸优化问题）如图\ref{figure:gradient}</li>
+</ol>
+
+<p>这些问题将会在后面一一解决！</p>
+
+<p>\begin{figure}[htbp]
+\centering                                                          %居中
+\subfigure[梯度下降]{                    %第一张子图
+\begin{minipage}{7cm}
+\centering                                                          %子图居中
+\includegraphics[scale=0.3]{gradient_intu.png}               %以pic.jpg的0.5倍大小输出
+\end{minipage}}
+\subfigure[走到局部最低点]{                    %第二张子图
+\begin{minipage}{7cm}
+\centering                                                          %子图居中
+\includegraphics[scale=0.3]{gradient_intu_2.png}                %以pic.jpg的0.5倍大小输出
+\end{minipage}}
+\caption{梯度下降算法} %                         %大图名称
+\label{figure:gradient}                                                        %图片引用标记
+\end{figure}
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/65682294.jpg" alt="" />
+</center>
+下面是梯度下降算法的为伪代码。</p>
+
+<p>\begin{algorithm}[h]<br />
+  \caption{梯度下降算法简化版}<br />
+  \label{alg::Gradient Descent Simple}<br />
+  \begin{algorithmic}[1]<br />
+    \Require
+    $\alpha$ 学习率;
+    $\theta<em>{0} \in R, \theta</em>{1}\in R$ 参数;
+    $J$ 代价误差函数;
+    $:=$ 赋值;
+    \Repeat<br />
+      \State $\theta<em>{j} := \theta</em>{j} - \alpha\frac{\partial}{\partial<em>{j}}J(\theta</em>{0}, \theta<em>{1})$ for $j = 0 $和$j = 1 $;
+      \State (向量版本)$\theta :=  \theta - \alpha\nabla J(\theta</em>{0}, \theta_{1})$;
+    \Until{收敛}<br />
+  \end{algorithmic}<br />
+\end{algorithm}<br />
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/96169106.jpg" alt="" />
+</center></p>
+
+<p>下图\ref{figure:gradient_change_theta} 直观的描述$\theta$是如何变化的.这里$\alpha &gt; 0$.</p>
+
+<p>\begin{figure}[htbp]
+\centering                                                          %居中
+\subfigure[$\frac{\partial}{\partial<em>{\theta</em>{1}}}J(\theta<em>{0}, \theta</em>{1}) &gt; 0$时，$\theta_{1}$往右移动]{                    %第一张子图
+\begin{minipage}{7cm}
+\centering                                                          %子图居中
+\includegraphics[scale=0.5]{gradient_change<em>theta.png}               %以pic.jpg的0.5倍大小输出
+\end{minipage}}
+\subfigure[$\frac{\partial}{\partial</em>{\theta<em>{1}}}J(\theta</em>{0}, \theta<em>{1}) &lt; 0$时，$\theta</em>{1}$往左移动]{                    %第二张子图
+\begin{minipage}{7cm}
+\centering                                                          %子图居中
+\includegraphics[scale=0.5]{gradient_change_theta_1.png}                %以pic.jpg的0.5倍大小输出
+\end{minipage}}
+\caption{代价误差不断接近最低处} %                         %大图名称
+\label{figure:gradient_change_theta}                                                        %图片引用标记
+\end{figure}
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/29605590.jpg" alt="" />
+</center></p>
+
+<h2 id="学习率-alpha">学习率$\alpha$</h2>
+
+<p>学习率在算法迭代时起着很大的作用。
+\begin{enumerate}
+\setlength{\itemsep}{1pt}
+\setlength{\parsep}{0pt}
+\setlength{\parskip}{0pt}
+- 如果$\alpha$过小，将会导致算法的收敛速度很慢，算法的效率低;
+- 如果$\alpha$过大，在梯度下降过程中，很容易掠过最小值，可能会无法收敛甚至发散。如图\ref{figure:alpha}.
+\end{enumerate}</p>
+
+<p>\begin{figure}[htbp]
+\centering                                                          %居中
+\subfigure[$\alpha$过小，导致收敛速度很慢]{                    %第一张子图
+\begin{minipage}{7cm}
+\centering                                                          %子图居中
+\includegraphics[scale=0.5]{alpha_low.png}               %以pic.jpg的0.5倍大小输出
+\end{minipage}}
+\subfigure[$\alpha$过大，导致无法到达最低点]{                    %第二张子图
+\begin{minipage}{7cm}
+\centering                                                          %子图居中
+\includegraphics[scale=0.5]{alpha_high.png}                %以pic.jpg的0.5倍大小输出
+\end{minipage}}
+\caption{不同的$\alpha$对算法收敛的影响} %                         %大图名称
+\label{figure:alpha}                                                        %图片引用标记
+\end{figure}</p>
+
+<p><center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/75838488.jpg" alt="" />
+</center></p>
+
+<p>虽然选择的是合适的$alpha$，但是算法还是会掉到局部最小值，对于局部最小值的描述如图\ref{figure:local_minimize}</p>
+
+<p>\begin{figure}[htbp]
+    \begin{center}
+        \includegraphics[width=0.6\textwidth]{local_minimize.png}
+        \caption{局部最小值}\label{figure:local_minimize}
+    \end{center}
+\end{figure}
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/23570380.jpg" alt="" />
+</center></p>
+
+<p>在算法迭代时，随着逐渐接近最小值，步子会慢慢地变小，直到接近最小值。所以在算法的迭代过程中不需要对$\alpha$改变。</p>
+
+<p>\subsubsection{算法详细版}</p>
+
+<ul>
+<li>假说函数: $h<em>{\theta}(x) = \theta</em>{0} + \theta_{1}x$</li>
+<li>参数：$\theta<em>{0}, \theta</em>{1}$</li>
+<li>代价函数：$J(\theta<em>{0},\theta</em>{1}) = \frac{1}{2m}\sum<em>{i=1}^{m}(h</em>{\theta}(x^{(i)})- y^{(i)})^{2}$</li>
+<li>目标：$minimize<em>{\theta{0},\theta{1}}J(\theta</em>{0}, \theta_{1})$</li>
+<li>求解：$\theta<em>{j} := \theta</em>{j} - \alpha \frac{\partial}{\partial<em>{\theta</em>{j}}} J(\theta<em>{0}, \theta</em>{1})$ for $j=0$ 和 $j=1$</li>
+</ul>
+
+<p>结合上面的公式可以求得
+$$ \theta<em>{0} := \theta</em>{0} - \alpha \frac{1}{m} \sum<em>{i=1}^{m}(h</em>{\theta}(x^{(i)}) - y^{(i)})$$
+$$ \theta<em>{1} := \theta</em>{1} - \alpha \frac{1}{m} \sum<em>{i=1}^{m}(h</em>{\theta}(x^{(i)}) - y^{(i)})x^{(i)}$$</p>
+
+<p>算法的伪代码如下：</p>
+
+<p>\begin{algorithm}[h]<br />
+  \caption{梯度下降算法简化版}<br />
+  \label{alg::Gradient Descent Simple}<br />
+  \begin{algorithmic}[1]<br />
+    \Require
+    $\alpha$ 学习率;
+    $\theta<em>{0} \in R, \theta</em>{1}\in R$ 参数;
+    $:=$ 赋值;
+    \Repeat<br />
+      \State $\theta<em>{0} := \theta</em>{0} - \alpha \frac{1}{m} \sum<em>{i=1}^{m}(h</em>{\theta}(x^{(i)}) - y^{(i)})$;
+      \State $\theta<em>{1} := \theta</em>{1} - \alpha \frac{1}{m} \sum<em>{i=1}^{m}(h</em>{\theta}(x^{(i)}) - y^{(i)})x^{(i)}$;
+    \Until{收敛}<br />
+  \end{algorithmic}<br />
+\end{algorithm}<br />
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/55414484.jpg" alt="" />
+</center></p>
+
+<ul>
+<li>由于代价误差函数是二次函数，二次项为负所以图像为“弓（拱）”形，所以是<strong>凸函数</strong>，所以算法总能收敛到全局最小值.</li>
+<li>由于训练的过程中，将全部的训练数据喂给我们的模型，所以该过程又称<strong>“批量训练过程”</strong>.</li>
+</ul>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/multi-variable-linear-regression/">多变量线性回归</a></li>
+        
+        <li><a href="/posts/overfitting/">过拟合和正则化</a></li>
+        
+        <li><a href="/posts/bayesian-learning/">朴素贝叶斯算法</a></li>
+        
+        <li><a href="/posts/introduction-machine-learning/">机器学习简介</a></li>
+        
+        <li><a href="/posts/polynomial-regression/">多项式回归</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/ml">ml</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-cheatsheet/" title="Scala CheatSheet">Scala CheatSheet</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-learning-resources/" title="Scala Learning Resources">Scala Learning Resources</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-style/" title="Scala Style Guide">Scala Style Guide</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/" title="分布式编程第三周课堂笔记">分布式编程第三周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/" title="分布式编程第一周课堂笔记">分布式编程第一周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/" title="分布式编程第二周课堂笔记">分布式编程第二周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title" style="color:red">福利派送</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    领取￥1888阿里云产品通用代金券
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/vmpt/aliyun-group/home.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB17qJhXpzqK1RjSZFvXXcB7VXa-200-126.jpg">
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB1aDXhXpzqK1RjSZFvXXcB7VXa-259-194.jpg">
+                
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pcdp/">PCDP(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dpcp/">dpcp(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hmm/">hmm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/java/">java(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/mail-server/">mail server(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(9)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rmarkdown/">rmarkdown(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rpi/">rpi(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/template/">template(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/welcome/">welcome(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">分布式编程(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/pcdp/">PCDP</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/cheatsheet/">cheatsheet</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/dpcp/">dpcp</a>
+    
+    <a href="http://shenheng.xyz/tags/gitalk/">gitalk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hmm/">hmm</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/mailserver/">mailserver</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/rmarkdown/">rmarkdown</a>
+    
+    <a href="http://shenheng.xyz/tags/rpi/">rpi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/scala-style/">scala style</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://yuedu.baidu.com/ebook/14a722970740be1e640e9a3e" title="Android Gradle权威指南">Android Gradle权威指南</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://mirrors.flysnow.org/" title="常用开发工具CDN镜像">常用开发工具CDN镜像</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '48ac64a24eebc5cb273da3d6a926069b', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+  <script src="/js/douban.js"></script>
+
+</body>
+</html>

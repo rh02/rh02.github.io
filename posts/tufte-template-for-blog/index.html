@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tufte样式 | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="Tufte样式 - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2017-12-15T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2017-12-15T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="Tufte样式">
+        <meta name="author" content="Heng-Heng Shen">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/tufte-template-for-blog/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [ ['$','$'] ],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    
+    
+        <link rel="stylesheet" href="/css/douban.css">
+    
+        <link rel="stylesheet" href="/css/other.css">
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">Tufte样式</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2017年12月15日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/rmarkdown">rmarkdown</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<hr />
+
+<p>title: &ldquo;Tufte样式&rdquo;
+subtitle: &ldquo;一个R Markdown实现&rdquo;
+author: &ldquo;JJ Allaire，谢益辉&rdquo;
+date: &ldquo;<code>r Sys.Date()</code>&ldquo;
+output:
+  tufte::tufte_html: default
+  tufte::tufte_book:
+    citation_package: natbib
+    latex_engine: xelatex
+  tufte::tufte_handout:
+    citation_package: natbib
+    latex_engine: xelatex
+ctex: yes
+biblio-title: 参考文献
+bibliography: skeleton.bib</p>
+
+<h2 id="link-citations-yes">link-citations: yes</h2>
+
+<pre><code class="language-r">library(tufte)
+
+# tufte版本变化之后更新knitr缓存
+knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion('tufte'))
+options(htmltools.dir.version = FALSE)
+</code></pre>
+
+<h1 id="引言">引言</h1>
+
+<p>Tufte样式在Edward Tufte的书以及物理学家费曼的教科书很常见，它的一个显著特点就是边栏的使用。例如脚注和边栏注解，以及放在边栏里的小型插图。Tufte样式在LaTeX和HTML/CSS中都有实现<sup class="footnote-ref" id="fnref:Github-tufte-lat"><a href="#fn:Github-tufte-lat">1</a></sup>。我们将这两种实现都纳入了<a href="https://github.com/rstudio/tufte"><strong>tufte</strong>包</a>。若需要LaTeX/PDF输出，使用输出格式<code>tufte_handout</code>即可，类似地，<code>tufte_book</code>可以用来输出PDF书，<code>tufte_html</code>生成HTML网页。这些输出格式可以在YAML元数据中指定，或者传给<code>rmarkdown::render()</code>函数。若对<strong>rmarkdown</strong>包不熟悉，可参见 @R-rmarkdown。</p>
+
+<pre><code class="language-yaml">---
+title: &quot;一个Tufte样式示例&quot;
+author: &quot;张三&quot;
+ctex: yes
+output:
+  tufte::tufte_handout:
+    latex_engine: xelatex
+  tufte::tufte_html: default
+---
+</code></pre>
+
+<h1 id="章节标题">章节标题</h1>
+
+<p>Tufte样式不主张太深的章节目录，一般仅仅使用一级标题（Markdown中用一个井号<code>#</code>）和二级标题（两个井号）。</p>
+
+<h1 id="插图">插图</h1>
+
+<h2 id="边栏插图">边栏插图</h2>
+
+<p>插图在Tufte的书中非常常见，我们可以使用三种插图：边栏图、全宽图、主栏图。先说边栏图：使用<strong>knitr</strong>代码段选项<code>fig.margin = TRUE</code>即可将图形放置在边栏中，如：</p>
+
+<pre><code class="language-r">library(ggplot2)
+par(bg = &quot;#f5f5d5&quot;)
+mtcars2 &lt;- mtcars
+mtcars2$am &lt;- factor(
+  mtcars$am, labels = c('automatic', 'manual')
+)
+ggplot(mtcars2, aes(hp, mpg, color = am)) +
+  geom_point() + geom_smooth() +
+  theme(legend.position = 'bottom')+ theme(panel.background = element_rect(fill = '#f5f5d5', colour = '#f5f5d5'))
+</code></pre>
+
+<p>注意我们使用代码段选项<code>fig.cap</code>设定了图的标题。当然我们也可以设置图的长宽。</p>
+
+<h2 id="任意数学公式">任意数学公式</h2>
+
+<p>对于数学公式，<code>$\LaTeX$</code>的支持，可以使用(inline: <code>`$ $`</code>; display style: <code>`$$ $$`</code>)。例如下面有一个微积分第一基本定理。</p>
+
+<blockquote>
+<p>根据微积分第一基本定理我们知道，对<code>$x \in [a, b]$</code>有
+<code>$$\frac{d}{dx}\left( \int_{a}^{x} f(u)\,du\right)=f(x).$$</code></p>
+</blockquote>
+
+<p>为了文本内容的可移植性（同样的内容可以生成HTML和LaTeX文档）。</p>
+
+<h2 id="全宽插图">全宽插图</h2>
+
+<p>代码段选项<code>fig.fullwidth = TRUE</code>可以使得一幅图占用全部页宽，例如：</p>
+
+<pre><code class="language-r">par(bg = &quot;#f5f5d5&quot;)
+ggplot(diamonds, aes(carat, price)) + geom_smooth() +
+  facet_grid(~ cut) + theme(panel.background = element_rect(fill = '#f5f5d5', colour = '#f5f5d5'))
+</code></pre>
+
+<p>其它和图形有关的代码段选项仍然可以使用，一般情况下，全款图形的<code>fig.width</code>选项会较大，而<code>fig.height</code>相对较小。上图的尺寸是 <code>$10 \times 2$</code> 英寸.</p>
+
+<h2 id="主栏插图">主栏插图</h2>
+
+<p>默认情况下，R代码段生成的图形放置在主栏里，其标题放在边栏中，例如：</p>
+
+<pre><code class="language-r">ggplot(diamonds, aes(cut, price)) + geom_boxplot() + theme(panel.background = element_rect(fill = '#f5f5d5', colour = '#f5f5d5'))
+</code></pre>
+
+<h1 id="边栏附注">边栏附注</h1>
+
+<p>Tufte样式的文档中，脚注会被自动转换为边栏附注<sup class="footnote-ref" id="fnref:-"><a href="#fn:-">2</a></sup>。脚注是带编号的，另一种边栏附注是不带编号的，这种附注需要用<strong>tufte</strong>包中的R函数<code>margin_note()</code>在<strong>knitr</strong>行内代码中生成。</p>
+
+<p><code>r margin_note(&quot;这是一个边栏附注，它没有编号。&quot;)</code>与边栏插图一样，边栏附注中我们也不建议写太复杂的内容，通常只是一句简单的文字。</p>
+
+<h1 id="参考文献">参考文献</h1>
+
+<p>HTML输出中，参考文献默认也放在边栏中。例如这里我们可以引用[@R-base]。这个功能需要在YAML元数据中设置<code>link-citations: yes</code>，而且<code>pandoc-citeproc</code>程序的版本应该至少是0.7.2。若这两个条件不满足，参考文献会被放在文档末尾。</p>
+
+<h1 id="表格">表格</h1>
+
+<p>我们可以用<strong>knitr</strong>包中的<code>kable()</code>函数生成简单的表格。HTML输出中表格的标题也会被放在边栏中。</p>
+
+<pre><code class="language-r">knitr::kable(
+  mtcars[1:6, 1:6], caption = 'mtcars数据的前几行。'
+)
+</code></pre>
+
+<h1 id="引文">引文</h1>
+
+<p>Markdown语法使用<code>&gt;</code>来生成引文，如果需要在引文下面用行内代码以及<code>quote_footer()</code>函数加上一句引文来源，例如：</p>
+
+<blockquote>
+<p>&ldquo;多亏了我的律师，要不然我现在还在牢里。两个人一起挖确实比一个人快很多啊。&rdquo;</p>
+
+<p><code>r tufte::quote_footer('--- Joe Martin')</code></p>
+</blockquote>
+
+<p>如果不用这个函数的话，引文底部的话只是一个普通段落：</p>
+
+<blockquote>
+<p>&ldquo;伟人论道，凡人论事，小人论酒。&rdquo;</p>
+
+<p><code>r tufte::quote_footer('--- Fran Lebowitz')</code></p>
+</blockquote>
+
+<h1 id="响应式页面">响应式页面</h1>
+
+<p>这个包生成的HTML页面是响应式的：如果页宽小于760像素，边栏内容会自动隐藏。此时我们可以点击脚注的序号显示它，其它边栏附注则可以通过点击圆圈加号的符号显示。</p>
+
+<h1 id="结语">结语</h1>
+
+<p>希望诸位喜欢R Markdown的超级简洁性，同时我们感谢Tufte-CSS和Tufte-LaTeX项目的作者们，没有他们的辛勤劳动，就没有这个<strong>tufte</strong>包。这份文档的R Markdown源文档可以在<a href="https://github.com/rstudio/tufte/raw/master/inst/rmarkdown/templates/tufte_ctex/skeleton/skeleton.Rmd">Github上找到</a>，或者直接使用RStudio菜单<code>File -&gt; New File -&gt; R Markdown -&gt; From Template</code>新建一个文档，或直接从R里面打开这个Rmd文件：</p>
+
+<pre><code class="language-r">file.edit(
+  tufte:::template_resources(
+    'tufte_ctex', '..', 'skeleton', 'skeleton.Rmd'
+  )
+)
+</code></pre>
+
+<pre><code class="language-r"># create a bib file for the R packages used in this document
+knitr::write_bib(c('base', 'rmarkdown'), file = 'skeleton.bib')
+</code></pre>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:Github-tufte-lat">参见Github库<a href="https://github.com/tufte-latex/tufte-latex">tufte-latex</a>和 <a href="https://github.com/edwardtufte/tufte-css">tufte-css</a> <a class="footnote-return" href="#fnref:Github-tufte-lat"><sup>↩</sup></a></li>
+<li id="fn:-">这里本来是一个脚注 <a class="footnote-return" href="#fnref:-"><sup>↩</sup></a></li>
+</ol>
+</div>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/ctex-template-for-rstudio/">CTeX样式</a></li>
+        
+        <li><a href="/posts/template-of-rmarkdown/">Rmarkdown模板</a></li>
+        
+        <li><a href="/posts/%E5%88%A9%E7%94%A8python%E4%BB%8E%E5%A4%B4%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E7%AE%97%E6%B3%95/">利用python从头实现矩阵分解算法</a></li>
+        
+        <li><a href="/posts/welcome-to-readailib/">Welcome to ReadAILib</a></li>
+        
+        <li><a href="/posts/2017-12-14-add-comment-to-your-blog/">为我的博客安装评论插件</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/rmarkdown">rmarkdown</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-cheatsheet/" title="Scala CheatSheet">Scala CheatSheet</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-learning-resources/" title="Scala Learning Resources">Scala Learning Resources</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-style/" title="Scala Style Guide">Scala Style Guide</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/" title="分布式编程第三周课堂笔记">分布式编程第三周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/" title="分布式编程第一周课堂笔记">分布式编程第一周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/" title="分布式编程第二周课堂笔记">分布式编程第二周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title" style="color:red">福利派送</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    领取￥1888阿里云产品通用代金券
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/vmpt/aliyun-group/home.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB17qJhXpzqK1RjSZFvXXcB7VXa-200-126.jpg">
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB1aDXhXpzqK1RjSZFvXXcB7VXa-259-194.jpg">
+                
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pcdp/">PCDP(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dpcp/">dpcp(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hmm/">hmm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/java/">java(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/mail-server/">mail server(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(9)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rmarkdown/">rmarkdown(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rpi/">rpi(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/template/">template(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/welcome/">welcome(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">分布式编程(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/pcdp/">PCDP</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/cheatsheet/">cheatsheet</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/dpcp/">dpcp</a>
+    
+    <a href="http://shenheng.xyz/tags/gitalk/">gitalk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hmm/">hmm</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/mailserver/">mailserver</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/rmarkdown/">rmarkdown</a>
+    
+    <a href="http://shenheng.xyz/tags/rpi/">rpi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/scala-style/">scala style</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://yuedu.baidu.com/ebook/14a722970740be1e640e9a3e" title="Android Gradle权威指南">Android Gradle权威指南</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://mirrors.flysnow.org/" title="常用开发工具CDN镜像">常用开发工具CDN镜像</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '48ac64a24eebc5cb273da3d6a926069b', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+  <script src="/js/douban.js"></script>
+
+</body>
+</html>

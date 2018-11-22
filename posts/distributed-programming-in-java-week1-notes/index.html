@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>分布式编程第一周课堂笔记 | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="分布式编程第一周课堂笔记 - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-01-04T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-01-04T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="分布式编程第一周课堂笔记">
+        <meta name="author" content="Heng-Heng Shen">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [ ['$','$'] ],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    
+    
+        <link rel="stylesheet" href="/css/douban.css">
+    
+        <link rel="stylesheet" href="/css/other.css">
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">分布式编程第一周课堂笔记</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年1月4日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/java">java</a>
+                            
+                                <a href="http://shenheng.xyz/categories/dpcp">dpcp</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<p>本笔记来自课堂记录和课程网站的总结，<strong>转载请注明出处</strong>!</p>
+
+<h2 id="introduction-to-mapreduce">Introduction to MapReduce</h2>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-4/89745544.jpg" alt="Figure1: Introduction to MapReduce" /></p>
+
+<p><strong>Lecture Summary:</strong> In this lecture, we learned the MapReduce paradigm, which is a pattern of parallel functional programming that has been very successful in enabling &ldquo;big data&rdquo; computations.
+The input to a MapReduce style computation is a set of key-value pairs. The keys are similar to keys used in hash tables, and the functional programming approach requires that both the keys and values be immutable. When a user-specified map function, f, is applied on a key-value pair, $(kA,vA)$, it results in a (possibly empty) set of output key-value pairs, ${(kA1,vA1), (kA2,vA2),&hellip;.}$ This map function can be applied in parallel on all key-value pairs in the input set, to obtain a set of intermediate key-value pairs that is the union of all the outputs.</p>
+
+<p>The next operation performed in the MapReduce workflow is referred to as grouping, which groups together all intermediate key-value pairs with the same key. Grouping is performed automatically by the MapReduce framework, and need not be specified by the programmer. For example, if there are two intermediate key- value pairs, $(kA1, vA1)$ and $(kB1, vB1)$ with the same key, $kA1 = kB1 =k$, then the output of grouping will associate the set of values ${vA1,vB1}$ with key k.
+Finally, when a user-specified reduce function, g, is applied on two or more grouped values (e.g., vA1, vB1,&hellip;) associated with the same key k, it folds or reduces all those values to obtain a single output key-value pair, (k, g(vA1, vB1, &hellip;)), for each key, k. in the intermediate key-value set. If needed, the set of output key-value pairs can then be used as the input for a successive MapReduce computation.</p>
+
+<p>In the example discussed in the lecture, we assumed that the map function, f, mapped a key-value pair like (“WR”,10) to a set of intermediate key-value pairs obtained from factors of 10 to obtain the set, ${ (“WR”,2), (“WR”,5), (“WR”,10) }$, and the reduce function, g, calculated the sum of all the values with the same key to obtain $(“WR”,17)$ as the output key-value pair for key “WR”. The same process can be performed in parallel for all keys to obtain the complete output key-value set.</p>
+
+<h2 id="apache-hadoop-project">Apache Hadoop Project</h2>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-4/97256737.jpg" alt="Figure2: Apache Hadoop Project" /></p>
+
+<p><strong>Lecture Summary:</strong> The Apache Hadoop project is a popular open-source implementation of the Map-Reduce paradigm for distributed computing. A distributed computer can be viewed as a large set of multicore computers connected by a network, such that each computer has multiple processor cores, e.g., $P0, P1, P2, P3, &hellip; .$ Each individual computer also has some persistent storage (e.g., hard disk, flash memory), thereby making it possible to store and operate on large volumes of data when aggregating the storage available across all the computers in a data center. The main motivation for the Hadoop project is to make it easy to write large-scale parallel programs that operate on this “big data”.</p>
+
+<p>The Hadoop framework allows the programmer to specify map and reduce functions in Java, and takes care of all the details of generating a large number of map tasks and reduce tasks to perform the computation as well as scheduling them across a distributed computer. A key property of the Hadoop framework is that it supports automatic fault-tolerance. Since MapReduce is essentially a functional programming model, if a node in the distributed system fails, the Hadoop scheduler can reschedule the tasks that were executing on that node with the same input elsewhere, and continue computation. This is not possible with non-functional parallelism in general, because when a non-functional task modifies some state, re-executing it may result in a different answer. The ability of the Hadoop framework to process massive volumes of data has also made it a popular target for higher-level query languages that implement SQL-like semantics on top of Hadoop.</p>
+
+<p>The lecture discussed the word-count example, which, despite its simplicity, is used very often in practice for document mining and text mining. In this example, we illustrated how a Hadoop map-reduce program can obtain word-counts for the distributed text “To be or not to be”. There are several other applications that have been built on top of Hadoop and other MapReduce frameworks. The main benefit of Hadoop is that it greatly simplifies the job of writing programs to process large volumes of data available in a data center.</p>
+
+<h2 id="apache-spark-framework">Apache Spark Framework</h2>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-4/2963434.jpg" alt="Figure3: Apache Spark Framework" /></p>
+
+<p><strong>Lecture Summary:</strong> Apache Spark is a similar, but more general, programming model than Hadoop MapReduce. Like Hadoop, Spark also works on distributed systems, but a key difference in Spark is that it makes better use of in-memory computing within distributed nodes compared to Hadoop MapReduce. This difference can have a significant impact on the performance of iterative MapReduce algorithms since the use of memory obviates the need to write intermediate results to external storage after each map/reduce step. However, this also implies that the size of data that can be processed in this manner is limited by the total size of memory across all nodes, which is usually much smaller than the size of external storage. (Spark can spill excess data to external storage if needed, but doing so reduces the performance advantage over Hadoop.)</p>
+
+<p>Another major difference between Spark and Hadoop MapReduce, is that the primary data type in Spark is the Resilient Distributed Dataset (RDD), which can be viewed as a generalization of sets of key-value pairs. RDDs enable Spark to support more general operations than map and reduce. Spark supports intermediate operations called Transformations (e.g., map,filter,join,&hellip;) and terminal operations called Actions (e.g., reduce,count,collect,&hellip;). As in Java streams, intermediate transformations are performed lazily, i.e., their evaluation is postponed to the point when a terminal action needs to be performed.</p>
+
+<p>In the lecture, we saw how the Word Count example can be implemented in Spark using Java APIs. (The Java APIs use the same underlying implementation as Scala APIs, since both APIs can be invoked in the same Java virtual machine instance.) We used the Spark flatMap() method to combine all the words in all the lines in an input file into a single RDD, followed by a mapToPair() Transform method call to emit pairs of the form, (word, 1), which can then be processed by a reduceByKey() operation to obtain the final word counts.</p>
+
+<h2 id="tf-idf-example">TF-IDF Example</h2>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-4/89669571.jpg" alt="Figure4: TF-IDF" /></p>
+
+<p><strong>Lecture Summary:</strong> In this lecture, we discussed an important statistic used in information retrieval and document mining, called Term Frequency – Inverse Document Frequency (TF-IDF). The motivation for computing TF-IDF statistics is to efficiently identify documents that are most similar to each other within a large corpus.</p>
+
+<p>Assume that we have a set of $N$ documents $D1,D2,…,DN$, and a set of terms $TERM1,TERM2,…$ that can appear in these documents. We can then compute total frequencies TFi,j for each term TERMi in each document Dj . We can also compute the document frequencies $DF1,DF2,&hellip;$ for each term, indicating how many documents contain that particular term, and the inverse document frequencies (IDF):$IDF_i=N/DF<em>i$. The motivation for computing inverse document frequencies is to determine which terms are common and which ones are rare, and give higher weights to the rarer terms when searching for similar documents. The weights are computed as: $Weight(TERM</em>{a_i},D<em>j)=TF</em>{i,j} + x log(N/DF_i)$.</p>
+
+<p>Using MapReduce, we can compute the $TF_{i,j}$ values by using a MAP operation to find all the occurrences of TERMi in document Dj, followed by a REDUCE operation to add up all the occurrences of TERMi as key-value pairs of the form, $((D_j,TERM<em>i),TF</em>{i,j})$ (as in the Word Count example studied earlier). These key-value pairs can also be used to compute DFi values by using a MAP operation to identify all the documents that contain TERMi and a REDUCE operation to count the number of documents that TERMi appears in. The final weights can then be easily computed from the $TF_{i,j}$ and $DF_i$ values. Since the $TF−IDF$ computation uses a fixed (not iterative) number of MAP and REDUCE operations, it is a good candidat_e for both Hadoop and Spark frameworks.</p>
+
+<h2 id="pagerank-example">PageRank Example</h2>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-4/56238987.jpg" alt="Figure5: PageRank" /></p>
+
+<p><strong>Lecture Summary:</strong> In this lecture, we discussed the PageRank algorithm as an example of an iterative algorithm that is well suited for the Spark framework. The goal of the algorithm is to determine which web pages are more important by examining links from one page to other pages. In this algorithm, the rank of a page, B, is defined as follows,
+$$RANK(B)=\sum_{A \in SRC(B)} \frac{RANK(A)}{DEST_COUNT(A)}$$
+where $SRC(B)$ is the set of pages that contain a link to B, while $DEST_COUNT(A)$ is the total number of pages that A links to. Intuitively, the PageRank algorithm works by splitting the weight of a page A (i.e., $RANK(A)$) among all of the pages that A links to (i.e. $DEST_COUNT(A)$). Each page that A links to has its own rank increased proportional to A&rsquo;s own rank. As a result, pages that are linked to from many highly-ranked pages will also be highly ranked.</p>
+
+<p>The motivation to divide the contribution of A in the sum by $DEST_COUNT(A)$ is that if page A links to multiple pages, each of the successors should get a fraction of the contribution from page A.</p>
+
+<p>Conversely, if a page has many outgoing links, then each successor page gets a relatively smaller weightage, compared to pages that have fewer outgoing links. This is a recursive definition in general, since if (say) page $X$ links to page $Y$, and page $Y$ links to page $X$, then $RANK(X)$ depends on$RANK(Y)$ and vice versa. Given the recursive nature of the problem, we can use an iterative algorithm to compute all page ranks by repeatedly updating the rank values using the above formula, and stopping when the rank values have converged to some acceptable level of precision. In each iteration, the new value of $RANK(B)$ can be computed by accumulating the contributions from each predecessor page, A. A parallel implementation in Spark can be easily obtained by implementing two steps in an iteration, one for computing the contributions of each page to its successor pages by using the $flatMapToPair()$ method, and the second for computing the current rank of each page by using the $reduceByKey()$ and $mapValues()$ methods.. All the intermediate results between iterations will be kept in main memory, resulting in a much faster execution than a Hadoop version (which would store intermediate results in external storage).</p>
+
+<h2 id="implementation-of-pagerank">Implementation of PageRank</h2>
+
+<pre><code class="language-java">public static JavaPairRDD&lt;Integer, Double&gt; sparkPageRank(
+            final JavaPairRDD&lt;Integer, Website&gt; sites,
+            final JavaPairRDD&lt;Integer, Double&gt; ranks) throws UnsupportedOperationException {
+        JavaPairRDD&lt;Integer, Double&gt; newRanks =
+                sites.
+                        join(ranks).
+                        flatMapToPair(kv -&gt;{
+                            Integer websiteId = kv._1();
+                            Tuple2&lt;Website, Double&gt; value = kv._2();
+                            Website edges = kv._2()._1();
+                            Double currentRank = kv._2()._2();
+
+                        List&lt;Tuple2&lt;Integer, Double&gt;&gt; contribs = new ArrayList&lt;&gt;();
+                        Iterator&lt;Integer&gt; iter = edges.edgeIterator();
+                        while(iter.hasNext()){
+                            final int target = iter.next();
+                            contribs.add(new Tuple2(target,
+                                    currentRank / (double) edges.getNEdges()));
+                        }
+                        return contribs;
+                    });
+            return newRanks.reduceByKey((Double r1, Double r2) -&gt; r1 + r2)
+                .mapValues(v -&gt; 0.15 + v*0.85);
+
+
+        }
+</code></pre>
+
+<h2 id="optional-reading">Optional Reading</h2>
+
+<ul>
+<li>Wikipedia article on the <a href="https://en.wikipedia.org/wiki/Apache_Hadoop">Apache Hadoop project</a></li>
+<li>Wikipedia article on the<a href="https://en.wikipedia.org/wiki/MapReduce"> MapReduce framework</a></li>
+<li><a href="https://spark.apache.org/docs/latest/programming-guide.html">Spark Programming Guide</a></li>
+<li>Wikipedia article on the <a href="https://en.wikipedia.org/wiki/Tf-idf">Term Frequency – Inverse Document Frequency (TF-IDF) statistic</a></li>
+<li>Wikipedia article on the <a href="https://en.wikipedia.org/wiki/Apache_Spark">Apache Spark project</a></li>
+<li>Wikipedia article on the <a href="https://en.wikipedia.org/wiki/PageRank">PageRank algorithm</a></li>
+<li><a href="http://www.sirgroane.net/google-page-rank/">http://www.sirgroane.net/google-page-rank/</a></li>
+<li><a href="http://blog.csdn.net/hguisu/article/details/7996185">http://blog.csdn.net/hguisu/article/details/7996185</a></li>
+</ul>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/distributed-programming-in-java-week2-notes/">分布式编程第二周课堂笔记</a></li>
+        
+        <li><a href="/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/">R实战-决策树</a></li>
+        
+        <li><a href="/posts/r-kmeans/">R实战-Kmeans</a></li>
+        
+        <li><a href="/posts/hmm/">隐马尔可夫模型</a></li>
+        
+        <li><a href="/posts/polynomial-regression/">多项式回归</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/dpcp">dpcp</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-cheatsheet/" title="Scala CheatSheet">Scala CheatSheet</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-learning-resources/" title="Scala Learning Resources">Scala Learning Resources</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-style/" title="Scala Style Guide">Scala Style Guide</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/" title="分布式编程第三周课堂笔记">分布式编程第三周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/" title="分布式编程第一周课堂笔记">分布式编程第一周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/" title="分布式编程第二周课堂笔记">分布式编程第二周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title" style="color:red">福利派送</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    领取￥1888阿里云产品通用代金券
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/vmpt/aliyun-group/home.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB17qJhXpzqK1RjSZFvXXcB7VXa-200-126.jpg">
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB1aDXhXpzqK1RjSZFvXXcB7VXa-259-194.jpg">
+                
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pcdp/">PCDP(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dpcp/">dpcp(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hmm/">hmm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/java/">java(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/mail-server/">mail server(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(9)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rmarkdown/">rmarkdown(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rpi/">rpi(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/template/">template(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/welcome/">welcome(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">分布式编程(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/pcdp/">PCDP</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/cheatsheet/">cheatsheet</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/dpcp/">dpcp</a>
+    
+    <a href="http://shenheng.xyz/tags/gitalk/">gitalk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hmm/">hmm</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/mailserver/">mailserver</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/rmarkdown/">rmarkdown</a>
+    
+    <a href="http://shenheng.xyz/tags/rpi/">rpi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/scala-style/">scala style</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://yuedu.baidu.com/ebook/14a722970740be1e640e9a3e" title="Android Gradle权威指南">Android Gradle权威指南</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://mirrors.flysnow.org/" title="常用开发工具CDN镜像">常用开发工具CDN镜像</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '48ac64a24eebc5cb273da3d6a926069b', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+  <script src="/js/douban.js"></script>
+
+</body>
+</html>

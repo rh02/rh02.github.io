@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>多变量线性回归 | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="多变量线性回归 - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2017-12-21T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2017-12-21T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="多变量线性回归">
+        <meta name="author" content="Heng-Heng Shen">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/multi-variable-linear-regression/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [ ['$','$'] ],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    
+    
+        <link rel="stylesheet" href="/css/douban.css">
+    
+        <link rel="stylesheet" href="/css/other.css">
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">多变量线性回归</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2017年12月21日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/ml">ml</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<p>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:<strong>多变量线性回归</strong>的课堂记录，其实就是将单变量线性回归推广到多变量中去，主要讲解了以下几个内容:</p>
+
+<ul>
+<li>模型的表示</li>
+<li>梯度下降算法</li>
+<li>运算中的实用技巧
+
+<ul>
+<li>特征缩放</li>
+<li>学习率$\alpha$</li>
+</ul></li>
+</ul>
+
+<h1 id="模型表达">模型表达</h1>
+
+<p>在单变量线性回归的房屋预测模型例子中，我们忽略了一个显示，往往购房者不仅仅考虑一个因素，因此多变量（特征）的引入是必需的，比如房屋的价格往往和卧室的数量（numbers of bedrooms），有多少个楼层(numbers of floors)，房屋的年龄(age of home)等等，我们选取这些特征来预测价格，实例数据如图\ref{figure:multi_features}</p>
+
+<p>为了后面描述的方便，特别对符号作出声明：</p>
+
+<ul>
+<li>$n$ 特征的数目</li>
+<li>$m$ 训练集中实例的数量</li>
+<li>$x&rsquo;s$ 输入变量或者特征</li>
+<li>$y&rsquo;s$ 输出变量或目标变量</li>
+<li>$x^{(i)}$ 第$i$个训练样本的输入特征</li>
+<li>$x^{(i)}_{j}$ 第$i$个训练样本的第$j$个特征</li>
+<li>$x_{j}$ 样本数据的第$j$个特征</li>
+</ul>
+
+<p>如图\ref{figure:multi<em>features}中，第一个训练样本为$x^{(1)}=\left[\begin{matrix}
+2104 &amp;5 &amp;1&amp; 45 &amp;460\end{matrix}\right]$
+则第一个训练样本的第一个特征为 $x^{(1)}</em>{1} = 21040$ 样本数据的第一个特征
+$x_{1}=
+\left[
+\begin{matrix}
+2104 <br />
+1416 <br />
+1534<br />
+852
+\end{matrix}
+\right]$</p>
+
+<p>同样地，支持多变量的假说函数表示为</p>
+
+<p>$$h<em>{\theta}(x) = \theta</em>{0} + \theta<em>{1}x</em>{1}  + \theta<em>{2}x</em>{2} + \theta<em>{3}x</em>{3} + &hellip;$$</p>
+
+<p>为了更方便的表示，令
+define $x<em>{0}$ = 1
+$$ X = \left[\begin{matrix}
+x</em>{0}<br />
+x<em>{1}<br />
+x</em>{2}<br />
+x<em>{3}<br />
+&hellip; <br />
+x</em>{n}
+\end{matrix}
+\right] \in \mathbb{R}^{n+1}, \theta = \left[\begin{matrix}
+\theta<em>{0} <br />
+\theta</em>{1} <br />
+\theta<em>{2} <br />
+\theta</em>{3} <br />
+&hellip;<br />
+\theta_{n}
+\end{matrix}\right]$$</p>
+
+<p>所以假说函数$h<em>{\theta}$可以表示为$$h</em>{\theta}(x) = \theta<em>{0} + \theta</em>{1}x<em>{1}  + \theta</em>{2}x<em>{2} + \theta</em>{3}x_{3} + &hellip;
+= \theta^{T}X$$</p>
+
+<h1 id="梯度下降算法">梯度下降算法</h1>
+
+<p>本节主要讲解如何设定该假设的参数，特别地，讲解如何使用梯度下降算法处理多元线性回归模型。现在我们已经知道：</p>
+
+<ul>
+<li>假说函数：$h<em>{\theta}(x) = \theta</em>{0} + \theta<em>{1}x</em>{1}  + \theta<em>{2}x</em>{2} + \theta<em>{3}x</em>{3} + &hellip;
+= \theta^{T}X$</li>
+<li>参数： $\theta \in \mathbb{R}^{n+1}$</li>
+<li>代价误差函数：$J(\mathbb{\theta}) = \frac{1}{2m}\sum<em>{i=1}^{m}(h</em>{\theta}(x^{(i)})- y^{(i)})^{2}$</li>
+<li>Goals：$minimize_{\mathbb{\theta}}J(\mathbb{\theta})$</li>
+</ul>
+
+<p>梯度下降算法伪代码：</p>
+
+<h2 id="运算中的适用技巧">运算中的适用技巧</h2>
+
+<h3 id="特征缩放-特征归一化">特征缩放<sup class="footnote-ref" id="fnref:-"><a href="#fn:-">1</a></sup></h3>
+
+<p>特征缩放（feature scaling）可以把特征缩放到一个相近的范围内，是一种能使得梯度下降算法快速收敛的一个技巧。</p>
+
+<p>例子：图中，$\theta<em>{2}$表示房屋的大小（$0～2000$ $feets$）， $\theta</em>{2}$表示卧室的数量($0~5$)，从图可以看出等高线很扁，如果不进行特征的缩放，梯度下降算法需要经过很多次迭代才能到达最小值点。经过缩放后，收敛到最小值速度比不缩放的快。</p>
+
+<p>为了实现特征缩放将会使用到一种叫做<strong>均值归一化</strong>的技术，使得$\theta<em>{1}$,$\theta</em>{2}$的范围在[-1,1]之间。主要的转换公式为：
+$$X<em>{i} = \frac{X</em>{i} - \mu<em>{n}}{\mathbb{S}</em>{n}}$$</p>
+
+<p>其中$\mu<em>{n}$表示$X$的均值，$\mathbb{S}</em>{n}$表示$X$的范围，即$max - min$.</p>
+
+<p>比如$\theta<em>{1}$归一化的结果为$\theta</em>{1} = \frac{\theta_{1} - 1000}{2000}$</p>
+
+<h2 id="学习率-alpha">学习率$\alpha$</h2>
+
+<p>复习：梯度下降算法的迭代公式如下.</p>
+
+<p>$$\theta<em>{j} := \theta</em>{j} - \alpha\frac{\partial}{\partial<em>{\theta</em>{j}}}J(\theta)$$</p>
+
+<p>通过上面的公式，我们可以绘制出迭代次数与代价函数$J(\theta)$的关系曲线.通过曲线观测算发在何时起开始收敛。也有一些自动测试是否收敛的方法，例如将代价函数的变化与某个阈值（例如0.01）进行比较，通常图\ref{figure:J_theta}能直观的表示出$J(\theta)$的变化情况。</p>
+
+<p>那么上面的例子与学习率有什么关系？关系就是如果学习率$\alpha$选择不合适将会导致梯度算法不能工作，即不能到达最小值或者将会使得梯度下降算法运行效率低迟迟不能收敛！</p>
+
+<p><strong>总结：</strong></p>
+
+<ul>
+<li>如果$\alpha$过小，将会导致算法的收敛速度慢;</li>
+<li>如果$\alpha$过大，在梯度下降过程中，很容易掠过局部最小值，导致无法收敛甚至发散。如图\ref{figure:alpha}.</li>
+</ul>
+
+<p><strong>技巧：</strong> 可以尝试下面的学习率：$$\alpha = 0.001,0.003,0.01,0.03,0.1,0.3,1$$</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:-">特征归一化 <a class="footnote-return" href="#fnref:-"><sup>↩</sup></a></li>
+</ol>
+</div>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/introduction-machine-learning/">机器学习简介</a></li>
+        
+        <li><a href="/posts/bayesian-learning/">朴素贝叶斯算法</a></li>
+        
+        <li><a href="/posts/overfitting/">过拟合和正则化</a></li>
+        
+        <li><a href="/posts/single-variable-linear-regression/">单变量线性回归</a></li>
+        
+        <li><a href="/posts/polynomial-regression/">多项式回归</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/ml">ml</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-cheatsheet/" title="Scala CheatSheet">Scala CheatSheet</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-learning-resources/" title="Scala Learning Resources">Scala Learning Resources</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-style/" title="Scala Style Guide">Scala Style Guide</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/" title="分布式编程第三周课堂笔记">分布式编程第三周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/" title="分布式编程第一周课堂笔记">分布式编程第一周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/" title="分布式编程第二周课堂笔记">分布式编程第二周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title" style="color:red">福利派送</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    领取￥1888阿里云产品通用代金券
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/vmpt/aliyun-group/home.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB17qJhXpzqK1RjSZFvXXcB7VXa-200-126.jpg">
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB1aDXhXpzqK1RjSZFvXXcB7VXa-259-194.jpg">
+                
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pcdp/">PCDP(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dpcp/">dpcp(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hmm/">hmm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/java/">java(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/mail-server/">mail server(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(9)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rmarkdown/">rmarkdown(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rpi/">rpi(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/template/">template(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/welcome/">welcome(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">分布式编程(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/pcdp/">PCDP</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/cheatsheet/">cheatsheet</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/dpcp/">dpcp</a>
+    
+    <a href="http://shenheng.xyz/tags/gitalk/">gitalk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hmm/">hmm</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/mailserver/">mailserver</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/rmarkdown/">rmarkdown</a>
+    
+    <a href="http://shenheng.xyz/tags/rpi/">rpi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/scala-style/">scala style</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://yuedu.baidu.com/ebook/14a722970740be1e640e9a3e" title="Android Gradle权威指南">Android Gradle权威指南</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://mirrors.flysnow.org/" title="常用开发工具CDN镜像">常用开发工具CDN镜像</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '48ac64a24eebc5cb273da3d6a926069b', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+  <script src="/js/douban.js"></script>
+
+</body>
+</html>

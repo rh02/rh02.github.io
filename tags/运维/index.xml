@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>运维 on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/</link>
+    <description>Recent content in 运维 on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Sun, 04 Mar 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>CentOS6源码安装MySQL</title>
+      <link>http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/</link>
+      <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/</guid>
+      <description>首先确定本机是安装了开发工具包套件（里面含有gcc等编译器）以及相关的make套件。使用下面命令进行安装。 yum groupinstall &amp;quot;Development Tools&amp;quot; –y yum install cmake ncurses-devel -y 然后依照下面</description>
+    </item>
+    
+  </channel>
+</rss>

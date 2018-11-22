@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>机器学习简介 | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="机器学习简介 - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2017-12-21T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2017-12-21T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="机器学习简介">
+        <meta name="author" content="Heng-Heng Shen">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/introduction-machine-learning/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [ ['$','$'] ],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    
+    
+        <link rel="stylesheet" href="/css/douban.css">
+    
+        <link rel="stylesheet" href="/css/other.css">
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">机器学习简介</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2017年12月21日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/pi">pi</a>
+                            
+                                <a href="http://shenheng.xyz/categories/ml">ml</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<p>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第一周的课堂记录，主要讲解了以下几个内容:</p>
+
+<ul>
+<li>机器学习的定义</li>
+<li>机器学习的分类
+
+<ul>
+<li>第一类：监督学习</li>
+<li>第二类：学习理论</li>
+<li>第三类：非监督学习</li>
+<li>第四类：强化学习</li>
+</ul></li>
+</ul>
+
+<h1 id="什么是机器学习">什么是机器学习？</h1>
+
+<h2 id="非正式定义">非正式定义</h2>
+
+<p>1959年， Arthur Samuel<sup class="footnote-ref" id="fnref:-"><a href="#fn:-">1</a></sup>非正式地定义了机器学习：“在不直接针对问题进行编程的情况下，赋予计算机学习能力的一个研究领域”。</p>
+
+<p>西洋棋就是一个例子，西洋棋自己和自己下棋。由于计算机程序的处理速度非常快，所以Arthur Samuel让计算机与计算机自己下了成千上万盘棋，逐渐地，西洋棋意识到了怎样的局势能使自己胜利，什么样的局势导致自己失败，它会反复地自我学习：“如果让对手占据这些地方时，那么我输的概率可能比较大”，或者“如果我占据这些地方时，我胜利的概率比较大”。在1959年，奇迹出现，他的西洋棋程序的棋艺远远超过西洋棋程序的作者！</p>
+
+<p>过去人们的看法是计算机除了做程序明确让其做的事情，除外它什么都不能做，但是Arthur Samuel做到了！</p>
+
+<h2 id="现代化的定义">现代化的定义</h2>
+
+<p>Tom Mitchell在1998年提出现代化的机器学习的定义：“一个合理的学习问题应该是这样定义的：对于一个计算机程序来说，给它一个任务$T$和一个性能评测方法$P$，如果在经验$E$的影响下，$P$对$T$的测量结果得到了改进，那么就说明程序从中学习到了经验$E$.</p>
+
+<p>比如对于西洋棋那个例子来说：</p>
+
+<ul>
+<li>$E$ - 程序成千上万次的自我练习</li>
+<li>$T$ - 下棋</li>
+<li>$P$ - 它与人类棋手对奕的概率</li>
+</ul>
+
+<h1 id="监督学习">监督学习</h1>
+
+<h2 id="回归问题">回归问题</h2>
+
+<p>下面是给予一组房屋大小与对应的房屋价格的数据进行拟合的例子：</p>
+
+<p>\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{price_prediction.png}
+  \caption{房屋价格预测模型}\label{figure:price_prediction}
+\end{center}
+\end{figure}</p>
+
+<p><center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/2994829.jpg" alt="" />
+</center></p>
+
+<p>通过学习来预测房屋价格的问题是监督学习问题的一个例子，之所以成为监督学习，是因为我们这个算法提供了一组房屋的大小($size$)和一组某种程度上可以堪称正确答案的房屋价格$Price$的数据。比如(1000, 30)等。</p>
+
+<p>监督问题的学习，给算法提供了一组”正确“的输入和”标准“答案，之后，我们希望算法能够去学习标准输入和标准答案之间的联系，以尝试对于我们提供的其他输入来给我们提供<strong>更为</strong>标准的答案。</p>
+
+<h2 id="分类问题">分类问题</h2>
+
+<p>分类问题是监督学习问题中的另一类问题，它与回归问题最大的区别在于，此时的数据是离散的我而不是连续的.</p>
+
+<p>下面是给予肿瘤的大小和对应的肿瘤是否是恶性（1）或者良性（0），来进行拟合学习最佳的分类决策线。其中</p>
+
+<ul>
+<li>数据是一组关于乳腺癌的数据，$X$代表肿瘤的大小，$Y$代表肿瘤的是否为恶性</li>
+<li>目标是让一个算法学会预测一个肿瘤是否是恶性或良性</li>
+</ul>
+
+<p>很显然，这是一个<strong>2分类</strong>问题。具体如图2所示：
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{tumor_classifict.png}
+  \caption{肿瘤恶性/良性分类模型}\label{tumor_classifict}
+\end{center}
+\end{figure}
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/41356628.jpg" alt="" />
+</center></p>
+
+<p>下面考虑一组多个输入变量（多个特征）的数据，下面以两个特征进行举例说明。其中$X$表示肿瘤的大小，$Y$表示患者的年龄，对于图中的样本数据的表示进行说明：&rsquo;o&rsquo;表示良性，&rsquo;x&rsquo;表示为恶性，目标是找出最佳的分类决策边界。如图3所示：
+\begin{figure}[htbp]
+\begin{center}
+  \includegraphics[width=0.5\textwidth]{tumor_classifict_2.png}
+  \caption{多特征的肿瘤恶性/良性分类模型}\label{tumor_classifict_2}
+\end{center}
+\end{figure}
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/66479699.jpg" alt="" />
+</center></p>
+
+<p>如果你的数据不能在二维，三维甚至任何有限维空间表示出来，如果你觉得数据实际上存在于无线维空间中该怎么办？</p>
+
+<p><strong>solution:</strong>支持向量机算法<sup class="footnote-ref" id="fnref:kernel-method"><a href="#fn:kernel-method">2</a></sup>，可以将数据映射到无限维空间，所以他不仅能处理像之前例子中的两个特征所表示的数据，而且还可以处理无限种特征.</p>
+
+<h1 id="学习理论">学习理论</h1>
+
+<p>学习理论主要主要试图了解一下什么算法能够很好地近似不同的函数，并且试图了解一些诸如需要多少训练集数据，测试集数据这样的问题，还比如算法优化，欠拟合和过拟合等问题。</p>
+
+<h1 id="无监督学习">无监督学习</h1>
+
+<p>\begin{figure}[htbp]
+\centering                                                          %居中
+\subfigure[一些样本数据]{                    %第一张子图
+\begin{minipage}{7cm}
+\centering                                                          %子图居中
+\includegraphics[scale=0.3]{unsupervised_1.png}               %以pic.jpg的0.5倍大小输出
+\end{minipage}}
+\subfigure[聚类之后]{                    %第二张子图
+\begin{minipage}{7cm}
+\centering                                                          %子图居中
+\includegraphics[scale=0.3]{unsupervised_2.png}                %以pic.jpg的0.5倍大小输出
+\end{minipage}}
+\caption{你能在这组数据中寻找一些有趣的结构吗？} %                         %大图名称
+\label{figure:unsupervised}                                                        %图片引用标记
+\end{figure}
+<center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/85085279.jpg" alt="" />
+</center></p>
+
+<p>一个算法会寻找这样的结构（如图\ref{figure:unsupervised}）,它会将里面的数据聚成两类，”聚类问题“就是无监督学习的一个典型问题。主要应用：</p>
+
+<ul>
+<li>无监督学习尝试理解基因数据，会按照基因在实验中体现出的形状的规律，来对单独的基因数据进行分类。</li>
+<li>google news尝试对新闻进行聚类。</li>
+<li>聚类算法处理图像问题</li>
+</ul>
+
+<p>特定的无监督学习算法，它会学习对这些像素进行聚类，就是说，这些像素可能是在一起的，那些像素可能是在一起的。对像素进行的分组，他们对于计算机视觉和图像处理领域都很有用。</p>
+
+<p>\begin{figure}[htbp]
+\centering                                                          %居中
+\subfigure[对单独的基因进行分类]{                    %第一张子图
+\begin{minipage}{7cm}
+\centering                                                          %子图居中
+\includegraphics[scale=0.3]{gene.png}               %以pic.jpg的0.5倍大小输出
+\end{minipage}}
+\subfigure[google news对新闻数据进行聚类]{                    %第二张子图
+\begin{minipage}{7cm}
+\centering                                                          %子图居中
+\includegraphics[scale=0.25]{google_news.png}                %以pic.jpg的0.5倍大小输出
+\end{minipage}}
+\caption{应用} %                         %大图名称
+\label{figure:cluster}                                                        %图片引用标记
+\end{figure}</p>
+
+<p><center>
+<img src="http://olrs8j04a.bkt.clouddn.com/17-12-21/60672521.jpg" alt="" />
+</center></p>
+
+<p>还有一些例子，比如计算机集群，社会网络分析，市场划分，航天数据分析等等都会用到无监督学习。另外还有在语音识别方面的经典问题<a href="https://baike.baidu.com/item/%E9%B8%A1%E5%B0%BE%E9%85%92%E4%BC%9A%E9%97%AE%E9%A2%98">鸡尾酒会问题</a>.</p>
+
+<h1 id="强化学习">强化学习</h1>
+
+<p>他可以用在一些你不需要进行一次决策的情形中，比如，利用监督学习对癌症进行预测的例子中，对于一个病人，你要预测他的肿瘤是否为恶性，那么你的预测将会决定病人的生死，也就是说，你的决策要么对要么错。那么对于强化学习来说，他主要使用了一种叫做<strong>回报函数</strong>的概念来进行决策，不像监督学习那样一次性决策，它是探索性算法它常常用于机器人领域，网页爬取等领域。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:-">发明了西洋棋程序 <a class="footnote-return" href="#fnref:-"><sup>↩</sup></a></li>
+<li id="fn:kernel-method">kernel method <a class="footnote-return" href="#fnref:kernel-method"><sup>↩</sup></a></li>
+</ol>
+</div>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/overfitting/">过拟合和正则化</a></li>
+        
+        <li><a href="/posts/single-variable-linear-regression/">单变量线性回归</a></li>
+        
+        <li><a href="/posts/multi-variable-linear-regression/">多变量线性回归</a></li>
+        
+        <li><a href="/posts/polynomial-regression/">多项式回归</a></li>
+        
+        <li><a href="/posts/logistic-regression/">逻辑回归</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/ml">ml</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-cheatsheet/" title="Scala CheatSheet">Scala CheatSheet</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-learning-resources/" title="Scala Learning Resources">Scala Learning Resources</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-style/" title="Scala Style Guide">Scala Style Guide</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/" title="分布式编程第三周课堂笔记">分布式编程第三周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/" title="分布式编程第一周课堂笔记">分布式编程第一周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/" title="分布式编程第二周课堂笔记">分布式编程第二周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title" style="color:red">福利派送</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    领取￥1888阿里云产品通用代金券
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/vmpt/aliyun-group/home.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB17qJhXpzqK1RjSZFvXXcB7VXa-200-126.jpg">
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB1aDXhXpzqK1RjSZFvXXcB7VXa-259-194.jpg">
+                
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pcdp/">PCDP(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dpcp/">dpcp(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hmm/">hmm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/java/">java(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/mail-server/">mail server(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(9)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rmarkdown/">rmarkdown(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rpi/">rpi(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/template/">template(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/welcome/">welcome(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">分布式编程(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/pcdp/">PCDP</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/cheatsheet/">cheatsheet</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/dpcp/">dpcp</a>
+    
+    <a href="http://shenheng.xyz/tags/gitalk/">gitalk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hmm/">hmm</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/mailserver/">mailserver</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/rmarkdown/">rmarkdown</a>
+    
+    <a href="http://shenheng.xyz/tags/rpi/">rpi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/scala-style/">scala style</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://yuedu.baidu.com/ebook/14a722970740be1e640e9a3e" title="Android Gradle权威指南">Android Gradle权威指南</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://mirrors.flysnow.org/" title="常用开发工具CDN镜像">常用开发工具CDN镜像</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '48ac64a24eebc5cb273da3d6a926069b', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+  <script src="/js/douban.js"></script>
+
+</body>
+</html>

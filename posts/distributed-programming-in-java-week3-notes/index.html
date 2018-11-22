@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>分布式编程第三周课堂笔记 | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="分布式编程第三周课堂笔记 - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-01-05T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-01-05T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="分布式编程第三周课堂笔记">
+        <meta name="author" content="Heng-Heng Shen">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [ ['$','$'] ],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    
+    
+        <link rel="stylesheet" href="/css/douban.css">
+    
+        <link rel="stylesheet" href="/css/other.css">
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">分布式编程第三周课堂笔记</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年1月5日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/dpcp">dpcp</a>
+                            
+                                <a href="http://shenheng.xyz/categories/pcdp">PCDP</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<p>本笔记来自课堂记录和课程网站的总结，<strong>转载请注明出处</strong>!</p>
+
+<h2 id="single-program-multiple-data-spmd-model">Single Program Multiple Data (SPMD) Model</h2>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-5/83441117.jpg" alt="Figure1: SPMD" /></p>
+
+<p><strong>Lecture Summary:</strong> In this lecture, we studied the Single Program Multiple Data (SPMD) model, which can enable the use of a cluster of distributed nodes as a single parallel computer. Each node in such a cluster typically consist of a multicore processor, a local memory, and a network interface card (NIC) that enables it to communicate with other nodes in the cluster. One of the biggest challenges that arises when trying to use the distributed nodes as a single parallel computer is that of data distribution. In general, we would want to allocate large data structures that span multiple nodes in the cluster; this logical view of data structures is often referred to as a global view. However, a typical physical implementation of this global view on a cluster is obtained by distributing pieces of the global data structure across different nodes, so that each node has a local view of the piece of the data structure allocated in its local memory. In many cases in practice, the programmer has to undertake the conceptual burden of mapping back and forth between the logical global view and the physical local views. Since there is one logical program that is executing on the individual pieces of data, this abstraction of a cluster is referred to as the Single Program Multiple Data (SPMD) model.</p>
+
+<p>In this module, we will focus on a commonly used implementation of the SPMD model, that is referred to as the Message Passing Interface (MPI). When using MPI, you designate a fixed set of processes that will participate for the entire lifetime of the global application. It is common for each node to execute one MPI process, but it is also possible to execute more than one MPI process per multicore node so as to improve the utilization of processor cores within the node. Each process starts executing its own copy of the MPI program, and starts by calling the $\mathtt {mpi.MPI_Init()}$ method, where $\mathtt {mpi}$ is the instance of the MPI class used by the process. After that, each process can call the $\mathtt{mpi.MPI_Comm_size(mpi.MPI_COMM_WORLD)}$ method to determine the total number of processes participating in the MPI application, and the $\mathtt {MPI_Comm_rank(mpi.MPI_COMM_WORLD})$ method to determine the process&rsquo; own rank within the range, $0…(S−1)$, where $\mathtt {S=MPI_Comm_size()}$.</p>
+
+<p>In this lecture, we studied how a global view, $XG$, of array X can be implemented by S local arrays (one per process) of size, $XL.length = XG.length/S$. For simplicity, assume that XG.length is a multiple of S. Then, if we logically want to set $XG[i]:=i$ for all logical elements of XG, we can instead set XL[i]:=L×R+i in each local array, where L = XL.length, and $\mathtt {R=MPI_Comm_rank()}$. Thus process 0&rsquo;s copy of XL will contain logical elements $XG[0…L−1]$, process 1&rsquo;s copy of XL will contain logical elements $XG[L…2×L−1]$, and so on. Thus, we see that the SPMD approach is very different from client server programming, where each process can be executing a different program.</p>
+
+<h2 id="point-to-point-communication">Point-to-Point Communication</h2>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-5/39454835.jpg" alt="Figure2: Point-to-Point Communication" /></p>
+
+<p><strong>Lecture Summary:</strong> In this lecture, we studied how to perform point-to-point communication in MPI by sending and receiving messages. In particular, we worked out the details for a simple scenario in which process 0 sends a string, &ldquo;ABCD&rdquo;, to process 1. Since MPI programs follow the SPMD model, we have to ensure that the same program behaves differently on processes 0 and 1. This was achieved by using an if-then-else statement that checks the value of the rank of the process that it is executing on. If the rank is zero, we include the necessary code for calling $\mathtt{MPI_Send()}$; otherwise, we include the necessary code for calling $\mathtt{MPI_Recv()}$ (assuming that this simple program is only executed with two processes). Both calls include a number of parameters. The $\mathtt{MPI_Send()}$ call specifies the substring to be sent as a subarray by providing the string, offset, and data type, as well as the rank of the receiver, and a tag to assist with matching send and receive calls (we used a tag value of 99 in the lecture). The $\mathtt{MPI_Recv()}$ call (in the else part of the if-then-else statement) includes a buffer in which to receive the message, along with the offset and data type, as well as the rank of the sender and the tag. Each send/receive operation waits (or is blocked) until its dual operation is performed by the other process. Once a pair of parallel and compatible $\mathtt{MPI_Send()}$ and $\mathtt{MPI_Recv()}$ calls is matched, the actual communication is performed by the MPI library. This approach to matching pairs of send/receive calls in SPMD programs is referred to as two-sided communication.</p>
+
+<p>As indicated in the lecture, the current implementation of MPI only supports communication of (sub)arrays of primitive data types. However, since we have already learned how to serialize and deserialize objects into/from bytes, the same approach can be used in MPI programs by communicating arrays of bytes.</p>
+
+<h2 id="message-ordering-and-deadlock">Message Ordering and Deadlock</h2>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-5/30986954.jpg" alt="Figure3: Message Ordering and Deadlock" /></p>
+
+<p><strong>Lecture Summary:</strong> In this lecture, we studied some important properties of the message-passing model with send/receive operations, namely message ordering and deadlock. For message ordering, we discussed a simple example with four MPI processes, $R0,R1,R2,R3$ (with ranks $0…3$ respectively). In our example, process $R1$ sends message $A$ to process $R0$, and process $R2$ sends message $B$ to process $R3$. We observed that there was no guarantee that process $R1&rsquo;s$ send request would complete before process $R2&rsquo;s$ request, even if process $R1$ initiated its send request before process $R2$. Thus, there is no guarantee of the temporal ordering of these two messages. In MPI, the only guarantee of message ordering is when multiple messages are sent with the same sender, receiver, data type, and tag &ndash; these messages will all be ordered in accordance with when their send operations were initiated.</p>
+
+<p>We learned that send and receive operations can lead to an interesting parallel programming challenge called deadlock. There are many ways to create deadlocks in MPI programs. In the lecture, we studied a simple example in which process $R0$ attempts to send message $X$ to process $R1$, and process R1 attempts to send message $Y$ to process $R0$. Since both sends are attempted in parallel, processes R0 and $R1$ remain blocked indefinitely as they wait for matching receive operations, thus resulting in a classical deadlock cycle.</p>
+
+<p>We also learned two ways to fix such a deadlock cycle. The first is by interchanging the two statements in one of the processes (say process $R1$). As a result, the send operation in process R0 will match the receive operation in process $R1$, and both processes can move forward with their next communication requests. Another approach is to use MPI&rsquo;s $\mathtt{sendrecv()}$ operation which includes all the parameters for the send and for the receive operations. By combining send and receive into a single operation, the MPI runtime ensures that deadlock is avoided because a $\mathtt{sendrecv()}$ call in process $R0$ can be matched with a $\mathtt{sendrecv()}$ call in process $R1$ instead of having to match individual send and receive operations.</p>
+
+<h2 id="non-blocking-communications">Non-Blocking Communications</h2>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-5/91505338.jpg" alt="Figure4: Non-Blocking Communications" /></p>
+
+<p>Lecture Summary: In this lecture, we studied non-blocking communications, which are implemented via the $\mathtt{MPI_Isend()}$ and $\mathtt{MPI_Irecv()}$ API calls. The $I$ in $\mathtt{MPI_Isend}$ and $\mathtt{MPI_Irec}v$ stands for &ldquo;Immediate&rdquo; because these calls return immediately instead of blocking until completion. Each such call returns an object of type $\mathtt{MPI_Request}$ which can be used as a handle to track the progress of the corresponding send/receive operation. In the example we studied, process $R0$ performs an Isend operation with req0 as the return value. Likewise process $R1$ performs an Irecv operation with req1 as the return value. Further, process $R0$ can perform some local computation in statement $S2$ while waiting for its Isend operation to complete, and process $R1$ can do the same with statement $S5$ while waiting for its Irecv operation to complete. Finally, when process $R1$ needs to use the value received from process $R0$ in statement $S6$, it has to first perform an $\mathtt{MPI_Wait()}$ operation on the req1 object to ensure that the receive operation has fully completed. Likewise, when process R0 needs to ensure that the buffer containing the sent message can be overwritten, it has to first perform an $\mathtt{MPI_Wait()}$ operation on the req0 object to ensure that the send operation has fully completed. For convenience, $\mathtt{MPI_Waitall()}$ can be invoked on an array of requests to wait on all of them with a single API call.</p>
+
+<p>The main benefit of this approach is that the amount of idle time spent waiting for communications to complete is reduced when using non-blocking communications, since the $\mathtt{Isend}$ and $\mathtt{Irecv}$ operations can be overlapped with local computations. As a convenience, MPI also offers two additional wait operations, $\mathtt{MPI_Waitall()}$ and $\mathtt{MPI_Waitany()}$, that can be used to wait for all and any one of a set of requests to complete. Also, while it is common for $\mathtt{Isend}$ and $\mathtt{Irecv}$ operations to be paired with each other, it is also possible for a nonblocking $\mathtt{send/receive}$ operation in one process to be paired with a blocking $\mathtt{receive/send}$ operation in another process. In fact, a blocking $\mathtt{Send/Recv}$ operation can also be viewed as being equivalent to a nonblocking $\mathtt{Isend/Irecv}$ operation that is immediately followed by a Wait operation.</p>
+
+<h2 id="collective-communication">Collective Communication</h2>
+
+<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-5/84630111.jpg" alt="Figure5: Collective Communication" /></p>
+
+<p><strong>Lecture Summary:</strong> In this lecture, we studied collective communication, which can involve multiple processes, in a manner that is both similar to, and more powerful, than multicast and publish-subscribe operations. We first considered a simple broadcast operation in which rank $R0$ needs to send message X to all other MPI processes in the application. One way to accomplish this is for $R0$ to send individual (point-to-point) messages to processes $R1,R2,…$ one by one, but this approach will make $R0$ a sequential bottleneck when there are (say) thousands of processes in the MPI application. Further, the interconnection network for the compute nodes is capable of implementing such broadcast operations more efficiently than point-to-point messages. Collective communications help exploit this efficiency by leveraging the fact that all MPI processes execute the same program in an SPMD model. For a broadcast operation, all MPI processes execute an $\mathtt{MPI_Bcast()}$ API call with a specified root process that is the source of the data to be broadcasted. A key property of collective operations is that each process must wait until all processes reach the same collective operation, before the operation can be performed. This form of waiting is referred to as a barrier. After the operation is completed, all processes can move past the implicit barrier in the collective call. In the case of $\mathtt{MPI_Bcast()}$, each process will have obtained a copy of the value broadcasted by the root process.</p>
+
+<p>MPI supports a wide range of collective operations, which also includes reductions. The reduction example discussed in the lecture was one in which process $R2$ needs to receive the sum of the values of element $Y[0]$ in all the processes, and store it in element $Z[0]$ in process $R2$. To perform this computation, all processes will need to execute a Reduce() operation (with an implicit barrier). The parameters to this call include the input array ($Y$), a zero offset for the input value, the output array ($Z$, which only needs to be allocated in process $R2$), a zero offset for the output value, the number of array elements (1) involved in the reduction from each process, the data type for the elements ($\mathtt{MPI.INT}$), the operator for the reduction ($\mathtt{MPI_SUM}$), and the root process ($R2$) which receives the reduced value. Finally, it is interesting to note that MPI&rsquo;s SPMD model and reduction operations can also be used to implement the MapReduce paradigm. All the local computations in each MPI process can be viewed as map operations, and they can be interspersed with reduce operations as needed.</p>
+
+<h2 id="implementation-of-matrix-multiply">Implementation of Matrix Multiply</h2>
+
+<pre><code class="language-java">public static void parallelMatrixMultiply(Matrix a, Matrix b, Matrix c,
+            final MPI mpi) throws MPIException {
+
+        final int myrank = mpi.MPI_Comm_rank(mpi.MPI_COMM_WORLD);
+        final int size = mpi.MPI_Comm_size(mpi.MPI_COMM_WORLD);
+
+        final int nrows = c.getNRows();
+        final int ncols = c.getNCols();
+        final int rowChunk = (nrows + size - 1) / size;
+        final int startRow = myrank * rowChunk;
+        final int endRow = Math.min((myrank + 1) * rowChunk, nrows);
+
+        mpi.MPI_Bcast(a.getValues(), 0, a.getNRows() * a.getNCols(), 0, mpi.MPI_COMM_WORLD);
+        mpi.MPI_Bcast(b.getValues(), 0, b.getNRows() * b.getNCols(), 0, mpi.MPI_COMM_WORLD);
+
+        for (int i = startRow; i &lt; endRow; i++) {
+            for (int j = 0; j &lt; ncols; j++) {
+                c.set(i, j, 0.0);
+                for (int k = 0; k &lt; b.getNRows(); k++) {
+                    c.incr(i, j, a.get(i, k) * b.get(k, j));
+                }
+            }
+        }
+
+        if (myrank == 0) {
+            final MPI.MPI_Request[] requests = new MPI.MPI_Request[size - 1];
+            for (int i = 1; i &lt; size; i++) {
+                final int rankStartRow = i * rowChunk;
+                int rankEndRow = (i +1) * rowChunk;
+                // final int rankEndRow = Math.min((i + 1) * rowChunk, nrows);
+                if (rankEndRow &gt; nrows) rankEndRow = nrows;
+
+                final int rowOffset = rankStartRow * c.getNCols();
+                final int nElements = (rankEndRow - rankStartRow) * c.getNCols();
+
+                requests[i - 1] = mpi.MPI_Irecv(c.getValues(), rowOffset,
+                        nElements, i, i, mpi.MPI_COMM_WORLD);
+            }
+            mpi.MPI_Waitall(requests);
+        } else {
+            mpi.MPI_Send(c.getValues(), startRow * ncols, (endRow - startRow) * ncols, 0, myrank, mpi.MPI_COMM_WORLD);
+        }
+
+    }
+</code></pre>
+
+<h2 id="mpi-installation">MPI Installation</h2>
+
+<p>If you would like to test your solution on your local machine, you will need to install an MPI implementation.</p>
+
+<p>If you are using Ubuntu, you can install OpenMPI with the following commands:</p>
+
+<pre><code class="language-bash">$ sudo apt-get update
+$ sudo apt-get install -y openmpi-bin libopenmpi-dev
+</code></pre>
+
+<p>If you are using Linux or Mac OS, we recommend downloading the OpenMPI implementation from:</p>
+
+<p><a href="https://www.open-mpi.org/software/ompi/v2.0/">https://www.open-mpi.org/software/ompi/v2.0/</a></p>
+
+<p>and following the build instructions in the &ldquo;User Builds&rdquo; section of the included INSTALL file. Following installation, you must also add the created OpenMPI bin/ folder to your PATH and the created OpenMPI lib/ folder to your LD_LIBRARY_PATH (on Linux) or your DYLD_LIBRARY_PATH (on Mac OS).</p>
+
+<p>If you are on Windows or find the installation instructions for OpenMPI difficult to follow, we recommend using print statements and the Cousera autograder to test your code. The Coursera autograder automatically links in an OpenMPI implementation for you.</p>
+
+<h2 id="optional-reading">Optional Reading:</h2>
+
+<ul>
+<li>Wikipedia article on the <a href="https://en.wikipedia.org/wiki/SPMD">SPMD model</a></li>
+<li>Documentation on <a href="https://www.open-mpi.org/faq/?category=java#java_docs">Open MPI&rsquo;s Java interface</a></li>
+<li>Wikipedia article on an <a href="https://en.wikipedia.org/wiki/Message_Passing_Interface#Example_program">example MPI program</a> (written in C, not Java).</li>
+<li>Documentation on <a href="https://www.open-mpi.org/doc/current/man3/MPI_Send.3.php">MPI Send()</a> and <a href="https://www.open-mpi.org/doc/current/man3/MPI_Recv.3.php">MPI Recv()</a> API&rsquo;s (in C/C++, not Java)</li>
+<li>Wikipedia article on <a href="https://en.wikipedia.org/wiki/Deadlock">Deadlock</a></li>
+<li>Documentation on <a href="https://www.open-mpi.org/doc/current/man3/MPI_Isend.3.php">MPI Isend()</a> and <a href="https://www.open-mpi.org/doc/current/man3/MPI_Irecv.3.php">MPI Irecv()</a> API&rsquo;s (in C/C++, not Java)</li>
+<li>Documentation on<a href="https://www.open-mpi.org/doc/current/man3/MPI_Bcast.3.php"> MPI Bcast()</a> and <a href="https://www.open-mpi.org/doc/current/man3/MPI_Reduce.3.php">MPI Reduce()</a> API&rsquo;s (in C/C++, not Java)</li>
+</ul>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/distributed-programming-in-java-week2-notes/">分布式编程第二周课堂笔记</a></li>
+        
+        <li><a href="/posts/solve-sbt-update-scala-slow/">解决sbt更新scala速度慢</a></li>
+        
+        <li><a href="/posts/distributed-programming-in-java-week1-notes/">分布式编程第一周课堂笔记</a></li>
+        
+        <li><a href="/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/">R实战-决策树</a></li>
+        
+        <li><a href="/posts/r-kmeans/">R实战-Kmeans</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/pcdp">PCDP</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-cheatsheet/" title="Scala CheatSheet">Scala CheatSheet</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-learning-resources/" title="Scala Learning Resources">Scala Learning Resources</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-style/" title="Scala Style Guide">Scala Style Guide</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/" title="分布式编程第三周课堂笔记">分布式编程第三周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/" title="分布式编程第一周课堂笔记">分布式编程第一周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/" title="分布式编程第二周课堂笔记">分布式编程第二周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title" style="color:red">福利派送</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    领取￥1888阿里云产品通用代金券
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/vmpt/aliyun-group/home.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB17qJhXpzqK1RjSZFvXXcB7VXa-200-126.jpg">
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB1aDXhXpzqK1RjSZFvXXcB7VXa-259-194.jpg">
+                
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pcdp/">PCDP(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dpcp/">dpcp(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hmm/">hmm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/java/">java(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/mail-server/">mail server(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(9)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rmarkdown/">rmarkdown(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rpi/">rpi(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/template/">template(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/welcome/">welcome(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">分布式编程(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/pcdp/">PCDP</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/cheatsheet/">cheatsheet</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/dpcp/">dpcp</a>
+    
+    <a href="http://shenheng.xyz/tags/gitalk/">gitalk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hmm/">hmm</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/mailserver/">mailserver</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/rmarkdown/">rmarkdown</a>
+    
+    <a href="http://shenheng.xyz/tags/rpi/">rpi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/scala-style/">scala style</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://yuedu.baidu.com/ebook/14a722970740be1e640e9a3e" title="Android Gradle权威指南">Android Gradle权威指南</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://mirrors.flysnow.org/" title="常用开发工具CDN镜像">常用开发工具CDN镜像</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '48ac64a24eebc5cb273da3d6a926069b', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+  <script src="/js/douban.js"></script>
+
+</body>
+</html>

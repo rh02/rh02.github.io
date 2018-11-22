@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>朴素贝叶斯算法 | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="朴素贝叶斯算法 - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2017-12-21T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2017-12-21T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="朴素贝叶斯算法">
+        <meta name="author" content="Heng-Heng Shen">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/bayesian-learning/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [ ['$','$'] ],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    
+    
+        <link rel="stylesheet" href="/css/douban.css">
+    
+        <link rel="stylesheet" href="/css/other.css">
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">朴素贝叶斯算法</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2017年12月21日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/ml">ml</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<p>\noindent 本节主要讲解三个基本算法的之一：<strong>朴素贝叶斯算法</strong>，该算法主要是依据<strong>贝叶斯规则/公式/推理</strong>，它的主要作用在于，它和其他将要讲述的<strong>$k$近邻算法</strong>，<strong>感知机算法</strong>都一样，你的算法设计出来之后，至少你的算法的<strong>performance</strong>要比这三类算法的效果要好！另外贝叶斯学习算法基于一些统计上的假设而成立的，因此贝叶斯学习算法又称为统计学习的算法必须学习的算法.本节主要有以下部分内容：</p>
+
+<ul>
+<li>Bayes&rsquo; Rule</li>
+<li>Applying Baye’s Rule to Classification</li>
+<li>The Posterior Probability :$\mathrm{P}(C|x) = \frac{\mathrm{P}&copy;\mathrm{P}(x|C)}{\mathrm{P}(x)}$</li>
+<li>Extend to Multi-class classification</li>
+<li>Naive Bayes for Classification</li>
+<li>Zero-frequency Problem</li>
+</ul>
+
+<h1 id="贝叶斯定理-公式-规则">贝叶斯定理/公式/规则</h1>
+
+<p>假设${B_1,B_2,&hellip;,B_k}$是$S$集合的<strong>划分</strong>且对于$i=0,1,&hellip;,k$有$\mathrm{P}(B_i) &gt; 0$，那么
+$$\mathrm{P}(B_j|A) = \frac{\mathrm{P}(A|B_j)\mathrm{P}(B<em>j)}{\sum</em>{i=1}^k \mathrm{P}(A|B_i)\mathrm{P}(B_i)}$$</p>
+
+<h1 id="在分类问题上应用贝叶斯分类器">在分类问题上应用贝叶斯分类器</h1>
+
+<h2 id="例子-信用卡评估-高风险-低风险">例子：信用卡评估：高风险/低风险</h2>
+
+<p>信用卡评估是这样的一个过程，银行通过对用户的历史交易信息来进行选择的，如果该用户在过去的交易中按时缴纳了本金和利息，并且银行从中获益，那么这些用户是属于<strong>低风险的</strong>，如果他们没有按时缴纳本金和利息或者拒绝还款的话，这类用户比银行定义为<strong>高风险的用户</strong>.</p>
+
+<p>我们现在的任务就是来学习如何对用户进行分类\textbf{高风险} vs <strong>低风险</strong>.那么我们现在有以下用户的每年的收入信息和消费信息，我们们用两个<strong>随机变量</strong> $X_1$ 和 $X_2$ 来表示.用户的信用度可以用伯努利随机变量$\mathrm{C} = 1$ 和 $\mathrm{C} = 0$ 来表示。其中$C=0$表示这是一个低风险的用户，$C=0$表示这是一个高风险的用户。</p>
+
+<p>当一个新的用户来进行贷款时，他提供他的每年的收入和消费，即$X_1 = x_1$ 和 $X_2 = x_2$.如果我们知道信用度C的概率受限于观测值$X = [x_1, x_2]$，并且有
+\begin{align<em>}
+&amp;\mathrm{if} \; \; \mathrm{P}(C = 1|[x_1 , x_2 ]) &gt; 0.5, \; then \; \mathrm{C}=1 <br />
+&amp;\mathrm{if} \; \; \mathrm{P}(C = 1|[x_1 , x_2 ]) \leq 0.5, \; then \; \mathrm{C} = 0
+\end{align</em>}</p>
+
+<p>我们估计的误差建立在$1 − max{\mathrm{P}(C = 1|[x_1 , x_2 ]),\mathrm{P}(C = 0|[x_1 , x_2 ])} &lt; 0.5$，一般地，有$P(\mathrm{C} = 1|[x_1 , x_2 ]) +\mathrm{P}(C = 0|[x_1 , x_2 ]) = 1$。</p>
+
+<h2 id="后验概率-mathrm-p-c-x-frac-mathrm-p-c-mathrm-p-x-c-mathrm-p-x">后验概率$\mathrm{P}(C|x) = \frac{\mathrm{P}&copy;\mathrm{P}(x|C)}{\mathrm{P}(x)}$</h2>
+
+<p>其中，对于标题的概率公式又叫做贝叶斯公式，它主要思想是利用先验来估计后验，即$P(C = 1)$ 叫做C=1的先验概率，比如信用卡评估问题上，我们已经有了大量的历史客户数据，$P(C = 1)$表示在这些数据中高风险的人占总人数的比例，肯定地，这是我们知道的！所以被称作先验概率。</p>
+
+<ul>
+<li>$P(x|C )$被称作类的似然，它是条件概率，意思为一个事件在已知属于C类的情况下，事件x发生的概率,</li>
+<li>$P(x)$表示事件x发生的概率，不管它是正类还是负类,</li>
+<li>$P(C=0|x) + P(C=1|x) = 1$，来源于事件的划分。</li>
+</ul>
+
+<p>另外还有以下性质：</p>
+
+<ul>
+<li>$P(X 1 , X 2 )$表示随机变量$X_1$和$X_2$的联合概率</li>
+<li>在假设前提下，两个随机变量是条件概率独立，有$P(X 1 , X 2 |C ) = P(X 1 |C )P(X 2 |C )$，这是贝叶斯规则重要的假设。尽管假非常简单，但是在实际应用中十分关键。</li>
+</ul>
+
+<p>现在我们将问题扩展到多类分类问题上，即$C_i ,\; i = 1, 2, &hellip; , K$.比如，在数字识别问题上，输入是一个2值化的图像，目标总共有10类，即0-9，我们可以认为这K类看作是输入空间的一个划分。那么贝叶斯分类器是将最高的后验概率的类看作是目标类，也就是$\mathrm{P}(C_i |x) = \mathrm{max}_k \mathrm{P}(C_k |x)$.同样地，对于多类分类问题，我们可以将所有的属性/特征看作是一个随机变量，那么对于贝叶斯分类器将该样本分为No.1类的概率为$Pr (y = 1|x) = Pr (y = 1|\mathbf{X}_1 = x_1 , \mathbf{X}_2 = x_2 , &hellip; , \mathbf{X}_n = x_n )$.</p>
+
+<p>但是朴素贝叶斯分类七有两个不合理的假设：
+1. 每个属性/特征的重要性是一样的
+2. 所有属性/特征都是条件概率独立的，有
+$$Pr (y = 1|x) = \frac{1}{Pr(\mathbf{X} = x)} \Pi_{i=1}^{n} Pr (\mathbf{X}_i = x_i |y = 1)$$</p>
+
+<h1 id="天气数据的例子">天气数据的例子</h1>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/polynomial-regression/">多项式回归</a></li>
+        
+        <li><a href="/posts/single-variable-linear-regression/">单变量线性回归</a></li>
+        
+        <li><a href="/posts/overfitting/">过拟合和正则化</a></li>
+        
+        <li><a href="/posts/multi-variable-linear-regression/">多变量线性回归</a></li>
+        
+        <li><a href="/posts/introduction-machine-learning/">机器学习简介</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/ml">ml</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-cheatsheet/" title="Scala CheatSheet">Scala CheatSheet</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-learning-resources/" title="Scala Learning Resources">Scala Learning Resources</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-style/" title="Scala Style Guide">Scala Style Guide</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/" title="分布式编程第三周课堂笔记">分布式编程第三周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/" title="分布式编程第一周课堂笔记">分布式编程第一周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/" title="分布式编程第二周课堂笔记">分布式编程第二周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title" style="color:red">福利派送</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    领取￥1888阿里云产品通用代金券
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/vmpt/aliyun-group/home.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB17qJhXpzqK1RjSZFvXXcB7VXa-200-126.jpg">
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB1aDXhXpzqK1RjSZFvXXcB7VXa-259-194.jpg">
+                
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pcdp/">PCDP(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dpcp/">dpcp(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hmm/">hmm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/java/">java(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/mail-server/">mail server(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(9)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rmarkdown/">rmarkdown(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rpi/">rpi(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/template/">template(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/welcome/">welcome(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">分布式编程(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/pcdp/">PCDP</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/cheatsheet/">cheatsheet</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/dpcp/">dpcp</a>
+    
+    <a href="http://shenheng.xyz/tags/gitalk/">gitalk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hmm/">hmm</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/mailserver/">mailserver</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/rmarkdown/">rmarkdown</a>
+    
+    <a href="http://shenheng.xyz/tags/rpi/">rpi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/scala-style/">scala style</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://yuedu.baidu.com/ebook/14a722970740be1e640e9a3e" title="Android Gradle权威指南">Android Gradle权威指南</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://mirrors.flysnow.org/" title="常用开发工具CDN镜像">常用开发工具CDN镜像</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '48ac64a24eebc5cb273da3d6a926069b', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+  <script src="/js/douban.js"></script>
+
+</body>
+</html>

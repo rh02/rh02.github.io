@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hmm on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/hmm/</link>
+    <description>Recent content in hmm on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Sat, 23 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/hmm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>隐马尔可夫模型</title>
+      <link>http://shenheng.xyz/posts/hmm/</link>
+      <pubDate>Sat, 23 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/hmm/</guid>
+      <description>很早就想写一篇关于隐马尔可夫模型的文章了，这次刻意的将模型及其有关算法复习了一下，才有了这个信心去写了这篇文章.这篇文章主要参考了李航老师的</description>
+    </item>
+    
+  </channel>
+</rss>

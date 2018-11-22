@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Scala CheatSheet | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="Scala CheatSheet - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-01-08T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-01-08T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="Scala CheatSheet">
+        <meta name="author" content="lampepfl">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/scala-cheatsheet/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [ ['$','$'] ],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    
+    
+        <link rel="stylesheet" href="/css/douban.css">
+    
+        <link rel="stylesheet" href="/css/other.css">
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">Scala CheatSheet</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年1月8日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/scala">scala</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<p>This cheat sheet originated from the forum, credits to Laurent Poulain.
+We copied it and changed or added a few things.
+There are certainly a lot of things that can be improved! If you would like to contribute, you have two options:</p>
+
+<ul>
+<li><p>Click the &ldquo;Edit&rdquo; button on this file on GitHub:<br />
+<a href="https://github.com/lampepfl/progfun-wiki/blob/gh-pages/CheatSheet.md">https://github.com/lampepfl/progfun-wiki/blob/gh-pages/CheatSheet.md</a><br />
+You can submit a pull request directly from there without checking out the git repository to your local machine.</p></li>
+
+<li><p>Fork the repository <a href="https://github.com/lampepfl/progfun-wiki">https://github.com/lampepfl/progfun-wiki</a> and check it out locally. To preview your changes, you need <a href="http://jekyllrb.com/">jekyll</a>. Navigate to your checkout and invoke <code>jekyll serve</code>, then open the page <a href="http://localhost:4000/CheatSheet.html">http://localhost:4000/CheatSheet.html</a>.</p></li>
+</ul>
+
+<h2 id="evaluation-rules">#Evaluation Rules</h2>
+
+<ul>
+<li>Call by value: evaluates the function arguments before calling the function</li>
+<li>Call by name: evaluates the function first, and then evaluates the arguments if need be</li>
+</ul>
+
+<!-- code -->
+
+<pre><code class="language-scala">def example = 2      // evaluated when called
+val example = 2      // evaluated immediately
+lazy val example = 2 // evaluated once when needed
+
+def square(x: Double)    // call by value
+def square(x: =&gt; Double) // call by name
+def myFct(bindings: Int*) = { ... } // bindings is a sequence of int, containing a varying # of arguments
+</code></pre>
+
+<h2 id="higher-order-functions">#Higher order functions</h2>
+
+<p>These are functions that take a function as a parameter or return functions.</p>
+
+<pre><code class="language-scala">// sum() returns a function that takes two integers and returns an integer  
+def sum(f: Int =&gt; Int): (Int, Int) =&gt; Int = {  
+    def sumf(a: Int, b: Int): Int = {...}  
+    sumf  
+} 
+
+// same as above. Its type is (Int =&gt; Int) =&gt; (Int, Int) =&gt; Int  
+def sum(f: Int =&gt; Int)(a: Int, b: Int): Int = { ... } 
+
+// Called like this
+sum((x: Int) =&gt; x * x * x)          // Anonymous function, i.e. does not have a name  
+sum(x =&gt; x * x * x)                 // Same anonymous function with type inferred
+
+def cube(x: Int) = x * x * x  
+sum(x =&gt; x * x * x)(1, 10) // sum of cubes from 1 to 10
+sum(cube)(1, 10)           // same as above      
+</code></pre>
+
+<h2 id="currying">#Currying</h2>
+
+<p>Converting a function with multiple arguments into a function with a
+single argument that returns another function.</p>
+
+<pre><code class="language-scala">def f(a: Int, b: Int): Int // uncurried version (type is (Int, Int) =&gt; Int)
+def f(a: Int)(b: Int): Int // curried version (type is Int =&gt; Int =&gt; Int)
+</code></pre>
+
+<h2 id="classes">#Classes</h2>
+
+<pre><code class="language-scala">class MyClass(x: Int, y: Int) {           // Defines a new type MyClass with a constructor  
+    require(y &gt; 0, &quot;y must be positive&quot;)    // precondition, triggering an IllegalArgumentException if not met  
+    def this (x: Int) = { ... }             // auxiliary constructor   
+    def nb1 = x                             // public method computed every time it is called  
+    def nb2 = y  
+    private def test(a: Int): Int = { ... } // private method  
+    val nb3 = x + y                         // computed only once  
+    override def toString =                 // overridden method  
+        member1 + &quot;, &quot; + member2 
+}
+
+new MyClass(1, 2) // creates a new object of type
+</code></pre>
+
+<p><code>this</code> references the current object, <code>assert(&lt;condition&gt;)</code> issues <code>AssertionError</code> if condition
+is not met. See <code>scala.Predef</code> for <code>require</code>, <code>assume</code> and <code>assert</code>.</p>
+
+<h2 id="operators">#Operators</h2>
+
+<p><code>myObject myMethod 1</code> is the same as calling <code>myObject.myMethod(1)</code></p>
+
+<p>Operator (i.e. function) names can be alphanumeric, symbolic (e.g. <code>x1</code>, <code>*</code>, <code>+?%&amp;</code>, <code>vector_++</code>, <code>counter_=</code>)</p>
+
+<p>The precedence of an operator is determined by its first character, with the following increasing order of priority:</p>
+
+<pre><code>(all letters)
+|
+^
+&amp;
+&lt; &gt;
+= !
+:
++ -
+* / %
+(all other special characters)
+</code></pre>
+
+<p>The associativity of an operator is determined by its last character: Right-associative if ending with <code>:</code>, Left-associative otherwise.</p>
+
+<p>Note that assignment operators have lowest precedence. (Read Scala Language Specification 2.9 sections 6.12.3, 6.12.4 for more info)</p>
+
+<h2 id="class-hierarchies">#Class hierarchies</h2>
+
+<pre><code class="language-scala">abstract class TopLevel {    // abstract class  
+    def method1(x: Int): Int   // abstract method  
+    def method2(x: Int): Int = { ... }  
+}
+
+class Level1 extends TopLevel {  
+    def method1(x: Int): Int = { ... }  
+    override def method2(x: Int): Int = { ...} // TopLevel's method2 needs to be explicitly overridden  
+}
+
+object MyObject extends TopLevel { ... } // defines a singleton object. No other instance can be created
+</code></pre>
+
+<p>To create a runnable application in Scala:</p>
+
+<pre><code class="language-scala">object Hello {  
+    def main(args: Array[String]) = println(&quot;Hello world&quot;)  
+}
+</code></pre>
+
+<p>or</p>
+
+<pre><code class="language-scala">object Hello extends App {
+    println(&quot;Hello World&quot;)
+}
+</code></pre>
+
+<h2 id="class-organization">#Class Organization</h2>
+
+<ul>
+<li><p>Classes and objects are organized in packages (<code>package myPackage</code>).</p></li>
+
+<li><p>They can be referenced through import statements (<code>import myPackage.MyClass</code>, <code>import myPackage._</code>,
+<code>import myPackage.{MyClass1, MyClass2}</code>, <code>import myPackage.{MyClass1 =&gt; A}</code>)</p></li>
+
+<li><p>They can also be directly referenced in the code with the fully qualified name (<code>new myPackage.MyClass1</code>)</p></li>
+
+<li><p>All members of packages <code>scala</code> and <code>java.lang</code> as well as all members of the object <code>scala.Predef</code> are automatically imported.</p></li>
+
+<li><p>Traits are similar to Java interfaces, except they can have non-abstract members:</p>
+
+<pre><code class="language-scala">trait Planar { ... }
+class Square extends Shape with Planar
+</code></pre></li>
+
+<li><p>General object hierarchy:</p>
+
+<ul>
+<li><code>scala.Any</code> base type of all types. Has methods <code>hashCode</code> and <code>toString</code> that can be overridden</li>
+<li><code>scala.AnyVal</code> base type of all primitive types. (<code>scala.Double</code>, <code>scala.Float</code>, etc.)</li>
+<li><code>scala.AnyRef</code> base type of all reference types. (alias of <code>java.lang.Object</code>, supertype of <code>java.lang.String</code>, <code>scala.List</code>, any user-defined class)</li>
+<li><code>scala.Null</code> is a subtype of any <code>scala.AnyRef</code> (<code>null</code> is the only instance of type <code>Null</code>), and <code>scala.Nothing</code> is a subtype of any other type without any instance.</li>
+</ul></li>
+</ul>
+
+<h2 id="type-parameters">#Type Parameters</h2>
+
+<p>Conceptually similar to C++ templates or Java generics. These can apply to classes, traits or functions.</p>
+
+<pre><code class="language-scala">class MyClass[T](arg1: T) { ... }  
+new MyClass[Int](1)  
+new MyClass(1)   // the type is being inferred, i.e. determined based on the value arguments  
+</code></pre>
+
+<p>It is possible to restrict the type being used, e.g.</p>
+
+<pre><code class="language-scala">def myFct[T &lt;: TopLevel](arg: T): T = { ... } // T must derive from TopLevel or be TopLevel
+def myFct[T &gt;: Level1](arg: T): T = { ... }   // T must be a supertype of Level1
+def myFct[T &gt;: Level1 &lt;: Top Level](arg: T): T = { ... }
+</code></pre>
+
+<h2 id="variance">#Variance</h2>
+
+<p>Given <code>A &lt;: B</code></p>
+
+<p>If <code>C[A] &lt;: C[B]</code>, <code>C</code> is covariant</p>
+
+<p>If <code>C[A] &gt;: C[B]</code>, <code>C</code> is contravariant</p>
+
+<p>Otherwise C is nonvariant</p>
+
+<pre><code class="language-scala">class C[+A] { ... } // C is covariant
+class C[-A] { ... } // C is contravariant
+class C[A]  { ... } // C is nonvariant
+</code></pre>
+
+<p>For a function, if <code>A2 &lt;: A1</code> and <code>B1 &lt;: B2</code>, then <code>A1 =&gt; B1 &lt;: A2 =&gt; B2</code>.</p>
+
+<p>Functions must be contravariant in their argument types and covariant in their result types, e.g.</p>
+
+<pre><code class="language-scala">trait Function1[-T, +U] {
+    def apply(x: T): U
+} // Variance check is OK because T is contravariant and U is covariant
+
+class Array[+T] {
+    def update(x: T)
+} // variance checks fails
+</code></pre>
+
+<p>Find out more about variance in
+<a href="https://class.coursera.org/progfun-2012-001/lecture/81">lecture 4.4</a>
+and <a href="https://class.coursera.org/progfun-2012-001/lecture/83">lecture 4.5</a></p>
+
+<h2 id="pattern-matching">#Pattern Matching</h2>
+
+<p>Pattern matching is used for decomposing data structures:</p>
+
+<pre><code class="language-scala">unknownObject match {
+    case MyClass(n) =&gt; ...
+    case MyClass2(a, b) =&gt; ...
+}
+</code></pre>
+
+<p>Here are a few example patterns</p>
+
+<pre><code class="language-scala">(someList: List[T]) match {
+    case Nil =&gt; ...          // empty list
+    case x :: Nil =&gt; ...     // list with only one element
+    case List(x) =&gt; ...      // same as above
+    case x :: xs =&gt; ...      // a list with at least one element. x is bound to the head,
+                            // xs to the tail. xs could be Nil or some other list.
+    case 1 :: 2 :: cs =&gt; ... // lists that starts with 1 and then 2
+    case (x, y) :: ps =&gt; ... // a list where the head element is a pair
+    case _ =&gt; ...            // default case if none of the above matches
+}
+</code></pre>
+
+<p>The last example shows that every pattern consists of sub-patterns: it
+only matches lists with at least one element, where that element is a
+pair. <code>x</code> and <code>y</code> are again patterns that could match only specific
+types.</p>
+
+<h3 id="options">#Options</h3>
+
+<p>Pattern matching can also be used for <code>Option</code> values. Some
+functions (like <code>Map.get</code>) return a value of type <code>Option[T]</code> which
+is either a value of type <code>Some[T]</code> or the value <code>None</code>:</p>
+
+<pre><code class="language-scala">val myMap = Map(&quot;a&quot; -&gt; 42, &quot;b&quot; -&gt; 43)
+def getMapValue(s: String): String = {
+    myMap get s match {
+    case Some(nb) =&gt; &quot;Value found: &quot; + nb
+    case None =&gt; &quot;No value found&quot;
+    }
+}
+getMapValue(&quot;a&quot;)  // &quot;Value found: 42&quot;
+getMapValue(&quot;c&quot;)  // &quot;No value found&quot;
+</code></pre>
+
+<p>Most of the times when you write a pattern match on an option value,
+the same expression can be written more concisely using combinator
+methods of the <code>Option</code> class. For example, the function <code>getMapValue</code>
+can be written as follows:</p>
+
+<pre><code class="language-scala">def getMapValue(s: String): String =
+    myMap.get(s).map(&quot;Value found: &quot; + _).getOrElse(&quot;No value found&quot;)
+</code></pre>
+
+<h3 id="pattern-matching-in-anonymous-functions">#Pattern Matching in Anonymous Functions</h3>
+
+<p>Pattern matches are also used quite often in anonymous functions:</p>
+
+<pre><code class="language-scala">val pairs: List[(Char, Int)] = ('a', 2) :: ('b', 3) :: Nil
+val chars: List[Char] = pairs.map(p =&gt; p match {
+    case (ch, num) =&gt; ch
+})
+</code></pre>
+
+<p>Instead of <code>p =&gt; p match { case ... }</code>, you can simply write <code>{case ...}</code>, so the above example becomes more concise:</p>
+
+<pre><code class="language-scala">val chars: List[Char] = pairs map {
+    case (ch, num) =&gt; ch
+}
+</code></pre>
+
+<h2 id="collections">#Collections</h2>
+
+<p>Scala defines several collection classes:</p>
+
+<h3 id="base-classes">#Base Classes</h3>
+
+<ul>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.collection.Iterable"><code>Iterable</code></a> (collections you can iterate on)</li>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.collection.Seq"><code>Seq</code></a> (ordered sequences)</li>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.collection.Set"><code>Set</code></a></li>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.collection.Map"><code>Map</code></a> (lookup data structure)</li>
+</ul>
+
+<h3 id="immutable-collections">#Immutable Collections</h3>
+
+<ul>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.collection.immutable.List"><code>List</code></a> (linked list, provides fast sequential access)</li>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.collection.immutable.Stream"><code>Stream</code></a> (same as List, except that the tail is evaluated only on demand)</li>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.collection.immutable.Vector"><code>Vector</code></a> (array-like type, implemented as tree of blocks, provides fast random access)</li>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.collection.immutable.Range"><code>Range</code></a> (ordered sequence of integers with equal spacing)</li>
+<li><a href="http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/String.html"><code>String</code></a> (Java type, implicitly converted to a character sequence, so you can treat every string like a <code>Seq[Char]</code>)</li>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.collection.immutable.Map"><code>Map</code></a> (collection that maps keys to values)</li>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.collection.immutable.Set"><code>Set</code></a> (collection without duplicate elements)</li>
+</ul>
+
+<h3 id="mutable-collections">#Mutable Collections</h3>
+
+<ul>
+<li><a href="http://www.scala-lang.org/api/current/index.html#scala.Array"><code>Array</code></a> (Scala arrays are native JVM arrays at runtime, therefore they are very performant)</li>
+<li>Scala also has mutable maps and sets; these should only be used if there are performance issues with immutable types</li>
+</ul>
+
+<h3 id="examples">#Examples</h3>
+
+<pre><code class="language-scala">val fruitList = List(&quot;apples&quot;, &quot;oranges&quot;, &quot;pears&quot;)
+// Alternative syntax for lists
+val fruit = &quot;apples&quot; :: (&quot;oranges&quot; :: (&quot;pears&quot; :: Nil)) // parens optional, :: is right-associative
+fruit.head   // &quot;apples&quot;
+fruit.tail   // List(&quot;oranges&quot;, &quot;pears&quot;)
+val empty = List()
+val empty = Nil
+
+val nums = Vector(&quot;louis&quot;, &quot;frank&quot;, &quot;hiromi&quot;)
+nums(1)                     // element at index 1, returns &quot;frank&quot;, complexity O(log(n))
+nums.updated(2, &quot;helena&quot;)   // new vector with a different string at index 2, complexity O(log(n))
+
+val fruitSet = Set(&quot;apple&quot;, &quot;banana&quot;, &quot;pear&quot;, &quot;banana&quot;)
+fruitSet.size    // returns 3: there are no duplicates, only one banana
+
+val r: Range = 1 until 5 // 1, 2, 3, 4
+val s: Range = 1 to 5    // 1, 2, 3, 4, 5
+1 to 10 by 3  // 1, 4, 7, 10
+6 to 1 by -2  // 6, 4, 2
+
+val s = (1 to 6).toSet
+s map (_ + 2) // adds 2 to each element of the set
+
+val s = &quot;Hello World&quot;
+s filter (c =&gt; c.isUpper) // returns &quot;HW&quot;; strings can be treated as Seq[Char]
+
+// Operations on sequences
+val xs = List(...)
+xs.length   // number of elements, complexity O(n)
+xs.last     // last element (exception if xs is empty), complexity O(n)
+xs.init     // all elements of xs but the last (exception if xs is empty), complexity O(n)
+xs take n   // first n elements of xs
+xs drop n   // the rest of the collection after taking n elements
+xs(n)       // the nth element of xs, complexity O(n)
+xs ++ ys    // concatenation, complexity O(n)
+xs.reverse  // reverse the order, complexity O(n)
+xs updated(n, x)  // same list than xs, except at index n where it contains x, complexity O(n)
+xs indexOf x      // the index of the first element equal to x (-1 otherwise)
+xs contains x     // same as xs indexOf x &gt;= 0
+xs filter p       // returns a list of the elements that satisfy the predicate p
+xs filterNot p    // filter with negated p 
+xs partition p    // same as (xs filter p, xs filterNot p)
+xs takeWhile p    // the longest prefix consisting of elements that satisfy p
+xs dropWhile p    // the remainder of the list after any leading element satisfying p have been removed
+xs span p         // same as (xs takeWhile p, xs dropWhile p)
+
+List(x1, ..., xn) reduceLeft op    // (...(x1 op x2) op x3) op ...) op xn
+List(x1, ..., xn).foldLeft(z)(op)  // (...( z op x1) op x2) op ...) op xn
+List(x1, ..., xn) reduceRight op   // x1 op (... (x{n-1} op xn) ...)
+List(x1, ..., xn).foldRight(z)(op) // x1 op (... (    xn op  z) ...)
+
+xs exists p    // true if there is at least one element for which predicate p is true
+xs forall p    // true if p(x) is true for all elements
+xs zip ys      // returns a list of pairs which groups elements with same index together
+xs unzip       // opposite of zip: returns a pair of two lists
+xs.flatMap f   // applies the function to all elements and concatenates the result
+xs.sum         // sum of elements of the numeric collection
+xs.product     // product of elements of the numeric collection
+xs.max         // maximum of collection
+xs.min         // minimum of collection
+xs.flatten     // flattens a collection of collection into a single-level collection
+xs groupBy f   // returns a map which points to a list of elements
+xs distinct    // sequence of distinct entries (removes duplicates)
+
+x +: xs  // creates a new collection with leading element x
+xs :+ x  // creates a new collection with trailing element x
+
+// Operations on maps
+val myMap = Map(&quot;I&quot; -&gt; 1, &quot;V&quot; -&gt; 5, &quot;X&quot; -&gt; 10)  // create a map
+myMap(&quot;I&quot;)      // =&gt; 1  
+myMap(&quot;A&quot;)      // =&gt; java.util.NoSuchElementException  
+myMap get &quot;A&quot;   // =&gt; None 
+myMap get &quot;I&quot;   // =&gt; Some(1)
+myMap.updated(&quot;V&quot;, 15)  // returns a new map where &quot;V&quot; maps to 15 (entry is updated)
+                        // if the key (&quot;V&quot; here) does not exist, a new entry is added
+
+// Operations on Streams
+val xs = Stream(1, 2, 3)
+val xs = Stream.cons(1, Stream.cons(2, Stream.cons(3, Stream.empty))) // same as above
+(1 to 1000).toStream // =&gt; Stream(1, ?)
+x #:: xs // Same as Stream.cons(x, xs)
+            // In the Stream's cons operator, the second parameter (the tail)
+            // is defined as a &quot;call by name&quot; parameter.
+            // Note that x::xs always produces a List
+</code></pre>
+
+<h2 id="pairs-similar-for-larger-tuples">#Pairs (similar for larger Tuples)</h2>
+
+<pre><code class="language-scala">val pair = (&quot;answer&quot;, 42)   // type: (String, Int)
+val (label, value) = pair   // label = &quot;answer&quot;, value = 42  
+pair._1 // &quot;answer&quot;  
+pair._2 // 42  
+</code></pre>
+
+<h2 id="ordering">#Ordering</h2>
+
+<p>There is already a class in the standard library that represents orderings: <code>scala.math.Ordering[T]</code> which contains
+comparison functions such as <code>lt()</code> and <code>gt()</code> for standard types. Types with a single natural ordering should inherit from
+the trait <code>scala.math.Ordered[T]</code>.</p>
+
+<pre><code class="language-scala">import math.Ordering  
+
+def msort[T](xs: List[T])(implicit ord: Ordering) = { ...}  
+msort(fruits)(Ordering.String)  
+msort(fruits)   // the compiler figures out the right ordering  
+</code></pre>
+
+<h2 id="for-comprehensions">#For-Comprehensions</h2>
+
+<p>A for-comprehension is syntactic sugar for <code>map</code>, <code>flatMap</code> and <code>filter</code> operations on collections.</p>
+
+<p>The general form is <code>for (s) yield e</code></p>
+
+<ul>
+<li><code>s</code> is a sequence of generators and filters</li>
+<li><code>p &lt;- e</code> is a generator</li>
+<li><code>if f</code> is a filter</li>
+<li>If there are several generators (equivalent of a nested loop), the last generator varies faster than the first</li>
+<li>You can use <code>{ s }</code> instead of <code>( s )</code> if you want to use multiple lines without requiring semicolons</li>
+<li><code>e</code> is an element of the resulting collection</li>
+</ul>
+
+<h3 id="example-1">#Example 1</h3>
+
+<pre><code class="language-scala">// list all combinations of numbers x and y where x is drawn from
+// 1 to M and y is drawn from 1 to N
+for (x &lt;- 1 to M; y &lt;- 1 to N)
+    yield (x,y)
+</code></pre>
+
+<p>is equivalent to</p>
+
+<pre><code class="language-scala">(1 to M) flatMap (x =&gt; (1 to N) map (y =&gt; (x, y)))
+</code></pre>
+
+<h3 id="translation-rules">#Translation Rules</h3>
+
+<p>A for-expression looks like a traditional for loop but works differently internally</p>
+
+<p><code>for (x &lt;- e1) yield e2</code> is translated to <code>e1.map(x =&gt; e2)</code></p>
+
+<p><code>for (x &lt;- e1 if f) yield e2</code> is translated to <code>for (x &lt;- e1.filter(x =&gt; f)) yield e2</code></p>
+
+<p><code>for (x &lt;- e1; y &lt;- e2) yield e3</code> is translated to <code>e1.flatMap(x =&gt; for (y &lt;- e2) yield e3)</code></p>
+
+<p>This means you can use a for-comprehension for your own type, as long
+as you define <code>map</code>, <code>flatMap</code> and <code>filter</code>.</p>
+
+<p>For more, see <a href="https://class.coursera.org/progfun-2012-001/lecture/111">lecture 6.5</a>.</p>
+
+<h3 id="example-2">#Example 2</h3>
+
+<pre><code class="language-scala">for {  
+    i &lt;- 1 until n  
+    j &lt;- 1 until i  
+    if isPrime(i + j)  
+} yield (i, j)  
+</code></pre>
+
+<p>is equivalent to</p>
+
+<pre><code class="language-scala">for (i &lt;- 1 until n; j &lt;- 1 until i if isPrime(i + j))
+    yield (i, j)  
+</code></pre>
+
+<p>is equivalent to</p>
+
+<pre><code class="language-scala">(1 until n).flatMap(i =&gt; (1 until i).filter(j =&gt; isPrime(i + j)).map(j =&gt; (i, j)))
+</code></pre>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/scala-learning-resources/">Scala Learning Resources</a></li>
+        
+        <li><a href="/posts/solve-sbt-update-scala-slow/">解决sbt更新scala速度慢</a></li>
+        
+        <li><a href="/posts/scala-style/">Scala Style Guide</a></li>
+        
+        <li><a href="/posts/distributed-programming-in-java-week3-notes/">分布式编程第三周课堂笔记</a></li>
+        
+        <li><a href="/posts/distributed-programming-in-java-week1-notes/">分布式编程第一周课堂笔记</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/scala">scala</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/cheatsheet">cheatsheet</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-cheatsheet/" title="Scala CheatSheet">Scala CheatSheet</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-learning-resources/" title="Scala Learning Resources">Scala Learning Resources</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-style/" title="Scala Style Guide">Scala Style Guide</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/" title="分布式编程第三周课堂笔记">分布式编程第三周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/" title="分布式编程第一周课堂笔记">分布式编程第一周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/" title="分布式编程第二周课堂笔记">分布式编程第二周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title" style="color:red">福利派送</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    领取￥1888阿里云产品通用代金券
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/vmpt/aliyun-group/home.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB17qJhXpzqK1RjSZFvXXcB7VXa-200-126.jpg">
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB1aDXhXpzqK1RjSZFvXXcB7VXa-259-194.jpg">
+                
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pcdp/">PCDP(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dpcp/">dpcp(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hmm/">hmm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/java/">java(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/mail-server/">mail server(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(9)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rmarkdown/">rmarkdown(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rpi/">rpi(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/template/">template(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/welcome/">welcome(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">分布式编程(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/pcdp/">PCDP</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/cheatsheet/">cheatsheet</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/dpcp/">dpcp</a>
+    
+    <a href="http://shenheng.xyz/tags/gitalk/">gitalk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hmm/">hmm</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/mailserver/">mailserver</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/rmarkdown/">rmarkdown</a>
+    
+    <a href="http://shenheng.xyz/tags/rpi/">rpi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/scala-style/">scala style</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://yuedu.baidu.com/ebook/14a722970740be1e640e9a3e" title="Android Gradle权威指南">Android Gradle权威指南</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://mirrors.flysnow.org/" title="常用开发工具CDN镜像">常用开发工具CDN镜像</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '48ac64a24eebc5cb273da3d6a926069b', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+  <script src="/js/douban.js"></script>
+
+</body>
+</html>

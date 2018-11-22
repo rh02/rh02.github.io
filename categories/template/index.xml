@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>template on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/categories/template/</link>
+    <description>Recent content in template on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Fri, 15 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/categories/template/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Rmarkdown模板</title>
+      <link>http://shenheng.xyz/posts/template-of-rmarkdown/</link>
+      <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/template-of-rmarkdown/</guid>
+      <description>knitr::opts_chunk$set(echo = TRUE) GitHub Documents This is an R Markdown format used for publishing markdown documents to GitHub. When you click the Knit button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated. Including Code You can include R code in the document as follows: summary(cars) Including Plots You can also embed plots, for example: plot(pressure) Note that the echo =</description>
+    </item>
+    
+  </channel>
+</rss>

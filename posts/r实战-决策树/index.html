@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>R实战-决策树 | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="R实战-决策树 - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2017-12-30T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2017-12-30T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="R实战-决策树">
+        <meta name="author" content="Heng-Heng Shen">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [ ['$','$'] ],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    
+    
+        <link rel="stylesheet" href="/css/douban.css">
+    
+        <link rel="stylesheet" href="/css/other.css">
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">R实战-决策树</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2017年12月30日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/blog">blog</a>
+                            
+                                <a href="http://shenheng.xyz/categories/ml">ml</a>
+                            
+                                <a href="http://shenheng.xyz/categories/dicision-tree">Dicision Tree</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<p>本篇内容，会继续介绍一些常用的数据挖掘模型：</p>
+
+<p>这里拿网络上一个公开数据(铁达尼号的乘客数据)来进行分析，<a href="http://www.rdatamining.com/data/titanic.raw.rdata?attredirects=0&d=1" target="_blank">资料载点如下</a>。</p>
+
+<h2 id="决策树-decision-tree">决策树(Decision Tree)</h2>
+
+<p>无论在分类或预测上，决策树的算法都有很好的效果。</p>
+
+<p>但它最强大的地方，莫过于树状分支的结构：可以明显呈现分类的规则！与一些机器学习的方法(NN, SVM&hellip;)相比，相当容易进行解释，以及分析规则之间的关系。</p>
+
+<p>这里就简单用CART决策树来练习，对应的套件是<code>rpart</code>，一样使用上次铁达尼号的数据：</p>
+
+<pre><code class="language-r,warning=F"># 记得要给定数据所在的路径(path)，例如：我把下载的资料放在C槽下：
+load(&quot;F:\\01_学习资料\\R\\Data-Mining-master\\Source-File\\決策樹\\titanic.raw.rdata&quot;)  #汇入.rdata檔
+</code></pre>
+
+<pre><code class="language-r,">require(rpart)
+
+# 先把数据区分成 train=0.8, test=0.2 
+set.seed(22)
+train.index &lt;- sample(x=1:nrow(titanic.raw), size=ceiling(0.8*nrow(titanic.raw) ))
+train &lt;- titanic.raw[train.index, ]
+test &lt;- titanic.raw[-train.index, ]
+
+# CART的模型：把存活与否的变数(Survived)当作Y，剩下的变数当作X
+cart.model&lt;- rpart(Survived ~. , 
+                    data=train)
+
+# 输出各节点的详细信息(呈现在console窗口)
+cart.model
+</code></pre>
+
+<p>要画出决策树(可视化)，虽然用平常的<code>plot()</code>就可以达成</p>
+
+<p>但rpart有专属的绘图套件<code>rpart.plot</code>，函式是<code>prp()</code></p>
+
+<p>说真的，用<code>prp()</code>画出来的决策树，比较好看一些：</p>
+
+<pre><code class="language-r,">require(rpart.plot) 
+par(bg = &quot;#f5f5d5&quot;)
+prp(cart.model,         # 模型
+    faclen=0,           # 呈现的变数不要缩写
+    fallen.leaves=TRUE, # 让树枝以垂直方式呈现
+    shadow.col=&quot;gray&quot;,  # 最下面的节点涂上阴影
+    # number of correct classifications / number of observations in that node
+    extra=2)  
+</code></pre>
+
+<p>(最下面节点的数字，代表：<strong>number of correct classifications / number of observations in that node</strong>)</p>
+
+<p>根据以上决策树，可以发现<strong>是男生或女生</strong>其实很重要(因为是第一个分支规则)，其次是在船上的舱位等级。</p>
+
+<p>因此，我们可以这样解释：</p>
+
+<blockquote>
+<p>即使是女性，可是拥有的舱位若是最低下的(3rd)，则大概有一半的死亡机率(<sup>82</sup>&frasl;<sub>155</sub>=53%)；<br />
+但当妳的舱位高人一等时，则有相当高的存活机率(<sup>197</sup>&frasl;<sub>208</sub>=95%)。</p>
+</blockquote>
+
+<p>又或者是：</p>
+
+<blockquote>
+<p>当你是男性成人时，大概有八成机率会死(<sup>1084</sup>&frasl;<sub>1348</sub>=77%)</p>
+</blockquote>
+
+<p>以及</p>
+
+<blockquote>
+<p>若是男性小孩，就和舱位等级有关：高级舱位的小孩全都获救(<sup>13</sup>&frasl;<sub>13</sub>)，可是低舱位的小孩有七成机率(<sup>26</sup>&frasl;<sub>37</sub>=70%)会死。</p>
+</blockquote>
+
+<p><strong>(男生好可怜)</strong></p>
+
+<p>●也可用另一个绘图套件<code>partykit</code>，函式是<code>as.party()</code>和<code>plot()</code></p>
+
+<pre><code class="language-r,">require(partykit)   
+par(bg = &quot;#f5f5d5&quot;)
+rparty.tree &lt;- as.party(cart.model) # 转换cart决策树
+rparty.tree # 输出各节点的详细信息
+plot(rparty.tree) 
+</code></pre>
+
+<p>用这个套件画出来的图也是蛮容易一目了然的呢!
+有不一样的感觉~</p>
+
+<p>有决策树之后，就要进行预测！</p>
+
+<p>还记得在线性回归使用过的<code>predict()</code>吗？这时就会派上用场啰(在这里，会同时计算预测准确率)：</p>
+
+<pre><code class="language-r">pred &lt;- predict(cart.model, newdata=test, type=&quot;class&quot;)
+
+# 用table看预测的情况
+table(real=test$Survived, predict=pred)
+
+# 计算预测准确率 = 对角线的数量/总数量
+confus.matrix &lt;- table(real=test$Survived, predict=pred)
+sum(diag(confus.matrix))/sum(confus.matrix) # 对角线的数量/总数量
+</code></pre>
+
+<p>结果显示，模型在测试集中的预测能力大约77%，但模型的预测准确率还有提升的可能吗？我们继续对模型进行修树~</p>
+
+<pre><code class="language-r,">printcp(cart.model) # 先观察未修剪的树，CP字段代表树的成本复杂度参数
+</code></pre>
+
+<pre><code class="language-r,">par(bg = &quot;#f5f5d5&quot;)
+plotcp(cart.model) # 画图观察未修剪的树
+</code></pre>
+
+<pre><code class="language-r">prunetree_cart.model &lt;- prune(cart.model, cp = cart.model$cptable[which.min(cart.model$cptable[,&quot;xerror&quot;]),&quot;CP&quot;]) # 利用能使决策树具有最小误差的CP来修剪树
+</code></pre>
+
+<p>修剪完决策树之后，让我们重新建构一次预测模型</p>
+
+<pre><code class="language-r">prunetree_pred &lt;- predict(prunetree_cart.model, newdata=test, type=&quot;class&quot;)
+
+# 用table看预测的情况
+table(real=test$Survived, predict=prunetree_pred)
+
+prunetree_confus.matrix &lt;- table(real=test$Survived, predict=prunetree_pred)
+sum(diag(prunetree_confus.matrix))/sum(prunetree_confus.matrix) # 对角线的数量/总数量
+</code></pre>
+
+<p>很显然，模型的预测准确率并没有提升，一样是大约77%，这是因为我们在修剪时所挑选到满足条件的CP值为<strong>0.01</strong>，而函式<code>rpart()</code>预设的CP值就是<strong>0.01</strong>，故前后模型的结果一致。</p>
+
+<p>再来，我们为了避免模型过度拟合(overfitting)，故要利用K-fold Cross-Validation的方法进行交叉验证，我们使用<code>caret</code>这个套件，而K先设定为10次~</p>
+
+<pre><code class="language-r,">require(caret)
+require(e1071)
+train_control &lt;- trainControl(method=&quot;cv&quot;, number=10)
+train_control.model &lt;- train(Survived~., data=train, method=&quot;rpart&quot;, trControl=train_control)
+train_control.model
+</code></pre>
+
+<p>然而，我们一开始修剪树之后所得到的决策树模型，最佳的预测准确率大约为77%，而现在再透过交叉验证所Tune得的参数，使得模型的最佳预测准确率大约提升为78%。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>在数据挖掘领域中，决策树(Decision Tree)是相当常见的方法，例如在医学研究上，对某种特定的疾病(糖尿病，代谢症候群等)找出可以前期筛检分类，或是预测的因子时，就常以决策树的方法来进行，而决策树较为不同之处在于可用图像化来呈现结果，即使不了解背后理论，仍可解读并判断。</p>
+
+<p>进行决策树分析要注意的是，当样本存在类别不不衡的问题时，决策树对于小类的样本根本无能为力，模型的效能会大打折扣。</p>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/r-kmeans/">R实战-Kmeans</a></li>
+        
+        <li><a href="/posts/hmm/">隐马尔可夫模型</a></li>
+        
+        <li><a href="/posts/logistic-regression/">逻辑回归</a></li>
+        
+        <li><a href="/posts/multi-variable-linear-regression/">多变量线性回归</a></li>
+        
+        <li><a href="/posts/single-variable-linear-regression/">单变量线性回归</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/decision-tree">Decision Tree</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/ml">ml</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-cheatsheet/" title="Scala CheatSheet">Scala CheatSheet</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-learning-resources/" title="Scala Learning Resources">Scala Learning Resources</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-style/" title="Scala Style Guide">Scala Style Guide</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/" title="分布式编程第三周课堂笔记">分布式编程第三周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/" title="分布式编程第一周课堂笔记">分布式编程第一周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/" title="分布式编程第二周课堂笔记">分布式编程第二周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title" style="color:red">福利派送</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    领取￥1888阿里云产品通用代金券
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/vmpt/aliyun-group/home.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB17qJhXpzqK1RjSZFvXXcB7VXa-200-126.jpg">
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB1aDXhXpzqK1RjSZFvXXcB7VXa-259-194.jpg">
+                
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pcdp/">PCDP(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dpcp/">dpcp(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hmm/">hmm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/java/">java(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/mail-server/">mail server(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(9)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rmarkdown/">rmarkdown(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rpi/">rpi(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/template/">template(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/welcome/">welcome(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">分布式编程(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/pcdp/">PCDP</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/cheatsheet/">cheatsheet</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/dpcp/">dpcp</a>
+    
+    <a href="http://shenheng.xyz/tags/gitalk/">gitalk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hmm/">hmm</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/mailserver/">mailserver</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/rmarkdown/">rmarkdown</a>
+    
+    <a href="http://shenheng.xyz/tags/rpi/">rpi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/scala-style/">scala style</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://yuedu.baidu.com/ebook/14a722970740be1e640e9a3e" title="Android Gradle权威指南">Android Gradle权威指南</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://mirrors.flysnow.org/" title="常用开发工具CDN镜像">常用开发工具CDN镜像</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '48ac64a24eebc5cb273da3d6a926069b', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+  <script src="/js/douban.js"></script>
+
+</body>
+</html>

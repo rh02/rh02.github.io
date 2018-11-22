@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>gittalk on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/gittalk/</link>
+    <description>Recent content in gittalk on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Thu, 14 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/gittalk/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>为我的博客安装评论插件</title>
+      <link>http://shenheng.xyz/posts/2017-12-14-add-comment-to-your-blog/</link>
+      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-14-add-comment-to-your-blog/</guid>
+      <description>今天尝试了一下不同得评论系统，现在将我设置评论系统的安装方法以及设置步骤总结出来，分享给大家. 1.Disqus disqus是一个支持多社交账号和自家的账号</description>
+    </item>
+    
+  </channel>
+</rss>

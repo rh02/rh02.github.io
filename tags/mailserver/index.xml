@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mailserver on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/mailserver/</link>
+    <description>Recent content in mailserver on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Wed, 20 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/mailserver/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>在树莓派上搭建邮件服务器</title>
+      <link>http://shenheng.xyz/posts/mail-server-rpi/</link>
+      <pubDate>Wed, 20 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/mail-server-rpi/</guid>
+      <description>上篇文章介绍了利用树莓派搭建AP，那么有了AP之后，由于小编是一名在校的学生，将我的树莓派和我宿舍的路由器连接上网之后，我的树莓派就拥有了全</description>
+    </item>
+    
+  </channel>
+</rss>

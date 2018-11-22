@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>blog on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/categories/blog/</link>
+    <description>Recent content in blog on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Sun, 04 Mar 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/categories/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>CentOS6源码安装MySQL</title>
+      <link>http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/</link>
+      <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/</guid>
+      <description>首先确定本机是安装了开发工具包套件（里面含有gcc等编译器）以及相关的make套件。使用下面命令进行安装。 yum groupinstall &amp;quot;Development Tools&amp;quot; –y yum install cmake ncurses-devel -y 然后依照下面</description>
+    </item>
+    
+    <item>
+      <title>R实战-决策树</title>
+      <link>http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/</link>
+      <pubDate>Sat, 30 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/</guid>
+      <description>本篇内容，会继续介绍一些常用的数据挖掘模型： 这里拿网络上一个公开数据(铁达尼号的乘客数据)来进行分析，资料载点如下。 决策树(Decision</description>
+    </item>
+    
+    <item>
+      <title>隐马尔可夫模型</title>
+      <link>http://shenheng.xyz/posts/hmm/</link>
+      <pubDate>Sat, 23 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/hmm/</guid>
+      <description>很早就想写一篇关于隐马尔可夫模型的文章了，这次刻意的将模型及其有关算法复习了一下，才有了这个信心去写了这篇文章.这篇文章主要参考了李航老师的</description>
+    </item>
+    
+    <item>
+      <title>单变量线性回归</title>
+      <link>http://shenheng.xyz/posts/single-variable-linear-regression/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/single-variable-linear-regression/</guid>
+      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:单变量线性回归的课堂记录，主要讲解了以下几个内容: 代价函数 梯度下降算法 模型表达 还是上一个关于房屋价格预</description>
+    </item>
+    
+    <item>
+      <title>在树莓派上配置AP</title>
+      <link>http://shenheng.xyz/posts/aphot-rpi/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/aphot-rpi/</guid>
+      <description>有了一个新的树莓派之后，如果不将它配置成AP热点，你就失去了他的其中的一个优势，如果你的家里面没有无限路由器或者你的家里信号不能遍及，树莓派</description>
+    </item>
+    
+    <item>
+      <title>Display Image Using R</title>
+      <link>http://shenheng.xyz/posts/2017-12-19-example/</link>
+      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-19-example/</guid>
+      <description>{r fig-margin, echo=FALSE, fig.cap=&amp;quot;这是一个神经网络的图。&amp;quot;, fig.height=3.5, fig.margin=TRUE, warning=FALSE, background=&amp;quot;#f5f5d5&amp;quot;, cache=FALSE} # need png package library(png) #Replace the directory and file information with your info ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima) library(png) par(bg = &amp;quot;#f5f5d5&amp;quot;) ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima)</description>
+    </item>
+    
+    <item>
+      <title>为我的博客安装评论插件</title>
+      <link>http://shenheng.xyz/posts/2017-12-14-add-comment-to-your-blog/</link>
+      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-14-add-comment-to-your-blog/</guid>
+      <description>今天尝试了一下不同得评论系统，现在将我设置评论系统的安装方法以及设置步骤总结出来，分享给大家. 1.Disqus disqus是一个支持多社交账号和自家的账号</description>
+    </item>
+    
+  </channel>
+</rss>

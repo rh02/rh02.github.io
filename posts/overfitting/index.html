@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+    
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>过拟合和正则化 | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="过拟合和正则化 - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2017-12-21T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2017-12-21T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="过拟合和正则化">
+        <meta name="author" content="Heng-Heng Shen">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/overfitting/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+
+    
+
+    <script type="text/javascript">
+        window.MathJax = {
+            tex2jax: {
+                inlineMath: [ ['$','$'] ],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+    
+    
+        <link rel="stylesheet" href="/css/douban.css">
+    
+        <link rel="stylesheet" href="/css/other.css">
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">过拟合和正则化</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2017年12月21日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/ml">ml</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        <div class="post-content">
+                            
+
+<p>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第三周:<strong>多分类和过拟合技术</strong>的课堂记录，过拟合是机器学习优化的部分，主要讲解了以下几个内容:</p>
+
+<ul>
+<li>多类别的分类问题</li>
+<li>过/欠拟合问题</li>
+<li>解决过拟合的方法
+
+<ul>
+<li>正则化方法</li>
+</ul></li>
+</ul>
+
+<h1 id="多类别的分类问题">多类别的分类问题</h1>
+
+<p>在现实生活中多类别的问题更常见，比如：</p>
+
+<ul>
+<li>Email:邮件的自动分类，e.g. work,friends,family,hobby</li>
+<li>医疗诊断：Notil,Cold,Flu</li>
+<li>天气预测：Sunny,Cloudy,Rain,Snow</li>
+</ul>
+
+<p>在涉及到多分类问题，我们往往采取一种“One VS All”算法！在二分类问题上$Y = {0,1}$，在多分类上，我们将扩大$Y$的定义，即$Y =  {0,1,…,n}$。多分类的任务转化为$n + 1$个（<strong>+ 1因为索引从0开始</strong>）二分类问题；在每一个二分类任务，预测的“$Y$”是一个类概率。</p>
+
+<p>\begin{align<em>}
+&amp; y \in \lbrace0, 1 &hellip; n\rbrace <br />
+&amp; h<em>\theta^{(0)}(x) = P(y = 0 | x ; \theta) <br />
+&amp; h</em>\theta^{(1)}(x) = P(y = 1 | x ; \theta) <br />
+&amp; \cdots <br />
+&amp; h_\theta^{(n)}(x) = P(y = n | x ; \theta) <br />
+&amp; \mathrm{prediction} = \max<em>i( h</em>\theta ^{(i)}(x) )
+\end{align</em>}</p>
+
+<p>我们基本上是选择其中一个类别的数据作为<strong>positive</strong>，然后将所有其他的类别数据为<strong>negative</strong>，这样将问题转化为一个二分类问题，反复这样做，对每一种情况应用<strong>二元logistic回归</strong>，然后将所有情况中预测的最高的那个类作为我们的预测。下图\ref{figure:onevsall} 显示了如何将3个类进行分类：</p>
+
+<!-- ![](http://olrs8j04a.bkt.clouddn.com/17-12-21/50713193.jpg) -->
+
+<ul>
+<li>对于每一个类训练一个二元逻辑回归分类器来预测$y=1$的概率.</li>
+<li>对于一个新的测试样本x，选择$h_{\theta}$最大的那一个类.</li>
+</ul>
+
+<h1 id="过-欠拟合问题">过/欠拟合问题</h1>
+
+<p>机器学习的目的不仅仅对训练集的拟合效果好，在测试集上我也要达到一样好！所以往往在机器学习建模时往往出现过拟合问题，就是对训练数据的预测达到100\%，但是在测试集上的效果很差！还有一种情况就是在训练集上的效果低，这叫欠拟合问题，如图所示</p>
+
+<!-- ![](http://olrs8j04a.bkt.clouddn.com/17-12-21/26710244.jpg) -->
+
+<p>考虑$x \in \mathbb{R}$预测$y$的问题。上图\ref{figure:overfit}的最左边的图显示了$y = \theta_{0} + \theta_1 x$拟合数据集$\mathrm{X}$的结果。我们看到数据不是真的在直线上，所以拟合程度不是很好。相反，如果我们添加了一个额外的特征$x^2$，用$y = \theta_0 + \theta_1x + \theta<em>2x^2$来拟合$y$,那么我们获得一个稍微更好的数据拟合（见中图）。看起来添加的特征越多越好，然而，增加太多特征也有一个危险：最右边的图是拟合5阶多项式$y = \sum</em>{j=0} ^5 \theta_j x^j$的结果，可以看到即使曲线完美地拟合了所有数据，但是也不会是个很好的模型。左边的图片是一个<strong>欠拟合</strong>的例子，而右侧的图就是过拟合的例子。</p>
+
+<p><strong>欠拟合（高偏差，低方差）</strong>，它通常是由于假说函数过于简单或使用的特征太少而造成的。另一个极端，<strong>过拟合(低偏差，高方差)</strong>，它通常是由一个复杂的假说函数或者特征太太多引起的，而导致模型不能很好的泛化<sup class="footnote-ref" id="fnref:-"><a href="#fn:-">1</a></sup>。</p>
+
+<p>解决过拟合问题两个主要策略：</p>
+
+<ul>
+<li>减少特征数量
+
+<ul>
+<li>人工检查变量的数目，决定哪些变量重要，哪些变量不重要.</li>
+<li>模型选择算法</li>
+</ul></li>
+<li>正则化
+
+<ul>
+<li>当我们有很多特征变量时，其中每一个变量都能对预测产生一点影响.</li>
+<li>保留所有特性，但减少参数$\theta_j$的大小</li>
+</ul></li>
+</ul>
+
+<h1 id="修改代价函数">修改代价函数</h1>
+
+<p>如果模型（假设/说函数）出现过拟合，我们可以减轻部分权重$\theta_j$，进而增加他们的代价。比如说，我们想让下面的函数看起来更加像二次方程</p>
+
+<p>\begin{align<em>}
+&amp;\theta_0 + \theta_1x + \theta_2x^2 + \theta_3x^3 + \theta_4x^4
+\end{align</em>}</p>
+
+<p>所以我们减弱$\theta_3x^3$和$\theta<em>4x^4$的影响.实际上, 如果不去掉这些特征或者改变假设函数$h</em>{\theta}(x)$的形式, 我们可以改变我们的代价函数：</p>
+
+<p>\begin{align<em>}
+&amp;min<em>\theta\ \dfrac{1}{2m}\sum</em>{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})^2 + 1000\cdot\theta_3^2 + 1000\cdot\theta_4^2
+\end{align</em>}</p>
+
+<p>在公式后面增加了两项用来增加$\theta_3$和$\theta_4$的代价，为了使得我们的代价函数接近0,所以不得不将$\theta_3$和$\theta_4$的值接近于0。在假说函数中，将大大降低$\theta_3x^3$和$\theta_4x^4$的值。因此,可以看到新的假设 (<strong>由粉红色曲线描述</strong>) 看起来更像一个二次函数,并且也更好的拟合我们训练数据。</p>
+
+<!-- ![](http://olrs8j04a.bkt.clouddn.com/17-12-21/91568480.jpg) -->
+
+<p>我们还可以将所有的$\theta$参数求和来进行正则化处理,在代价函数最后增加一个<strong>正则项</strong> $\lambda \sum_{j=1}^n \theta<em>j^2$，其中$\lambda$是一个正则化参数（<strong>超参数</strong>）.如下所示.
+\begin{align*}
+&amp;min</em>\theta\ \dfrac{1}{2m}\  \sum<em>{i=1}^m (h</em>\theta(x^{(i)}) - y^{(i)})^2 + \lambda\ \sum_{j=1}^n \theta_j^2
+\end{align*}</p>
+
+<h1 id="给线性回归模型增加正则项">给线性回归模型增加正则项</h1>
+
+<h2 id="gradient-descent-for-fixed-linear-regression">Gradient Descent For Fixed Linear Regression</h2>
+
+<p>\begin{align<em>}
+&amp; \text{Repeat}\ \lbrace <br />
+&amp; \ \ \ \ \theta_0 := \theta<em>0 - \alpha\ \frac{1}{m}\ \sum</em>{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})x_0^{(i)} <br />
+&amp; \ \ \ \ \theta_j := \theta<em>j - \alpha\ \left[ \left( \frac{1}{m}\ \sum</em>{i=1}^m (h_\theta(x^{(i)}) - y^{(i)})x_j^{(i)} \right) + \frac{\lambda}{m}\theta_j \right] &amp;\ \ \ \ \ \ \ \ \ \ j \in \lbrace 1,2&hellip;n\rbrace<br />
+&amp; \rbrace
+\end{align</em>}</p>
+
+<p>其中上面的$\theta_j$的更新公式也可以这样写：$$\theta_j := \theta<em>j(1 - \alpha\frac{\lambda}{m}) - \alpha\frac{1}{m}\sum</em>{i=1}^m(h_\theta(x^{(i)}) - y^{(i)})x_j^{(i)}$$.</p>
+
+<h2 id="normal-equation">Normal Equation</h2>
+
+<p>\begin{align<em>}
+&amp; \theta = \left( X^TX + \lambda \cdot L \right)^{-1} X^Ty, \; \text{where}\ \ L = \begin{bmatrix} 0 &amp; &amp; &amp; &amp; <br />
+ &amp; 1 &amp; &amp; &amp; <br />
+ &amp; &amp; 1 &amp; &amp; <br />
+  &amp; &amp; &amp; \ddots &amp; <br />
+   &amp; &amp; &amp; &amp; 1 <br />
+\end{bmatrix}_{(n+1)×(n+1)}
+\end{align</em>}</p>
+
+<p><strong>前面提到过</strong>,如果 $m &lt; n$, 那么 $X^TX$ 是不可逆矩阵。然而, 当我们添加$\lambda L$后 $X^TX$变得可逆了。</p>
+
+<h1 id="给逻辑回归模型增加正则项">给逻辑回归模型增加正则项</h1>
+
+<h2 id="cost-function">Cost Function</h2>
+
+<p>\begin{align}
+J(\theta) &amp;= - \frac{1}{m} \sum<em>{i=1}^m \large[ y^{(i)}\ \log (h</em>\theta (x^{(i)})) + (1 - y^{(i)})\ \log (1 - h<em>\theta(x^{(i)})) \large]<br />
+\rightarrow J(\theta) &amp;= - \frac{1}{m} \sum</em>{i=1}^m \large[ y^{(i)}\ \log (h<em>\theta (x^{(i)})) + (1 - y^{(i)})\ \log (1 - h</em>\theta(x^{(i)}))\large] + \frac{\lambda}{2m}\sum_{j=1}^n \theta_j^2
+\end{align}</p>
+
+<p>公式(2)的第二个sum项$\sum_{j=1}^n \theta_j^2$中的$\theta_j$不包括$\theta_0$!</p>
+
+<!-- ## Gradient Descent For Fixed Logistic Regression} -->
+
+<!-- ![](http://olrs8j04a.bkt.clouddn.com/17-12-21/82289725.jpg) -->
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:-">泛化指一个假设模型能够应用到新的样本数据的能力 <a class="footnote-return" href="#fnref:-"><sup>↩</sup></a></li>
+</ol>
+</div>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/logistic-regression/">逻辑回归</a></li>
+        
+        <li><a href="/posts/introduction-machine-learning/">机器学习简介</a></li>
+        
+        <li><a href="/posts/multi-variable-linear-regression/">多变量线性回归</a></li>
+        
+        <li><a href="/posts/polynomial-regression/">多项式回归</a></li>
+        
+        <li><a href="/posts/single-variable-linear-regression/">单变量线性回归</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/ml">ml</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-cheatsheet/" title="Scala CheatSheet">Scala CheatSheet</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-learning-resources/" title="Scala Learning Resources">Scala Learning Resources</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/scala-style/" title="Scala Style Guide">Scala Style Guide</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/" title="分布式编程第三周课堂笔记">分布式编程第三周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/" title="分布式编程第一周课堂笔记">分布式编程第一周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/" title="分布式编程第二周课堂笔记">分布式编程第二周课堂笔记</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title" style="color:red">福利派送</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    领取￥1888阿里云产品通用代金券
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/vmpt/aliyun-group/home.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB17qJhXpzqK1RjSZFvXXcB7VXa-200-126.jpg">
+                
+            </a>
+        </li>
+        
+        <li>
+            <a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=jdg9oj97" class="ads" title="领取￥1888阿里云产品通用代金券" target="_blank" style="color:red">
+                
+                    <img src="https://img.alicdn.com/tfs/TB1aDXhXpzqK1RjSZFvXXcB7VXa-259-194.jpg">
+                
+            </a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pcdp/">PCDP(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dpcp/">dpcp(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hmm/">hmm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/java/">java(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/mail-server/">mail server(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(9)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rmarkdown/">rmarkdown(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/rpi/">rpi(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/template/">template(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/welcome/">welcome(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/">分布式编程(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/pcdp/">PCDP</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/cheatsheet/">cheatsheet</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/dpcp/">dpcp</a>
+    
+    <a href="http://shenheng.xyz/tags/gitalk/">gitalk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hmm/">hmm</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/mailserver/">mailserver</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/rmarkdown/">rmarkdown</a>
+    
+    <a href="http://shenheng.xyz/tags/rpi/">rpi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/scala-style/">scala style</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://yuedu.baidu.com/ebook/14a722970740be1e640e9a3e" title="Android Gradle权威指南">Android Gradle权威指南</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="http://mirrors.flysnow.org/" title="常用开发工具CDN镜像">常用开发工具CDN镜像</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', '48ac64a24eebc5cb273da3d6a926069b', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+
+
+<script type="text/javascript" src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" async></script>
+
+
+
+
+  <script src="/js/douban.js"></script>
+
+</body>
+</html>

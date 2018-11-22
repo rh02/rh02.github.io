@@ -6,146 +6,267 @@
     <description>Recent content in Posts on Gopher&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>shenheng.xyz &amp;copy; 2018</copyright>
-    <lastBuildDate>Sun, 15 Oct 2017 00:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 04 Mar 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://shenheng.xyz/posts/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title></title>
-      <link>http://shenheng.xyz/posts/hero_carousel/</link>
-      <pubDate>Sun, 15 Oct 2017 00:00:00 +0800</pubDate>
+      <title>CentOS6源码安装MySQL</title>
+      <link>http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/</link>
+      <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/hero_carousel/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/</guid>
+      <description>首先确定本机是安装了开发工具包套件（里面含有gcc等编译器）以及相关的make套件。使用下面命令进行安装。 yum groupinstall &amp;quot;Development Tools&amp;quot; –y yum install cmake ncurses-devel -y 然后依照下面</description>
     </item>
     
     <item>
-      <title>Self-Driving Car</title>
-      <link>http://shenheng.xyz/posts/hero/</link>
-      <pubDate>Sun, 15 Oct 2017 00:00:00 +0800</pubDate>
+      <title>Scala CheatSheet</title>
+      <link>http://shenheng.xyz/posts/scala-cheatsheet/</link>
+      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/hero/</guid>
-      <description>Self Driving Car Based On Deep Learning and Raspberry Pi. Latest release   -- Star</description>
+      <guid>http://shenheng.xyz/posts/scala-cheatsheet/</guid>
+      <description>This cheat sheet originated from the forum, credits to Laurent Poulain. We copied it and changed or added a few things. There are certainly a lot of things that can be improved! If you would like to contribute, you have two options:
+ Click the &amp;ldquo;Edit&amp;rdquo; button on this file on GitHub:
+https://github.com/lampepfl/progfun-wiki/blob/gh-pages/CheatSheet.md
+You can submit a pull request directly from there without checking out the git repository to your local machine.</description>
     </item>
     
     <item>
-      <title></title>
-      <link>http://shenheng.xyz/posts/about/</link>
-      <pubDate>Wed, 21 Nov 2018 00:00:00 +0800</pubDate>
+      <title>Scala Learning Resources</title>
+      <link>http://shenheng.xyz/posts/scala-learning-resources/</link>
+      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/about/</guid>
-      <description>简介 申恒恒，学生，精通机器学习算法和深度学习算法，专注于大数据与机器学习方向，目前在大数据研究院负责工业互联网的研发工作。曾对基础架构，大数</description>
+      <guid>http://shenheng.xyz/posts/scala-learning-resources/</guid>
+      <description>#Quick References  Scala Standard Library API Scala School!: A Scala tutorial by Twitter A Tour of Scala: Tutorial indroducing the main concepts of Scala Scala Overview on StackOverflow: A list of useful questions sorted by topic  #Week 1  Martin&amp;rsquo;s talk at OSCON 2011: Working Hard to Keep it Simple (slides) Books:
+ Structure and Interpretation of Computer Programs. Harold Abelson and Gerald J. Sussman. 2nd edition. MIT Press 1996.</description>
     </item>
     
     <item>
-      <title>技术</title>
-      <link>http://shenheng.xyz/posts/skills/</link>
-      <pubDate>Wed, 20 Sep 2017 00:00:00 +0800</pubDate>
+      <title>Scala Style Guide</title>
+      <link>http://shenheng.xyz/posts/scala-style/</link>
+      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/skills/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/scala-style/</guid>
+      <description>On this page you can find a list of common issues that we detected while looking at some submissions.
+Some of the style issues can be detected by the automated style checker that we also use for the grading process. The style checker, which is based on Scalastyle, can be executed locally in sbt by running the styleCheck task.
+Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstanceOf - there&amp;rsquo;s always a better solution, both for the assignments, and also for any real-world Scala project.</description>
     </item>
     
     <item>
-      <title>个人经历</title>
-      <link>http://shenheng.xyz/posts/experience/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>分布式编程第三周课堂笔记</title>
+      <link>http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/</link>
+      <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/experience/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/</guid>
+      <description>本笔记来自课堂记录和课程网站的总结，转载请注明出处! Single Program Multiple Data (SPMD) Model Lecture Summary: In this lecture, we studied the Single Program Multiple Data (SPMD) model, which can enable the use of a cluster of distributed nodes as a single parallel computer. Each node in such a cluster typically consist</description>
     </item>
     
     <item>
-      <title>特别推荐</title>
-      <link>http://shenheng.xyz/posts/publications_selected/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 +0800</pubDate>
+      <title>解决sbt更新scala速度慢</title>
+      <link>http://shenheng.xyz/posts/solve-sbt-update-scala-slow/</link>
+      <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/publications_selected/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/solve-sbt-update-scala-slow/</guid>
+      <description>在国内如果要使用sbt更新scala时，速度是一个硬伤，因为国内访问maven库的速度确实很慢，因此在这里给出相应的解决方案。 编辑sbtco</description>
     </item>
     
     <item>
-      <title>最新动态</title>
-      <link>http://shenheng.xyz/posts/publications/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 +0800</pubDate>
+      <title>分布式编程第一周课堂笔记</title>
+      <link>http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/</link>
+      <pubDate>Thu, 04 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/publications/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/</guid>
+      <description>本笔记来自课堂记录和课程网站的总结，转载请注明出处! Introduction to MapReduce Lecture Summary: In this lecture, we learned the MapReduce paradigm, which is a pattern of parallel functional programming that has been very successful in enabling &amp;ldquo;big data&amp;rdquo; computations. The input to a MapReduce style computation is a set of key-value pairs.</description>
     </item>
     
     <item>
-      <title>Selected Talks</title>
-      <link>http://shenheng.xyz/posts/talks_selected/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 +0800</pubDate>
+      <title>分布式编程第二周课堂笔记</title>
+      <link>http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/</link>
+      <pubDate>Thu, 04 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/talks_selected/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/</guid>
+      <description>本笔记来自课堂记录和课程网站的总结，转载请注明出处! Introduction to Sockets Lecture Summary: In this lecture, we learned about client-server programming, and how two distributed Java applications can communicate with each other using sockets. Since each application in this scenario runs on a distinct Java Virtual Machine (JVM) process, we used the</description>
     </item>
     
     <item>
-      <title>Recent &amp; Upcoming Talks</title>
-      <link>http://shenheng.xyz/posts/talks/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 +0800</pubDate>
+      <title>R实战-Kmeans</title>
+      <link>http://shenheng.xyz/posts/r-kmeans/</link>
+      <pubDate>Sat, 30 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/talks/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/r-kmeans/</guid>
+      <description>本次主要讲解Kmeans实做部分，假设读者有Kmeans算法的背景下，下面是R程序，本程序对iris数据进行建模。 安装并导入必要的程式套件 主</description>
     </item>
     
     <item>
-      <title>技术博客</title>
-      <link>http://shenheng.xyz/posts/posts/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 +0800</pubDate>
+      <title>R实战-决策树</title>
+      <link>http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/</link>
+      <pubDate>Sat, 30 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/posts/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/</guid>
+      <description>本篇内容，会继续介绍一些常用的数据挖掘模型： 这里拿网络上一个公开数据(铁达尼号的乘客数据)来进行分析，资料载点如下。 决策树(Decision</description>
     </item>
     
     <item>
-      <title>开源项目</title>
-      <link>http://shenheng.xyz/posts/projects/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 +0800</pubDate>
+      <title>隐马尔可夫模型</title>
+      <link>http://shenheng.xyz/posts/hmm/</link>
+      <pubDate>Sat, 23 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/projects/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/hmm/</guid>
+      <description>很早就想写一篇关于隐马尔可夫模型的文章了，这次刻意的将模型及其有关算法复习了一下，才有了这个信心去写了这篇文章.这篇文章主要参考了李航老师的</description>
     </item>
     
     <item>
-      <title>Teaching</title>
-      <link>http://shenheng.xyz/posts/teaching/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 +0800</pubDate>
+      <title>单变量线性回归</title>
+      <link>http://shenheng.xyz/posts/single-variable-linear-regression/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/teaching/</guid>
-      <description>This is an example of using the custom widget to create your own homepage section.
-I am a teaching instructor for the following courses at University X:
- CS101: An intro to computer science CS102: An intro to computer science CS103: An intro to computer science CS104: An intro to computer science CS105: An intro to computer science CS106: An intro to computer science CS107: An intro to computer science  </description>
+      <guid>http://shenheng.xyz/posts/single-variable-linear-regression/</guid>
+      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:单变量线性回归的课堂记录，主要讲解了以下几个内容: 代价函数 梯度下降算法 模型表达 还是上一个关于房屋价格预</description>
     </item>
     
     <item>
-      <title>Tags</title>
-      <link>http://shenheng.xyz/posts/tags/</link>
-      <pubDate>Wed, 20 Sep 2017 00:00:00 +0800</pubDate>
+      <title>在树莓派上配置AP</title>
+      <link>http://shenheng.xyz/posts/aphot-rpi/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/tags/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/aphot-rpi/</guid>
+      <description>有了一个新的树莓派之后，如果不将它配置成AP热点，你就失去了他的其中的一个优势，如果你的家里面没有无限路由器或者你的家里信号不能遍及，树莓派</description>
     </item>
     
     <item>
-      <title>和我联系</title>
-      <link>http://shenheng.xyz/posts/contact/</link>
-      <pubDate>Wed, 20 Apr 2016 00:00:00 +0800</pubDate>
+      <title>多变量线性回归</title>
+      <link>http://shenheng.xyz/posts/multi-variable-linear-regression/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/contact/</guid>
-      <description>// 百度地图API功能 var map = new BMap.Map(&#34;allmap&#34;); var point = new BMap.Point(117.9431460000, 28.4575310000); var marker = new BMap.Marker(point); // 创建标注 map.addOverlay(marker); // 将标注添加到地图中 map.centerAndZoom(point, 15); var opts = { width : 50, // 信息窗口宽度 height: 50, // 信息窗口高度 } var infoWindow</description>
+      <guid>http://shenheng.xyz/posts/multi-variable-linear-regression/</guid>
+      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多变量线性回归的课堂记录，其实就是将单变量线性回归推广到多变量中去，主要讲解了以下几个内容: 模型的表示 梯</description>
     </item>
     
     <item>
-      <title>站内搜索</title>
-      <link>http://shenheng.xyz/posts/search/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>多项式回归</title>
+      <link>http://shenheng.xyz/posts/polynomial-regression/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/search/</guid>
-      <description></description>
+      <guid>http://shenheng.xyz/posts/polynomial-regression/</guid>
+      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多项式回归的课堂记录，有了合适的特征之后，我们发现线性回归并不适用于所有数据，有时我们需要曲线来适应我</description>
+    </item>
+    
+    <item>
+      <title>朴素贝叶斯算法</title>
+      <link>http://shenheng.xyz/posts/bayesian-learning/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/bayesian-learning/</guid>
+      <description>\noindent 本节主要讲解三个基本算法的之一：朴素贝叶斯算法，该算法主要是依据贝叶斯规则/公式/推理，它的主要作用在于，它和其他将要讲述的$k$近邻算法</description>
+    </item>
+    
+    <item>
+      <title>机器学习简介</title>
+      <link>http://shenheng.xyz/posts/introduction-machine-learning/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/introduction-machine-learning/</guid>
+      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第一周的课堂记录，主要讲解了以下几个内容: 机器学习的定义 机器学习的分类 第一类：监督学习 第二类：学习理论 第三类：</description>
+    </item>
+    
+    <item>
+      <title>过拟合和正则化</title>
+      <link>http://shenheng.xyz/posts/overfitting/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/overfitting/</guid>
+      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第三周:多分类和过拟合技术的课堂记录，过拟合是机器学习优化的部分，主要讲解了以下几个内容: 多类别的分类问题 过/欠</description>
+    </item>
+    
+    <item>
+      <title>逻辑回归</title>
+      <link>http://shenheng.xyz/posts/logistic-regression/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/logistic-regression/</guid>
+      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第三周:逻辑回归的课堂记录，逻辑回归是机器学习分类算法的地一个算法，涵盖信息论的相关内容.主要讲解了以下几个内</description>
+    </item>
+    
+    <item>
+      <title>在树莓派上搭建OpenCV环境</title>
+      <link>http://shenheng.xyz/posts/opencv-rpi/</link>
+      <pubDate>Wed, 20 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/opencv-rpi/</guid>
+      <description>本文主要介绍如何在树莓派上配置和安装OpenCV，本文原文出处1. 扩大文件系统 由于编译安装OpenCV需要的空间很大，所以应该做的第一件事是</description>
+    </item>
+    
+    <item>
+      <title>在树莓派上搭建邮件服务器</title>
+      <link>http://shenheng.xyz/posts/mail-server-rpi/</link>
+      <pubDate>Wed, 20 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/mail-server-rpi/</guid>
+      <description>上篇文章介绍了利用树莓派搭建AP，那么有了AP之后，由于小编是一名在校的学生，将我的树莓派和我宿舍的路由器连接上网之后，我的树莓派就拥有了全</description>
+    </item>
+    
+    <item>
+      <title>Display Image Using R</title>
+      <link>http://shenheng.xyz/posts/2017-12-19-example/</link>
+      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-19-example/</guid>
+      <description>{r fig-margin, echo=FALSE, fig.cap=&amp;quot;这是一个神经网络的图。&amp;quot;, fig.height=3.5, fig.margin=TRUE, warning=FALSE, background=&amp;quot;#f5f5d5&amp;quot;, cache=FALSE} # need png package library(png) #Replace the directory and file information with your info ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima) library(png) par(bg = &amp;quot;#f5f5d5&amp;quot;) ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima)</description>
+    </item>
+    
+    <item>
+      <title>CTeX样式</title>
+      <link>http://shenheng.xyz/posts/ctex-template-for-rstudio/</link>
+      <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/ctex-template-for-rstudio/</guid>
+      <description>引言 中文LaTeX文档并非难题。当然这句话得站在巨人 CTeX 的肩膀上才能说，它让我们只需要一句 \documentclass{ctexart} % 或者ctexrep/ctexbook 或者 \usepackage{ctex} 就轻松</description>
+    </item>
+    
+    <item>
+      <title>Rmarkdown模板</title>
+      <link>http://shenheng.xyz/posts/template-of-rmarkdown/</link>
+      <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/template-of-rmarkdown/</guid>
+      <description>knitr::opts_chunk$set(echo = TRUE) GitHub Documents This is an R Markdown format used for publishing markdown documents to GitHub. When you click the Knit button all R code chunks are run and a markdown file (.md) suitable for publishing to GitHub is generated. Including Code You can include R code in the document as follows: summary(cars) Including Plots You can also embed plots, for example: plot(pressure) Note that the echo =</description>
+    </item>
+    
+    <item>
+      <title>Tufte样式</title>
+      <link>http://shenheng.xyz/posts/tufte-template-for-blog/</link>
+      <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/tufte-template-for-blog/</guid>
+      <description>title: &amp;ldquo;Tufte样式&amp;rdquo; subtitle: &amp;ldquo;一个R Markdown实现&amp;rdquo; author: &amp;ldquo;JJ Allaire，谢益辉&amp;rdquo;</description>
+    </item>
+    
+    <item>
+      <title>利用python从头实现矩阵分解算法</title>
+      <link>http://shenheng.xyz/posts/%E5%88%A9%E7%94%A8python%E4%BB%8E%E5%A4%B4%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/%E5%88%A9%E7%94%A8python%E4%BB%8E%E5%A4%B4%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E7%AE%97%E6%B3%95/</guid>
+      <description>该程序主要是我的《矩阵分析与应用》课程的大作业的解决方案及程序说明。大作业的要求为： 要求完成课堂上讲的关于矩阵分解的LU、QR（Gram-S</description>
+    </item>
+    
+    <item>
+      <title>Welcome to ReadAILib</title>
+      <link>http://shenheng.xyz/posts/welcome-to-readailib/</link>
+      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/welcome-to-readailib/</guid>
+      <description>Hello Everyone, Welcome to ReadAILib. 大家好，本网站主要是由[blogdown]()和[Hugo]()生成的静态网站，为了方便起见，这里傻瓜式地照搬了yihui的模板（</description>
+    </item>
+    
+    <item>
+      <title>为我的博客安装评论插件</title>
+      <link>http://shenheng.xyz/posts/2017-12-14-add-comment-to-your-blog/</link>
+      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-14-add-comment-to-your-blog/</guid>
+      <description>今天尝试了一下不同得评论系统，现在将我设置评论系统的安装方法以及设置步骤总结出来，分享给大家. 1.Disqus disqus是一个支持多社交账号和自家的账号</description>
     </item>
     
   </channel>

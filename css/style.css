@@ -339,6 +339,7 @@ textarea {
 .meta-category a {
     position: relative;
     margin-left: 1.8em;
+    border-bottom: none;
 }
 .meta-category a:before, .meta-category a:after {
     content: '';
@@ -428,7 +429,7 @@ textarea {
     padding-top: 40px;
 }
 .post-content h3,.post-content h2{
-    margin: 1.4em 0 -1.1em;
+    margin: 1.4em 0 1.1em;
 }
 /* .post-content pre, .comment-content pre {
     max-height: 320px;
@@ -452,9 +453,9 @@ textarea {
 }
 .post-content ul {
     overflow: auto;
-    padding: .5em 2.4em;
+    /* padding: .5em 2.4em; */
     border-radius: 3px;
-    margin:1.8em 0;
+    /* margin:1.8em 0; */
 }
 .post-content ul li{
     text-indent: .5em;
@@ -548,6 +549,21 @@ textarea {
     margin-top:-20px;
     color:#777;
 }
+
+ol, ul {
+    padding: 0 0 0 20px;
+}
+
+ol {
+    display: block;
+    list-style-type: decimal;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+
 .comment-list .respond {
     margin:15px 0;
     border-top:1px solid #ddd;
@@ -665,6 +681,7 @@ textarea.textarea {
 .widget .tagcloud a {
     line-height: 1.5;
     padding: 5px; 
+    border-bottom: none;
 }
 #footer {
     padding:.8em 0 3.6em;

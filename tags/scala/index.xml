@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>scala on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/scala/</link>
+    <description>Recent content in scala on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Mon, 08 Jan 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/scala/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Scala CheatSheet</title>
+      <link>http://shenheng.xyz/posts/scala-cheatsheet/</link>
+      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/scala-cheatsheet/</guid>
+      <description>This cheat sheet originated from the forum, credits to Laurent Poulain. We copied it and changed or added a few things. There are certainly a lot of things that can be improved! If you would like to contribute, you have two options:
+ Click the &amp;ldquo;Edit&amp;rdquo; button on this file on GitHub:
+https://github.com/lampepfl/progfun-wiki/blob/gh-pages/CheatSheet.md
+You can submit a pull request directly from there without checking out the git repository to your local machine.</description>
+    </item>
+    
+    <item>
+      <title>Scala Learning Resources</title>
+      <link>http://shenheng.xyz/posts/scala-learning-resources/</link>
+      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/scala-learning-resources/</guid>
+      <description>#Quick References  Scala Standard Library API Scala School!: A Scala tutorial by Twitter A Tour of Scala: Tutorial indroducing the main concepts of Scala Scala Overview on StackOverflow: A list of useful questions sorted by topic  #Week 1  Martin&amp;rsquo;s talk at OSCON 2011: Working Hard to Keep it Simple (slides) Books:
+ Structure and Interpretation of Computer Programs. Harold Abelson and Gerald J. Sussman. 2nd edition. MIT Press 1996.</description>
+    </item>
+    
+    <item>
+      <title>解决sbt更新scala速度慢</title>
+      <link>http://shenheng.xyz/posts/solve-sbt-update-scala-slow/</link>
+      <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/solve-sbt-update-scala-slow/</guid>
+      <description>在国内如果要使用sbt更新scala时，速度是一个硬伤，因为国内访问maven库的速度确实很慢，因此在这里给出相应的解决方案。 编辑sbtco</description>
+    </item>
+    
+  </channel>
+</rss>

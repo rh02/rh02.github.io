@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Decision Tree on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/decision-tree/</link>
+    <description>Recent content in Decision Tree on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Sat, 30 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/decision-tree/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>R实战-决策树</title>
+      <link>http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/</link>
+      <pubDate>Sat, 30 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/</guid>
+      <description>本篇内容，会继续介绍一些常用的数据挖掘模型： 这里拿网络上一个公开数据(铁达尼号的乘客数据)来进行分析，资料载点如下。 决策树(Decision</description>
+    </item>
+    
+  </channel>
+</rss>

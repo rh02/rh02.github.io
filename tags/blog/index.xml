@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>blog on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/blog/</link>
+    <description>Recent content in blog on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Sat, 23 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>隐马尔可夫模型</title>
+      <link>http://shenheng.xyz/posts/hmm/</link>
+      <pubDate>Sat, 23 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/hmm/</guid>
+      <description>很早就想写一篇关于隐马尔可夫模型的文章了，这次刻意的将模型及其有关算法复习了一下，才有了这个信心去写了这篇文章.这篇文章主要参考了李航老师的</description>
+    </item>
+    
+    <item>
+      <title>在树莓派上配置AP</title>
+      <link>http://shenheng.xyz/posts/aphot-rpi/</link>
+      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/aphot-rpi/</guid>
+      <description>有了一个新的树莓派之后，如果不将它配置成AP热点，你就失去了他的其中的一个优势，如果你的家里面没有无限路由器或者你的家里信号不能遍及，树莓派</description>
+    </item>
+    
+    <item>
+      <title>Display Image Using R</title>
+      <link>http://shenheng.xyz/posts/2017-12-19-example/</link>
+      <pubDate>Tue, 19 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-19-example/</guid>
+      <description>{r fig-margin, echo=FALSE, fig.cap=&amp;quot;这是一个神经网络的图。&amp;quot;, fig.height=3.5, fig.margin=TRUE, warning=FALSE, background=&amp;quot;#f5f5d5&amp;quot;, cache=FALSE} # need png package library(png) #Replace the directory and file information with your info ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima) library(png) par(bg = &amp;quot;#f5f5d5&amp;quot;) ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima)</description>
+    </item>
+    
+    <item>
+      <title>Welcome to ReadAILib</title>
+      <link>http://shenheng.xyz/posts/welcome-to-readailib/</link>
+      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/welcome-to-readailib/</guid>
+      <description>Hello Everyone, Welcome to ReadAILib. 大家好，本网站主要是由[blogdown]()和[Hugo]()生成的静态网站，为了方便起见，这里傻瓜式地照搬了yihui的模板（</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -3,202 +3,17 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>http://shenheng.xyz/home/hero_carousel/</loc>
-    <lastmod>2017-10-15T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/hero_carousel/</loc>
-    <lastmod>2017-10-15T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/hero/</loc>
-    <lastmod>2017-10-15T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/hero/</loc>
-    <lastmod>2017-10-15T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/about/</loc>
     <lastmod>2018-11-21T00:00:00+08:00</lastmod>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/home/about/</loc>
-    <lastmod>2018-11-21T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/about/</loc>
-    <lastmod>2018-11-21T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/skills/</loc>
-    <lastmod>2017-09-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/skills/</loc>
-    <lastmod>2017-09-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/experience/</loc>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/experience/</loc>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/publications_selected/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/publications_selected/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/publications/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/publications/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/talks_selected/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/talks_selected/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/talks/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/talks/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/posts/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/posts/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/projects/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/projects/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/books/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/teaching/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/teaching/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/tags/</loc>
-    <lastmod>2017-09-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/tags/</loc>
-    <lastmod>2017-09-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/contact/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/contact/</loc>
-    <lastmod>2016-04-20T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/learning/example/</loc>
-    <lastmod>2018-09-09T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/learning/</loc>
-    <lastmod>2018-09-09T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/project/internal-project/</loc>
-    <lastmod>2017-04-27T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/publication/</loc>
-    <lastmod>2017-01-01T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/project/external-project/</loc>
-    <lastmod>2016-04-27T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/publication/person-re-id/</loc>
-    <lastmod>2015-09-01T00:00:00+08:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/publication/clothing-search/</loc>
-    <lastmod>2013-07-01T00:00:00+08:00</lastmod>
+    <lastmod>2018-11-21T00:00:00+08:00</lastmod>
   </url>
   
   <url>
     <loc>http://shenheng.xyz/archives/</loc>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/publication_types/1/</loc>
-    <lastmod>2013-07-01T00:00:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/publication_types/2/</loc>
-    <lastmod>2015-09-01T00:00:00+08:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -207,59 +22,19 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/deep-learning/</loc>
-    <lastmod>2017-04-27T00:00:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/tags/demo/</loc>
-    <lastmod>2016-04-27T00:00:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/</loc>
-    <lastmod>2017-10-15T00:00:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/</loc>
-    <lastmod>2017-10-15T00:00:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/</loc>
-    <lastmod>2017-10-15T00:00:00+08:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/project/</loc>
-    <lastmod>2017-04-27T00:00:00+08:00</lastmod>
+    <lastmod>2018-11-21T00:00:00+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://shenheng.xyz/publication_types/</loc>
-    <lastmod>2013-07-01T00:00:00+08:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://shenheng.xyz/tags/</loc>
-    <lastmod>2017-04-27T00:00:00+08:00</lastmod>
     <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/home/search/</loc>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/search/</loc>
   </url>
   
 </urlset>

@@ -118,7 +118,7 @@
 
 <h2 id="introduction-to-mapreduce">Introduction to MapReduce</h2>
 
-<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-4/89745544.jpg" alt="Figure1: Introduction to MapReduce" /></p>
+<!-- ![Figure1: Introduction to MapReduce](http://olrs8j04a.bkt.clouddn.com/18-1-4/89745544.jpg) -->
 
 <p><strong>Lecture Summary:</strong> In this lecture, we learned the MapReduce paradigm, which is a pattern of parallel functional programming that has been very successful in enabling &ldquo;big data&rdquo; computations.
 The input to a MapReduce style computation is a set of key-value pairs. The keys are similar to keys used in hash tables, and the functional programming approach requires that both the keys and values be immutable. When a user-specified map function, f, is applied on a key-value pair, $(kA,vA)$, it results in a (possibly empty) set of output key-value pairs, ${(kA1,vA1), (kA2,vA2),&hellip;.}$ This map function can be applied in parallel on all key-value pairs in the input set, to obtain a set of intermediate key-value pairs that is the union of all the outputs.</p>
@@ -130,7 +130,7 @@ Finally, when a user-specified reduce function, g, is applied on two or more gro
 
 <h2 id="apache-hadoop-project">Apache Hadoop Project</h2>
 
-<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-4/97256737.jpg" alt="Figure2: Apache Hadoop Project" /></p>
+<!-- ![Figure2: Apache Hadoop Project](http://olrs8j04a.bkt.clouddn.com/18-1-4/97256737.jpg) -->
 
 <p><strong>Lecture Summary:</strong> The Apache Hadoop project is a popular open-source implementation of the Map-Reduce paradigm for distributed computing. A distributed computer can be viewed as a large set of multicore computers connected by a network, such that each computer has multiple processor cores, e.g., $P0, P1, P2, P3, &hellip; .$ Each individual computer also has some persistent storage (e.g., hard disk, flash memory), thereby making it possible to store and operate on large volumes of data when aggregating the storage available across all the computers in a data center. The main motivation for the Hadoop project is to make it easy to write large-scale parallel programs that operate on this “big data”.</p>
 
@@ -140,7 +140,7 @@ Finally, when a user-specified reduce function, g, is applied on two or more gro
 
 <h2 id="apache-spark-framework">Apache Spark Framework</h2>
 
-<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-4/2963434.jpg" alt="Figure3: Apache Spark Framework" /></p>
+<!-- ![Figure3: Apache Spark Framework](http://olrs8j04a.bkt.clouddn.com/18-1-4/2963434.jpg) -->
 
 <p><strong>Lecture Summary:</strong> Apache Spark is a similar, but more general, programming model than Hadoop MapReduce. Like Hadoop, Spark also works on distributed systems, but a key difference in Spark is that it makes better use of in-memory computing within distributed nodes compared to Hadoop MapReduce. This difference can have a significant impact on the performance of iterative MapReduce algorithms since the use of memory obviates the need to write intermediate results to external storage after each map/reduce step. However, this also implies that the size of data that can be processed in this manner is limited by the total size of memory across all nodes, which is usually much smaller than the size of external storage. (Spark can spill excess data to external storage if needed, but doing so reduces the performance advantage over Hadoop.)</p>
 
@@ -150,11 +150,12 @@ Finally, when a user-specified reduce function, g, is applied on two or more gro
 
 <h2 id="tf-idf-example">TF-IDF Example</h2>
 
-<p><img src="http://olrs8j04a.bkt.clouddn.com/18-1-4/89669571.jpg" alt="Figure4: TF-IDF" /></p>
+<!-- ![Figure4: TF-IDF](http://olrs8j04a.bkt.clouddn.com/18-1-4/89669571.jpg) -->
 
 <p><strong>Lecture Summary:</strong> In this lecture, we discussed an important statistic used in information retrieval and document mining, called Term Frequency – Inverse Document Frequency (TF-IDF). The motivation for computing TF-IDF statistics is to efficiently identify documents that are most similar to each other within a large corpus.</p>
 
-<p>Assume that we have a set of $N$ documents $D1,D2,…,DN$, and a set of terms $TERM1,TERM2,…$ that can appear in these documents. We can then compute total frequencies TFi,j for each term TERMi in each document Dj . We can also compute the document frequencies $DF1,DF2,&hellip;$ for each term, indicating how many documents contain that particular term, and the inverse document frequencies (IDF):$IDF_i=N/DF<em>i$. The motivation for computing inverse document frequencies is to determine which terms are common and which ones are rare, and give higher weights to the rarer terms when searching for similar documents. The weights are computed as:$Weight(TERM</em>{a_i},D<em>j)=TF</em>{i,j} + x log(N/DF_i)$.</p>
+<p>Assume that we have a set of $N$ documents $D1,D2,…,DN$, and a set of terms $TERM1,TERM2,…$ that can appear in these documents. We can then compute total frequencies TFi,j for each term TERMi in each document Dj . We can also compute the document frequencies $DF1,DF2,&hellip;$ for each term, indicating how many documents contain that particular term, and the inverse document frequencies (IDF): $IDF<em>{i}=N/DF</em>{i}$ . The motivation for computing inverse document frequencies is to determine which terms are common and which ones are rare, and give higher weights to the rarer terms when searching for similar documents. The weights are computed as:
+$Weight(TERM_{a_i},D<em>j)=TF</em>{i,j} + x log(N/DF_i)$.</p>
 
 <p>Using MapReduce, we can compute the $TF_{i,j}$ values by using a MAP operation to find all the occurrences of TERMi in document Dj, followed by a REDUCE operation to add up all the occurrences of TERMi as key-value pairs of the form, $((D_j,TERM<em>i),TF</em>{i,j})$ (as in the Word Count example studied earlier). These key-value pairs can also be used to compute DFi values by using a MAP operation to identify all the documents that contain TERMi and a REDUCE operation to count the number of documents that TERMi appears in. The final weights can then be easily computed from the $TF_{i,j}$ and $DF_i$ values. Since the $TF−IDF$ computation uses a fixed (not iterative) number of MAP and REDUCE operations, it is a good candidat_e for both Hadoop and Spark frameworks.</p>
 
@@ -223,13 +224,13 @@ where $SRC(B)$ is the set of pages that contain a link to B, while $DEST_COUNT(A
         
         <li><a href="/posts/distributed-programming-in-java-week2-notes/">分布式编程第二周课堂笔记</a></li>
         
-        <li><a href="/posts/r-kmeans/">R实战-Kmeans</a></li>
-        
         <li><a href="/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/">R实战-决策树</a></li>
+        
+        <li><a href="/posts/r-kmeans/">R实战-Kmeans</a></li>
         
         <li><a href="/posts/hmm/">隐马尔可夫模型</a></li>
         
-        <li><a href="/posts/logistic-regression/">逻辑回归</a></li>
+        <li><a href="/posts/multi-variable-linear-regression/">多变量线性回归</a></li>
         
     </ul>
 </div>

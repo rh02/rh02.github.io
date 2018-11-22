@@ -62,7 +62,7 @@
       <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/bayesian-learning/</guid>
-      <description>\noindent 本节主要讲解三个基本算法的之一：朴素贝叶斯算法，该算法主要是依据贝叶斯规则/公式/推理，它的主要作用在于，它和其他将要讲述的$k$近邻算法</description>
+      <description>本节主要讲解三个基本算法的之一：朴素贝叶斯算法，该算法主要是依据贝叶斯规则/公式/推理，它的主要作用在于，它和其他将要讲述的$k$近邻算法，</description>
     </item>
     
     <item>

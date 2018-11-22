@@ -38,14 +38,5 @@
       <description>{r fig-margin, echo=FALSE, fig.cap=&amp;quot;这是一个神经网络的图。&amp;quot;, fig.height=3.5, fig.margin=TRUE, warning=FALSE, background=&amp;quot;#f5f5d5&amp;quot;, cache=FALSE} # need png package library(png) #Replace the directory and file information with your info ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima) library(png) par(bg = &amp;quot;#f5f5d5&amp;quot;) ima &amp;lt;- readPNG(&amp;quot;C:\\Users\\Shine\\Desktop\\readailib\\themes\\hugo-lithium-theme\\static\\images\\logo.png&amp;quot;) grid::grid.raster(ima)</description>
     </item>
     
-    <item>
-      <title>Welcome to ReadAILib</title>
-      <link>http://shenheng.xyz/posts/welcome-to-readailib/</link>
-      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/welcome-to-readailib/</guid>
-      <description>Hello Everyone, Welcome to ReadAILib. 大家好，本网站主要是由[blogdown]()和[Hugo]()生成的静态网站，为了方便起见，这里傻瓜式地照搬了yihui的模板（</description>
-    </item>
-    
   </channel>
 </rss>

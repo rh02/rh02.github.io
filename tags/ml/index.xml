@@ -48,21 +48,12 @@
     </item>
     
     <item>
-      <title>多变量线性回归</title>
-      <link>http://shenheng.xyz/posts/multi-variable-linear-regression/</link>
-      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/multi-variable-linear-regression/</guid>
-      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多变量线性回归的课堂记录，其实就是将单变量线性回归推广到多变量中去，主要讲解了以下几个内容: 模型的表示 梯</description>
-    </item>
-    
-    <item>
       <title>多项式回归</title>
       <link>http://shenheng.xyz/posts/polynomial-regression/</link>
       <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/polynomial-regression/</guid>
-      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多项式回归的课堂记录，有了合适的特征之后，我们发现线性回归并不适用于所有数据，有时我们需要曲线来适应我</description>
+      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多项式回归的课堂记录，有了合适的特征之后，我们发现线性回归并不适用于所有数据，有时我们需要曲线来适应我们</description>
     </item>
     
     <item>
@@ -80,7 +71,7 @@
       <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/introduction-machine-learning/</guid>
-      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第一周的课堂记录，主要讲解了以下几个内容: 机器学习的定义 机器学习的分类 第一类：监督学习 第二类：学习理论 第三类：</description>
+      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第一周的课堂记录，主要讲解了以下几个内容: 机器学习的定义 机器学习的分类 第一类：监督学习 第二类：学习理论 第三类：非</description>
     </item>
     
     <item>
@@ -90,15 +81,6 @@
       
       <guid>http://shenheng.xyz/posts/overfitting/</guid>
       <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第三周:多分类和过拟合技术的课堂记录，过拟合是机器学习优化的部分，主要讲解了以下几个内容: 多类别的分类问题 过/欠</description>
-    </item>
-    
-    <item>
-      <title>逻辑回归</title>
-      <link>http://shenheng.xyz/posts/logistic-regression/</link>
-      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/logistic-regression/</guid>
-      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第三周:逻辑回归的课堂记录，逻辑回归是机器学习分类算法的地一个算法，涵盖信息论的相关内容.主要讲解了以下几个内</description>
     </item>
     
   </channel>

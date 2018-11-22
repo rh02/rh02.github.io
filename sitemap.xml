@@ -33,23 +33,8 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/</loc>
-    <lastmod>2018-01-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/posts/solve-sbt-update-scala-slow/</loc>
     <lastmod>2018-01-05T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/</loc>
-    <lastmod>2018-01-04T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/</loc>
-    <lastmod>2018-01-04T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -78,11 +63,6 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/posts/multi-variable-linear-regression/</loc>
-    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/posts/polynomial-regression/</loc>
     <lastmod>2017-12-21T00:00:00+00:00</lastmod>
   </url>
@@ -99,11 +79,6 @@
   
   <url>
     <loc>http://shenheng.xyz/posts/overfitting/</loc>
-    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/logistic-regression/</loc>
     <lastmod>2017-12-21T00:00:00+00:00</lastmod>
   </url>
   
@@ -140,11 +115,6 @@
   <url>
     <loc>http://shenheng.xyz/posts/%E5%88%A9%E7%94%A8python%E4%BB%8E%E5%A4%B4%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E7%AE%97%E6%B3%95/</loc>
     <lastmod>2017-12-15T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/welcome-to-readailib/</loc>
-    <lastmod>2017-12-14T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -199,18 +169,6 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/pcdp/</loc>
-    <lastmod>2018-01-05T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/tags/pcdp/</loc>
-    <lastmod>2018-01-05T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/posts/</loc>
     <lastmod>2018-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -258,18 +216,6 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/dpcp/</loc>
-    <lastmod>2018-01-05T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/tags/dpcp/</loc>
-    <lastmod>2018-01-04T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/tags/gitalk/</loc>
     <lastmod>2017-12-19T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -290,12 +236,6 @@
   <url>
     <loc>http://shenheng.xyz/tags/hmm/</loc>
     <lastmod>2017-12-23T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/categories/java/</loc>
-    <lastmod>2018-01-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -422,18 +362,6 @@
   <url>
     <loc>http://shenheng.xyz/categories/template/</loc>
     <lastmod>2017-12-15T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/categories/welcome/</loc>
-    <lastmod>2017-12-14T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/</loc>
-    <lastmod>2018-01-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

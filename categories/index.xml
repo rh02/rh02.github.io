@@ -39,15 +39,6 @@
     </item>
     
     <item>
-      <title>PCDP</title>
-      <link>http://shenheng.xyz/categories/pcdp/</link>
-      <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/categories/pcdp/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>blog</title>
       <link>http://shenheng.xyz/categories/blog/</link>
       <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
@@ -66,29 +57,11 @@
     </item>
     
     <item>
-      <title>dpcp</title>
-      <link>http://shenheng.xyz/categories/dpcp/</link>
-      <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/categories/dpcp/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>hmm</title>
       <link>http://shenheng.xyz/categories/hmm/</link>
       <pubDate>Sat, 23 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/categories/hmm/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>java</title>
-      <link>http://shenheng.xyz/categories/java/</link>
-      <pubDate>Thu, 04 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/categories/java/</guid>
       <description></description>
     </item>
     
@@ -188,24 +161,6 @@
       <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/categories/template/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>welcome</title>
-      <link>http://shenheng.xyz/categories/welcome/</link>
-      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/categories/welcome/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>分布式编程</title>
-      <link>http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/</link>
-      <pubDate>Thu, 04 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%96%E7%A8%8B/</guid>
       <description></description>
     </item>
     

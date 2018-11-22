@@ -54,39 +54,12 @@ Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstance
     </item>
     
     <item>
-      <title>分布式编程第三周课堂笔记</title>
-      <link>http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/</link>
-      <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/distributed-programming-in-java-week3-notes/</guid>
-      <description>本笔记来自课堂记录和课程网站的总结，转载请注明出处! Single Program Multiple Data (SPMD) Model Lecture Summary: In this lecture, we studied the Single Program Multiple Data (SPMD) model, which can enable the use of a cluster of distributed nodes as a single parallel computer. Each node in such a cluster typically consist</description>
-    </item>
-    
-    <item>
       <title>解决sbt更新scala速度慢</title>
       <link>http://shenheng.xyz/posts/solve-sbt-update-scala-slow/</link>
       <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/solve-sbt-update-scala-slow/</guid>
       <description>在国内如果要使用sbt更新scala时，速度是一个硬伤，因为国内访问maven库的速度确实很慢，因此在这里给出相应的解决方案。 编辑sbtco</description>
-    </item>
-    
-    <item>
-      <title>分布式编程第一周课堂笔记</title>
-      <link>http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/</link>
-      <pubDate>Thu, 04 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/distributed-programming-in-java-week1-notes/</guid>
-      <description>本笔记来自课堂记录和课程网站的总结，转载请注明出处! Introduction to MapReduce Lecture Summary: In this lecture, we learned the MapReduce paradigm, which is a pattern of parallel functional programming that has been very successful in enabling &amp;ldquo;big data&amp;rdquo; computations. The input to a MapReduce style computation is a set of key-value pairs.</description>
-    </item>
-    
-    <item>
-      <title>分布式编程第二周课堂笔记</title>
-      <link>http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/</link>
-      <pubDate>Thu, 04 Jan 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/distributed-programming-in-java-week2-notes/</guid>
-      <description>本笔记来自课堂记录和课程网站的总结，转载请注明出处! Introduction to Sockets Lecture Summary: In this lecture, we learned about client-server programming, and how two distributed Java applications can communicate with each other using sockets. Since each application in this scenario runs on a distinct Java Virtual Machine (JVM) process, we used the</description>
     </item>
     
     <item>
@@ -135,21 +108,12 @@ Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstance
     </item>
     
     <item>
-      <title>多变量线性回归</title>
-      <link>http://shenheng.xyz/posts/multi-variable-linear-regression/</link>
-      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/multi-variable-linear-regression/</guid>
-      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多变量线性回归的课堂记录，其实就是将单变量线性回归推广到多变量中去，主要讲解了以下几个内容: 模型的表示 梯</description>
-    </item>
-    
-    <item>
       <title>多项式回归</title>
       <link>http://shenheng.xyz/posts/polynomial-regression/</link>
       <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/polynomial-regression/</guid>
-      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多项式回归的课堂记录，有了合适的特征之后，我们发现线性回归并不适用于所有数据，有时我们需要曲线来适应我</description>
+      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第二周:多项式回归的课堂记录，有了合适的特征之后，我们发现线性回归并不适用于所有数据，有时我们需要曲线来适应我们</description>
     </item>
     
     <item>
@@ -167,7 +131,7 @@ Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstance
       <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/introduction-machine-learning/</guid>
-      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第一周的课堂记录，主要讲解了以下几个内容: 机器学习的定义 机器学习的分类 第一类：监督学习 第二类：学习理论 第三类：</description>
+      <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第一周的课堂记录，主要讲解了以下几个内容: 机器学习的定义 机器学习的分类 第一类：监督学习 第二类：学习理论 第三类：非</description>
     </item>
     
     <item>
@@ -177,15 +141,6 @@ Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstance
       
       <guid>http://shenheng.xyz/posts/overfitting/</guid>
       <description>该笔记是来自 Andrew Ng 的 Machine Learning 课程的第三周:多分类和过拟合技术的课堂记录，过拟合是机器学习优化的部分，主要讲解了以下几个内容: 多类别的分类问题 过/欠</description>
-    </item>
-    
-    <item>
-      <title>逻辑回归</title>
-      <link>http://shenheng.xyz/posts/logistic-regression/</link>
-      <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/logistic-regression/</guid>
-      <description>\noindent 该笔记是来自 Andrew Ng 的 Machine Learning 课程的第三周:逻辑回归的课堂记录，逻辑回归是机器学习分类算法的地一个算法，涵盖信息论的相关内容.主要讲解了以下几个内</description>
     </item>
     
     <item>
@@ -239,7 +194,7 @@ Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstance
       <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/tufte-template-for-blog/</guid>
-      <description>title: &amp;ldquo;Tufte样式&amp;rdquo; subtitle: &amp;ldquo;一个R Markdown实现&amp;rdquo; author: &amp;ldquo;JJ Allaire，谢益辉&amp;rdquo;</description>
+      <description>library(tufte) # tufte版本变化之后更新knitr缓存 knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion(&#39;tufte&#39;)) options(htmltools.dir.version = FALSE) 引言 Tufte样式在Edward Tufte的书以及物理学家费曼的教科书很常见，</description>
     </item>
     
     <item>
@@ -249,15 +204,6 @@ Common Issues #1 Avoid Casts and Type Tests Never use isInstanceOf or asInstance
       
       <guid>http://shenheng.xyz/posts/%E5%88%A9%E7%94%A8python%E4%BB%8E%E5%A4%B4%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E7%AE%97%E6%B3%95/</guid>
       <description>该程序主要是我的《矩阵分析与应用》课程的大作业的解决方案及程序说明。大作业的要求为： 要求完成课堂上讲的关于矩阵分解的LU、QR（Gram-S</description>
-    </item>
-    
-    <item>
-      <title>Welcome to ReadAILib</title>
-      <link>http://shenheng.xyz/posts/welcome-to-readailib/</link>
-      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/welcome-to-readailib/</guid>
-      <description>Hello Everyone, Welcome to ReadAILib. 大家好，本网站主要是由[blogdown]()和[Hugo]()生成的静态网站，为了方便起见，这里傻瓜式地照搬了yihui的模板（</description>
     </item>
     
     <item>

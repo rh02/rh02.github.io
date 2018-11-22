@@ -44,7 +44,7 @@
       <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/tufte-template-for-blog/</guid>
-      <description>title: &amp;ldquo;Tufte样式&amp;rdquo; subtitle: &amp;ldquo;一个R Markdown实现&amp;rdquo; author: &amp;ldquo;JJ Allaire，谢益辉&amp;rdquo;</description>
+      <description>library(tufte) # tufte版本变化之后更新knitr缓存 knitr::opts_chunk$set(tidy = FALSE, cache.extra = packageVersion(&#39;tufte&#39;)) options(htmltools.dir.version = FALSE) 引言 Tufte样式在Edward Tufte的书以及物理学家费曼的教科书很常见，</description>
     </item>
     
   </channel>

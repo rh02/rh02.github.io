@@ -38,22 +38,12 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/posts/bayesian-learning/</loc>
-    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/posts/introduction-machine-learning/</loc>
     <lastmod>2017-12-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>http://shenheng.xyz/posts/opencv-rpi/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/posts/mail-server-rpi/</loc>
     <lastmod>2017-12-20T00:00:00+00:00</lastmod>
   </url>
   
@@ -167,18 +157,6 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/mail-server/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/tags/mailserver/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/categories/math/</loc>
     <lastmod>2017-12-15T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -223,18 +201,6 @@
   <url>
     <loc>http://shenheng.xyz/categories/pi/</loc>
     <lastmod>2017-12-21T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/tags/rpi/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>http://shenheng.xyz/categories/rpi/</loc>
-    <lastmod>2017-12-20T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

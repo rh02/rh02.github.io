@@ -113,12 +113,9 @@
                             <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
                             <nav id="TableOfContents">
 <ul>
-<li>
-<ul>
 <li><a href="#安装并导入必要的程式套件">安装并导入必要的程式套件</a></li>
 <li><a href="#导入数据">导入数据</a></li>
 <li><a href="#数据建模部分">数据建模部分</a></li>
-</ul></li>
 </ul>
 </nav>
                         </aside>
@@ -127,7 +124,7 @@
 
 <p>本次主要讲解Kmeans实做部分，假设读者有Kmeans算法的背景下，下面是R程序，本程序对iris数据进行建模。</p>
 
-<h2 id="安装并导入必要的程式套件">安装并导入必要的程式套件</h2>
+<h1 id="安装并导入必要的程式套件">安装并导入必要的程式套件</h1>
 
 <p>主要用到了MASS，cluster，clusterSim等套件，其中clusterSim主要作为选取合适的k值得算法。</p>
 
@@ -139,14 +136,14 @@ library(cluster)
 library(clusterSim)
 </code></pre>
 
-<h2 id="导入数据">导入数据</h2>
+<h1 id="导入数据">导入数据</h1>
 
 <p>导入经典的iris数据集，数据集已经是tidy的了。</p>
 
 <pre><code class="language-r,">data(iris)
 </code></pre>
 
-<h2 id="数据建模部分">数据建模部分</h2>
+<h1 id="数据建模部分">数据建模部分</h1>
 
 <p><strong>注意：</strong> 现在数据的整理和探索部分就省略掉了，假定读者对iris数据集非常熟悉了，因此直接进入数据建模部分。</p>
 

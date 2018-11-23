@@ -113,28 +113,10 @@
                         
                         <aside id="toc" class="dismissed">
                             <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
-                            <nav id="TableOfContents">
-<ul>
-<li>
-<ul>
-<li><a href="#程序说明">程序说明</a>
-<ul>
-<li><a href="#utils-py">utils.py</a></li>
-<li><a href="#factorization-py">factorization.py</a></li>
-</ul></li>
-<li><a href="#测试部分">测试部分</a>
-<ul>
-<li><a href="#plu-decomposition">PLU_decomposition</a></li>
-<li><a href="#gram-schimidt">Gram_Schimidt</a></li>
-</ul></li>
-</ul></li>
-</ul>
-</nav>
+                            
                         </aside>
                         <div class="post-content">
-                            
-
-<p>该程序主要是我的《矩阵分析与应用》课程的大作业的解决方案及程序说明。大作业的要求为：</p>
+                            <p>该程序主要是我的《矩阵分析与应用》课程的大作业的解决方案及程序说明。大作业的要求为：</p>
 
 <blockquote>
 <p>要求完成课堂上讲的关于矩阵分解的<strong>LU</strong>、<strong>QR（Gram-Schmidt）</strong>、<strong>Orthogonal Reduction (Householder reduction 和Givens reduction)</strong>程序实现，要求如下：</p>
@@ -146,15 +128,11 @@
 </ul>
 </blockquote>
 
-<h2 id="程序说明">程序说明</h2>
-
 <p>项目的地址为<a href="https://github.com/rh01/matrix-decomposition">https://github.com/rh01/matrix-decomposition</a></p>
 
 <pre><code class="language-text">- factorization.py
 - utils.py
 </code></pre>
-
-<h3 id="utils-py">utils.py</h3>
 
 <p>共有两个源文件组成，其中utils文件主要是一些实现好的工具函数，有</p>
 
@@ -176,8 +154,6 @@ def Q_i(Q_min, i, j, k):
 </code></pre>
 
 <p>由于实现的为矩阵运算，并且未使用到高级的矩阵运算工具软件<strong>numpy</strong>，因此程序里面的数据结构为python的基本数据结构<code>list</code>，所以说整个工程相对来说计算比较复杂。所以我们提前写好了简化计算的函数工具.</p>
-
-<h3 id="factorization-py">factorization.py</h3>
 
 <p>这个是主函数实现部分，基本上所有的算法都在这个文件中实现，将函数的结构列在下面:</p>
 
@@ -203,9 +179,7 @@ def Givens_reduction(A,verbose=False):
 
 </code></pre>
 
-<h2 id="测试部分">测试部分</h2>
-
-<h3 id="plu-decomposition">PLU_decomposition</h3>
+<p>以下是测试部分.</p>
 
 <pre><code class="language-python">the A matrix is:
 [[12, -51, 4], [6, 167, -68], [-4, 24, -41]]
@@ -221,8 +195,6 @@ The U matrix is
 [[12.0, -51.0, 4.0], [0.0, 192.5, -70.0], [0.0, 0.0, -37.121212121212125]]
 
 </code></pre>
-
-<h3 id="gram-schimidt">Gram_Schimidt</h3>
 
 <pre><code class="language-python">the A matrix is:
 [[12, -51, 4], [6, 167, -68], [-4, 24, -41]]

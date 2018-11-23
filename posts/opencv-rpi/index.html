@@ -113,18 +113,15 @@
                             <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
                             <nav id="TableOfContents">
 <ul>
-<li>
-<ul>
 <li><a href="#扩大文件系统">扩大文件系统</a></li>
 <li><a href="#安装依赖">安装依赖</a></li>
 <li><a href="#下载opencv源代码">下载OpenCV源代码</a></li>
-<li><a href="#python2-7还是python3-5">Python2.7还是Python3.5</a>
+<li><a href="#选择python版本">选择Python版本</a>
 <ul>
 <li><a href="#pip包管理器">pip包管理器</a></li>
 </ul></li>
 <li><a href="#安装numpy">安装Numpy</a></li>
 <li><a href="#编译安装opencv">编译安装OpenCV</a></li>
-</ul></li>
 </ul>
 </nav>
                         </aside>
@@ -133,7 +130,7 @@
 
 <p>本文主要介绍如何在树莓派上配置和安装OpenCV，本文原文出处<sup class="footnote-ref" id="fnref:www-pyimagesearc"><a href="#fn:www-pyimagesearc">1</a></sup>.</p>
 
-<h2 id="扩大文件系统">扩大文件系统</h2>
+<h1 id="扩大文件系统">扩大文件系统</h1>
 
 <p>由于编译安装OpenCV需要的空间很大，所以应该做的第一件事是扩展文件系统，以包括micro-SD卡上的所有可用空间：</p>
 
@@ -144,7 +141,7 @@
 
 <!-- <div align="center"><img src="http://olrs8j04a.bkt.clouddn.com/17-12-10/85376892.jpg"> <center class="cap"><caption>图4-1 扩展文件系统</caption></center></div>  -->
 
-<h2 id="安装依赖">安装依赖</h2>
+<h1 id="安装依赖">安装依赖</h1>
 
 <pre><code class="language-bash">sudo apt-get install build-essential cmake pkg-config -y
 sudo apt-get install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev -y
@@ -156,7 +153,7 @@ sudo apt-get install libatlas-base-dev gfortran -y
 sudo apt-get install python2.7-dev python3-dev -y
 </code></pre>
 
-<h2 id="下载opencv源代码">下载OpenCV源代码</h2>
+<h1 id="下载opencv源代码">下载OpenCV源代码</h1>
 
 <pre><code class="language-bash">cd ~
 wget -O opencv.zip https://github.com/Itseez/opencv/archive/3.1.0.zip
@@ -169,9 +166,9 @@ unzip opencv.zip
 unzip opencv_contrib.zip
 </code></pre>
 
-<h2 id="python2-7还是python3-5">Python2.7还是Python3.5</h2>
+<h1 id="选择python版本">选择Python版本</h1>
 
-<h3 id="pip包管理器">pip包管理器</h3>
+<h2 id="pip包管理器">pip包管理器</h2>
 
 <pre><code class="language-bash">wget https://bootstrap.pypa.io/get-pip.py
 sudo python get-pip.py
@@ -190,14 +187,14 @@ echo &quot;source /usr/local/bin/virtualenvwrapper.sh&quot; &gt;&gt; ~/.profile
 source ~/.profile
 </code></pre>
 
-<h2 id="安装numpy">安装Numpy</h2>
+<h1 id="安装numpy">安装Numpy</h1>
 
 <pre><code class="language-bash">pip install numpy
 </code></pre>
 
 <p>如果正在为Python 2.7编译OpenCV 3，请确保Python 2部分包含Interpreter ，Libraries ，numpy和packages path ：</p>
 
-<h2 id="编译安装opencv">编译安装OpenCV</h2>
+<h1 id="编译安装opencv">编译安装OpenCV</h1>
 
 <pre><code class="language-bash">cd ~/opencv-3.1.0/
 mkdir build

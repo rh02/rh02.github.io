@@ -431,7 +431,9 @@ textarea {
 .post-content h1, .post-content h3,.post-content h2{
     margin: 1.4em 0 1.1em;
 }
-
+/* post-content-titile h1 {
+    font-size: 1.4em;
+} */
 .post-content h1 {
     font-size: 1.6em;
 }

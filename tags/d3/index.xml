@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>d3 on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/d3/</link>
+    <description>Recent content in d3 on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Fri, 23 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/d3/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>D3 Demo</title>
+      <link>http://shenheng.xyz/posts/2018-11-23-d3-demo/</link>
+      <pubDate>Fri, 23 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-23-d3-demo/</guid>
+      <description>World Cup circle { fill: orange; stroke: black; stroke-width: 0.35; opacity: 0.7; } div.years_buttons { position: fixed; top: 5px; left: 50px; } div.years_buttons div { background-color: rgb(251, 201, 127); padding: 3px; margin: 7px; } function draw(geo_data) { &#34;use strict&#34;; var margin = 37, width = 700 - margin, height = 300 - margin; var svg = d3.select(&#34;.post-content&#34;) .append(&#34;svg&#34;) .attr(&#34;width&#34;, width + margin) .attr(&#34;height&#34;, height + margin) .append(&#39;g&#39;) .attr(&#39;class&#39;, &#39;map&#39;); var</description>
+    </item>
+    
+  </channel>
+</rss>

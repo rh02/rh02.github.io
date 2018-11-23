@@ -57,6 +57,15 @@
     </item>
     
     <item>
+      <title>d3</title>
+      <link>http://shenheng.xyz/categories/d3/</link>
+      <pubDate>Fri, 23 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/categories/d3/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>math</title>
       <link>http://shenheng.xyz/categories/math/</link>
       <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
@@ -116,6 +125,15 @@
       <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/categories/scala/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>可视化</title>
+      <link>http://shenheng.xyz/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/</link>
+      <pubDate>Fri, 23 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/</guid>
       <description></description>
     </item>
     

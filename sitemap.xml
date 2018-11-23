@@ -131,14 +131,14 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/blog/</loc>
-    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/categories/blog/</loc>
+    <lastmod>2018-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/blog/</loc>
-    <lastmod>2018-03-04T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/tags/blog/</loc>
+    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -149,13 +149,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/d3/</loc>
+    <loc>http://shenheng.xyz/categories/d3/</loc>
     <lastmod>2018-11-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/d3/</loc>
+    <loc>http://shenheng.xyz/tags/d3/</loc>
     <lastmod>2018-11-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -191,13 +191,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/matrix/</loc>
+    <loc>http://shenheng.xyz/categories/matrix/</loc>
     <lastmod>2017-12-15T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/matrix/</loc>
+    <loc>http://shenheng.xyz/tags/matrix/</loc>
     <lastmod>2017-12-15T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -209,20 +209,14 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/ml/</loc>
-    <lastmod>2017-12-30T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/categories/ml/</loc>
     <lastmod>2017-12-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/pi/</loc>
-    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/tags/ml/</loc>
+    <lastmod>2017-12-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -233,8 +227,8 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/sbt/</loc>
-    <lastmod>2018-01-05T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/tags/pi/</loc>
+    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -245,7 +239,7 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/scala/</loc>
+    <loc>http://shenheng.xyz/tags/sbt/</loc>
     <lastmod>2018-01-05T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -257,13 +251,19 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/shortcode/</loc>
-    <lastmod>2018-11-23T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/tags/scala/</loc>
+    <lastmod>2018-01-05T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://shenheng.xyz/categories/shortcode/</loc>
+    <lastmod>2018-11-23T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://shenheng.xyz/tags/shortcode/</loc>
     <lastmod>2018-11-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -275,13 +275,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/</loc>
+    <loc>http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/</loc>
     <lastmod>2018-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/</loc>
+    <loc>http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/</loc>
     <lastmod>2018-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>

@@ -113,6 +113,19 @@
                             <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
                         </div>
                         
+                        <aside id="toc" class="dismissed">
+                            <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                            <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#编辑sbtconfig-txt文件">编辑sbtconfig.txt文件</a></li>
+<li><a href="#编辑用户文件夹下repositories文件">编辑用户文件夹下repositories文件</a></li>
+<li><a href="#重启sbt">重启sbt</a></li>
+</ul></li>
+</ul>
+</nav>
+                        </aside>
                         <div class="post-content">
                             
 
@@ -120,14 +133,14 @@
 
 <h2 id="编辑sbtconfig-txt文件">编辑sbtconfig.txt文件</h2>
 
-<p>打开sbt的安装位置，比如在我的机器($\mathtt{Windows}$)上就是$\mathtt{E:\backslash Program Files (x86) \backslash sbt}$文件夹，打开文件夹下面的$\mathtt{conf\backslash sbtconfig.txt}$文件，增加一行</p>
+<p>打开sbt的安装位置，比如在我的机器 Windows 上就是 <code>E:\Program Files(x86)\sbt</code> 文件夹，打开文件夹下面的 <code>conf\sbtconfig.txt</code> 文件，增加一行</p>
 
 <pre><code class="language-bash">-Dsbt.override.build.repos=true
 </code></pre>
 
 <h2 id="编辑用户文件夹下repositories文件">编辑用户文件夹下repositories文件</h2>
 
-<p>打开本地用户目录，比如我的机器上上的目录为$\mathtt{C:\backslash Users\backslash Shine}$目录，找到$\mathtt{.sbt}$目录，在该目录下创建一个新的文件$\mathtt{repositories}$<strong>文件</strong>，编辑内容为</p>
+<p>打开本地用户目录，比如我的机器上上的目录为 <code>C:\Users\Shine</code> 目录，找到 <code>.sbt</code> 目录，在该目录下创建一个新的文件 <code>repositories</code> <strong>文件</strong>，编辑内容为</p>
 
 <pre><code class="language-bash">[repositories]
 local
@@ -142,7 +155,7 @@ maven-central
 
 <h2 id="重启sbt">重启sbt</h2>
 
-<p>重新打开命令行，切换到$\mathtt{C: \backslash Users \backslash Shine \backslash .sbt}$，输入$\mathtt{sbt \; console}$命令，更新Scala.</p>
+<p>重新打开命令行，切换到 <code>C:\Users\Shine\.sbt</code>，输入 <code>sbt console</code> 命令，更新Scala.</p>
 
                         </div>
 
@@ -415,13 +428,15 @@ maven-central
     <div class="container">
         &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
         Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
-        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rujews/maupassant-hugo" target="_blank">maupassant</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rh02/maupassant-hugo" target="_blank">maupassant</a>.
         
     </div>
 </footer>
 
 
     <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript" src="/js/app.js" defer></script>
+
     <script type="text/javascript">
     window.MathJax = {
         tex2jax: {

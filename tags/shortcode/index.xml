@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>shortcode on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/shortcode/</link>
+    <description>Recent content in shortcode on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Fri, 23 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/shortcode/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hugo ShortCode Demo</title>
+      <link>http://shenheng.xyz/posts/2018-11-23-hugo-shortcode-test/</link>
+      <pubDate>Fri, 23 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-23-hugo-shortcode-test/</guid>
+      <description>下面展示我收录的几个比较中意的Hugo Snippet 插入Mac风格终端输出（code） 插入带有标题的图片（code） 插入图片画廊（code） 插入Audi</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Golang并发 on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91/</link>
+    <description>Recent content in Golang并发 on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Sat, 24 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Go语言中的并发机制系列-1|并发简介</title>
+      <link>http://shenheng.xyz/posts/2018-11-24-go-routine-1/</link>
+      <pubDate>Sat, 24 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-24-go-routine-1/</guid>
+      <description>本系列阅读笔记是基于 Golang 经典图书 Concurrency in GO ，主要有6个章节： An Introduction to Concurrency Modeling Your Code: Communicating Sequential Processes Go’s Concurrency Building Blocks Concurrency Patterns in Go Concurrency at Scale Goroutines and the Go Runtime 本部分主要介绍第一章：An Introduction</description>
+    </item>
+    
+  </channel>
+</rss>

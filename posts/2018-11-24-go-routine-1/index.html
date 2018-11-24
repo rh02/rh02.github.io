@@ -1,0 +1,1257 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+     
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Go语言中的并发机制系列-1|并发简介 | Gopher&#39;s Blog</title>
+    <meta property="og:title" content="Go语言中的并发机制系列-1|并发简介 - Gopher&#39;s Blog">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-11-24T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-11-24T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="Go语言中的并发机制系列-1|并发简介">
+        <meta name="author" content="申恒恒">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-11-24-go-routine-1/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script async type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+
+    
+        
+            <script>
+            var _hmt = _hmt || [];
+            (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?d4dfacbf524037a85b6a1fd1fc584299";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+            })();
+            </script>
+        
+    
+
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        Gopher&#39;s Blog
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">Go语言中的并发机制系列-1|并发简介</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年11月24日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/golang">Golang</a>
+                            
+                                <a href="http://shenheng.xyz/categories/%E5%B9%B6%E5%8F%91">并发</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                            <aside id="toc" class="dismissed">
+                                <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                                <nav id="TableOfContents">
+<ul>
+<li><a href="#竞争条件-race-condition">竞争条件（Race Condition）</a></li>
+<li><a href="#原子性">原子性</a></li>
+<li><a href="#同步访问内存">同步访问内存</a></li>
+<li><a href="#死锁-活锁和饥饿">死锁，活锁和饥饿</a>
+<ul>
+<li><a href="#死锁">死锁</a></li>
+<li><a href="#活锁">活锁</a></li>
+<li><a href="#饥饿">饥饿</a></li>
+</ul></li>
+<li><a href="#总结">总结</a></li>
+</ul>
+</nav>
+                            </aside>
+                        
+                        
+                        <div class="post-content">
+                            
+
+<p>本系列阅读笔记是基于 Golang 经典图书 <em>Concurrency in GO</em> ，主要有6个章节：</p>
+
+<ul>
+<li>An Introduction to Concurrency</li>
+<li>Modeling Your Code: Communicating Sequential Processes</li>
+<li>Go’s Concurrency Building Blocks</li>
+<li>Concurrency Patterns in Go</li>
+<li>Concurrency at Scale</li>
+<li>Goroutines and the Go Runtime</li>
+</ul>
+
+<p>本部分主要介绍第一章：<em>An Introduction to Concurrency</em> ，并发的基本概念，程序中的并发若要控制为什么难？以及有哪些难题？</p>
+
+<p>大家都知道，程序中若要实现并发或者程序员们要写对并发代码是很难做正确的，通常需要几次迭代才能使并发代码按照预期工作。即便如此，有的支持并发的系统虽然已经非常成熟了，但是系统内部仍存在一些未被发现或者忽略的 bug。这就是为什么并发那么难搞的原因。</p>
+
+<h1 id="竞争条件-race-condition">竞争条件（Race Condition）</h1>
+
+<p>当两个或多个操作必须以正确的顺序执行时会发生竞争条件，但是程序尚未写入以确保保持此顺序。</p>
+
+<p>大多数情况下，我们遇见的是<strong>数据竞争</strong>，在所谓的数据竞争中，其中一个并发操作尝试读取某一变量，而在某个未确定的时间，另一个并发操作试图写入同一个变量。</p>
+
+<p>下面是一个典型的例子</p>
+
+<pre><code class="language-go">var data int
+go func() {
+    data++
+}()
+if data == 0 {
+    fmt.Printf(&quot;the value is %v.\n&quot;, data)
+}
+</code></pre>
+
+<blockquote>
+<p>在 Go 语言中，我们在某个函数前使用 go 关键字，表明你要创建一个 goroutine。</p>
+</blockquote>
+
+<p>这里，第3行和第5行都试图访问变量 <code>data</code> ，但无法保证执行的顺序。因此运行此代码有三种可能的结果：</p>
+
+<ul>
+<li>什么也不打印. 第 3 行 在 第 5 行 之前执行</li>
+<li>打印 <code>the value is 0</code>. 在这种情况下, 第 5 行和第 6 行在第 3 行之前执行。</li>
+<li>打印 <code>the value is 1</code>. 在这种情况下, 第 5 行在第 3 行之前执行,但第 3 行在第 6 行之前执行。</li>
+</ul>
+
+<p>为什么会产生这种结果？往往是因为程序员在编写程序时，并未考虑程序所出现的所有可能结果或者并未考虑完整。</p>
+
+<p>有时候在出现可能并发的时候，大家（包括我）可能都会第一时间想到：我给它 <code>sleep</code> 一下不就行了。<strong>但是</strong>，这是非常糟糕的想法。实际上，一些开发人员在整个代码中插入 <code>sleep</code> 的陷阱，它似乎解决了并发问题。现在让我们在前面的程序中尝试：</p>
+
+<pre><code class="language-go">var data int
+go func() { data++ }()
+time.Sleep(1*time.Second) // This is bad!
+if data == 0 {
+    fmt.Printf(&quot;the value is %v.\n&quot; data)
+}
+</code></pre>
+
+<p>解决数据竞争了吗？没有。事实上，上面出现的三个结果仍然可能发生，并且更不加确定是哪一个结果了！我们在调用我们的goroutine和检查变量值之间睡得越久，我们的程序越接近实现正确性，这种概率渐近地接近逻辑正确性;但它永远不会在逻辑上正确。除此之外，我们算法的效率越来越低。现在必须 <code>sleep</code> 一秒钟才能让我们更有可能看不到我们的数据竞争。如果我们使用了正确的方法，我们可能根本不必等待，或者等待可能只有一微秒。
+<strong>结论</strong>：将 <code>sleep</code> 引入代码可以是调试并发程序的一种快捷方法，但它们不是解决方案！</p>
+
+<h1 id="原子性">原子性</h1>
+
+<p>当某些东西被认为是 <strong>原子</strong> 的，或具有原子属性时，这意味着在它运行的上下文中，它是不可分割的或不可中断的。</p>
+
+<p>那么这究竟是什么意思，为什么在使用并发代码时知道这一点很重要？第一件非常重要的事情是“上下文”这个词。在某种情况下，某些东西可能是原子的，而不是另一种。在程序流程上下文中是原子的操作但在操作系统的上下文中可能不是原子的;在操作系统的上下文中是原子的操作但在您的机器的上下文中可能不是原子的;并且在您的机器上下文中是原子的操作但在您的应用程序的上下文中可能不是原子的。换句话说，操作的原子性可以根据当前定义的范围而改变。这个事实既可以支持也可以反对你！</p>
+
+<p>在考虑原子性时，通常需要做的第一件事就是定义上下文或范围，操作将被认为是原子的。一切都从此开始。</p>
+
+<p><strong>“不可分割”</strong> 和 <strong>“不间断”</strong> 这两个术语。这些术语意味着在你定义的上下文中，程序要不然完全执行，要不然完全不执行。下面看个例子：</p>
+
+<pre><code class="language-go"> i++
+</code></pre>
+
+<p>这是一个非常简单的例子，几乎所有学过程序语言设计的同学都知道他是什么意思，但它很容易证明原子性的概念。它可能看起来像原子，但简短的分析揭示了几个操作：</p>
+
+<ul>
+<li>访问变量 <code>i</code> 的值.</li>
+<li>将变量 <code>i</code> 加 1.</li>
+<li>将加 1 之后i储存在变量i中.</li>
+</ul>
+
+<p>虽然这些操作中的每一个都是原子的，但三者的组合可能不是，具体取决于您的上下文。这揭示了原子操作的一个有趣特性：组合它们不一定产生更大的原子操作。使操作原子化取决于您希望它在哪个上下文中是原子的。如果您的上下文是没有并发进程的程序，则此代码在该上下文中是原子的。如果你的上下文是一个不会将我暴露给其他goroutine的goroutine，那么这段代码就是原子的。</p>
+
+<p>那我们为什么要关心呢？原子性很重要，因为如果某些东西是原子的，那么隐含地它在并发上下文中是安全的。这使我们能够编写逻辑上正确的程序，并且 - 我们稍后会看到 - 甚至可以作为优化并发程序的一种方法。</p>
+
+<h1 id="同步访问内存">同步访问内存</h1>
+
+<p>假设我们有一个数据竞争：两个并发进程正在尝试访问相同的内存区域，并且它们访问内存的方式不是原子的。我们之前的简单数据竞争示例将通过一些修改很好地完成：</p>
+
+<pre><code class="language-go">var data int
+go func() { data++}()
+if data == 0 {
+    fmt.Println(&quot;the value is 0.&quot;)
+} else {
+    fmt.Printf(&quot;the value is %v.\n&quot;, data)
+}
+</code></pre>
+
+<p>在这里添加了一个 <code>else</code> 子句，这样无论数据的值如何，我们总会获得一些输出。请记住，在编写存在数据竞争的程序时，输出将完全不确定。</p>
+
+<p>实际上，程序中需要对共享资源进行独占访问的代码被称作 <strong>“临界区”</strong>。这被称为关键部分。在这个例子中，我们有三个临界区：</p>
+
+<ul>
+<li>goroutine，开启一个 goroutine</li>
+<li><code>if</code> 语句, 检查变量的值是否为0.</li>
+<li><code>fmt.Printf</code> 语句，格式化打印我们的数据.</li>
+</ul>
+
+<p>为了保证能够互斥访问，我们需要保护这些 “临界区” 代码，在 Golang 中是如何保护的呢？看下面的代码：</p>
+
+<pre><code class="language-go">var memoryAccess sync.Mutex
+var value int
+go func() {
+    memoryAccess.Lock()
+    value++
+    memoryAccess.Unlock()
+}()
+memoryAccess.Lock()
+if value == 0 {
+    fmt.Printf(&quot;the value is %v.\n&quot;, value)
+} else {
+    fmt.Printf(&quot;the value is %v.\n&quot;, value)
+}
+memoryAccess.Unlock()
+</code></pre>
+
+<p>无论何时开发人员想要访问数据变量的内存 (shared)，他们必须首先调用Lock，当访问完成后，他们必须调用Unlock退出该临界区。这两个语句之间的代码可以认为它具有对数据的独占访问权。</p>
+
+<h1 id="死锁-活锁和饥饿">死锁，活锁和饥饿</h1>
+
+<p>前面几节都讨论了程序的正确性，如果这些问题得到正确管理，你的程序永远不会给出错误的答案。不幸的是，即使您成功处理了这些类问题，还有另一类需要解决的问题：<strong>死锁，活锁和饥饿</strong>。这些问题都与确保您的计划始终有用的事情有关。如果处理不当，您的程序可能会进入一个完全停止运行的状态。</p>
+
+<h2 id="死锁">死锁</h2>
+
+<p>我们先看一段程序。</p>
+
+<pre><code class="language-go">type value struct {
+    mu sync.Mutex
+    value int
+}
+var wg sync.WaitGroup
+printSum := func(v1, v2 *value) {
+    defer wg.Done()
+    v1.mu.Lock()
+    defer v1.mu.Unlock()
+    time.Sleep(2*time.Second)
+    v2.mu.Lock()
+    defer v2.mu.Unlock()
+    fmt.Printf(&quot;sum=%v\n&quot;, v1.value + v2.value)
+}
+var a, b value
+wg.Add(2)
+go printSum(&amp;a, &amp;b)
+go printSum(&amp;b, &amp;a)
+wg.Wait()
+</code></pre>
+
+<ul>
+<li>第 8 行，进入临界区.</li>
+<li>第 9 行，这里使用 <code>defer</code> 语句在 <code>printSum</code> 返回之前退出临界区。</li>
+<li>第 10 行, 我们 <code>sleep</code> 了一段时间来模拟工作（并触发死锁）。</li>
+</ul>
+
+<p>运行结果：</p>
+
+<pre><code class="language-go">fatal error: all goroutines are asleep - deadlock!
+</code></pre>
+
+<p>
+
+
+<div class="box fancy-figure caption-position-bottom" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/2018112401.png" alt="Figure 1. Demonstration of a timing issue giving rise to a deadlock"/>
+    </div>
+    <a href="/img/2018112401.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>Figure 1. Demonstration of a timing issue giving rise to a deadlock</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+<!-- 
+
+
+
+
+<span class="caption-wrapper">
+    <img class="caption" style="width: 100%" src="/img/2018112401.png" title="Figure 1. Demonstration of a timing issue giving rise to a deadlock" alt="Figure 1. Demonstration of a timing issue giving rise to a deadlock">
+    <p style="text-align:center">Figure 1. Demonstration of a timing issue giving rise to a deadlock</p>
+</span>
+ --></p>
+
+<p><strong>解释</strong>：我们第一次调用 <code>printSum</code> 锁定 <code>a</code> 然后尝试锁定 <code>b</code>，但与此同时我们对 <code>printSum</code> 的第二次调用已锁定 <code>b</code> 并试图锁定 <code>a</code>。两个 goroutine 彼此无限等待。</p>
+
+<p>当且仅当以下所有条件同时存在于系统中时，才会出现资源上的死锁情况， 下面是产生死锁的四个必要条件<sup class="footnote-ref" id="fnref:https-en-wikiped"><a href="#fn:https-en-wikiped">1</a></sup>：</p>
+
+<ul>
+<li>互斥条件：一个资源每次只能被一个进程使用。</li>
+<li>请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放。</li>
+<li>不剥夺条件:进程已获得的资源，在末使用完之前，不能强行剥夺。</li>
+<li>循环等待条件:若干进程之间形成一种头尾相接的循环等待资源关系。</li>
+</ul>
+
+<p>这四个条件是死锁的必要条件，只要系统发生死锁，这些条件必然成立，而只要上述条件之一不满足，就不会发生死锁。</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/440px-Process_deadlock.svg.png" alt="Figure 2. 死锁的产生。两个进程都需要资源来继续执行。P1需要额外的资源R1并且拥有资源R2，P2需要额外的资源R2并且拥有R1;两个过程都不​​能继续"/>
+    </div>
+    <a href="/img/440px-Process_deadlock.svg.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>Figure 2. 死锁的产生。两个进程都需要资源来继续执行。P1需要额外的资源R1并且拥有资源R2，P2需要额外的资源R2并且拥有R1;两个过程都不​​能继续</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<!-- 
+
+
+<div class="box fancy-figure caption-position-bottom" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/Deadlock_at_a_four-way-stop.gif" alt="Four processes (blue lines) compete for one resource (grey circle), following a right-before-left policy. A deadlock occurs when all processes lock the resource simultaneously (black lines). The deadlock can be resolved by breaking the symmetry."/>
+    </div>
+    <a href="/img/Deadlock_at_a_four-way-stop.gif" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>Four processes (blue lines) compete for one resource (grey circle), following a right-before-left policy. A deadlock occurs when all processes lock the resource simultaneously (black lines). The deadlock can be resolved by breaking the symmetry.</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style> -->
+
+<p>让我们检查一下我们设计的程序，并确定它是否满足所有四个条件：</p>
+
+<ol>
+<li><code>printSum</code> 函数确实需要a和b的独占访问权，因此它满足这个条件。</li>
+<li>因为 <code>printSum</code> 函数持有 <code>a</code> 或 <code>b</code> 并且正在等待另一个，所以它满足这个条件。</li>
+<li>我们没有任何办法让我们的 goroutines 被抢先一步。</li>
+<li>我们第一次调用 printSum 正在等待第二次调用，反之亦然。</li>
+</ol>
+
+<h2 id="活锁">活锁</h2>
+
+<p>活锁指的是任务或者执行者没有被阻塞，由于某些条件没有满足，导致一直重复尝试—失败—尝试—失败的过程。处于活锁的实体是在不断的改变状态，活锁有可能自行解开。</p>
+
+<blockquote>
+<p>A livelock is similar to a deadlock, except that the states of the processes involved in the livelock constantly change with regard to one another, none progressing.</p>
+
+<p>&mdash; <em>wiki</em>  <a href="https://en.wikipedia.org/wiki/Deadlock/#Livelock">https://en.wikipedia.org/wiki/Deadlock/#Livelock</a></p>
+</blockquote>
+
+<p>你有没有走过走廊走向另一个人？她移到一边让你通过，但你刚刚完成了同样的事情。所以你转移到另一边，但她也做了同样的事情。导致你们两个无法向前走。这种情景就是“程序”出现了“活锁”. 我们将通过下面这个例子来模拟上面这个场景。</p>
+
+<pre><code class="language-go">cadence := sync.NewCond(&amp;sync.Mutex{})
+go func() {
+    for range time.Tick(1*time.Millisecond) {
+        cadence.Broadcast()
+    }
+}()
+takeStep := func() {
+    cadence.L.Lock()
+    cadence.Wait()
+    cadence.L.Unlock()
+}
+tryDir := func(dirName string, dir *int32, out *bytes.Buffer) bool {
+    fmt.Fprintf(out, &quot; %v&quot;, dirName)
+    atomic.AddInt32(dir, 1)
+    takeStep()
+    if atomic.LoadInt32(dir) == 1 {
+        fmt.Fprint(out, &quot;. Success!&quot;)
+        return true
+    }
+    takeStep()
+    atomic.AddInt32(dir, -1)
+    return false
+}
+var left, right int32
+tryLeft := func(out *bytes.Buffer) bool { return tryDir(&quot;left&quot;, &amp;left, out) }
+tryRight := func(out *bytes.Buffer) bool { return tryDir(&quot;right&quot;, &amp;right, out) }
+
+</code></pre>
+
+<p><strong>程序解释</strong>：</p>
+
+<ul>
+<li><code>tryDir</code> 允许一个人尝试向一个方向移动并返回移动是否成功，每个方向都表示为试图朝那个方向移动的人数，dir。</li>
+<li>第 14 行，首先，我们打算通过将该方向增加 1 来朝着一个方向前进。</li>
+<li>第 15 行，为了演示活锁，每个人必须以相同的速度移动。<code>takeStep</code> 模拟各方之间的常量的僵持。</li>
+<li>第 17 行，在这里，这个人意识到他们不能走向这个方向而放弃。我们通过将该方向减1来表明这一点。</li>
+</ul>
+
+<pre><code class="language-go">walk := func(walking *sync.WaitGroup, name string) {
+    var out bytes.Buffer
+    defer func() { fmt.Println(out.String()) }()
+    defer walking.Done()
+    fmt.Fprintf(&amp;out, &quot;%v is trying to scoot:&quot;, name)
+    for i := 0; i &lt; 5; i++ {
+        if tryLeft(&amp;out) || tryRight(&amp;out) {
+            return
+        }
+    }
+    fmt.Fprintf(&amp;out, &quot;\n%v tosses her hands up in exasperation!&quot;, name)
+}
+var peopleInHallway sync.WaitGroup
+peopleInHallway.Add(2)
+go walk(&amp;peopleInHallway, &quot;Alice&quot;)
+go walk(&amp;peopleInHallway, &quot;Barbara&quot;)
+peopleInHallway.Wait()
+</code></pre>
+
+<p>程序的输出：</p>
+
+<pre><code class="language-go">Alice is trying to scoot: left right left right left right left right left right
+Alice tosses her hands up in exasperation!
+Barbara is trying to scoot: left right left right left right left right
+left right
+Barbara tosses her hands up in exasperation!
+</code></pre>
+
+<h2 id="饥饿">饥饿</h2>
+
+<p>饥饿指的进程无法访问到它需要的资源而不能继续执行时，引发饥饿最常见资源就是CPU时钟周期。</p>
+
+<p>当我们讨论活锁时，每个goroutine缺乏的资源都是共享锁。活锁和饥饿是不同的概念，因为在活锁中，所有并发进程都是平等的，并且没有完成任何工作。更广泛地说，饥饿通常意味着存在一个或多个贪婪并发进程，这些进程持续占有共享资源而不公平地阻止一个或多个并发进程完成工作。</p>
+
+<p>下面这段程序模拟饥饿的发生，通过创建两个 goroutine  <code>greedyWorker</code> 和 <code>politeWorker</code>.</p>
+
+<p><code>greedyWorker</code> 贪婪地独占整个工作循环的共享锁，而 <code>politeWorker</code> 只在需要时尝试占有。两个 worker都进行相同数量的模拟工作（睡眠时间为3纳秒），但正如你在相同的时间内看到的那样，贪婪的工人几乎完成了两倍的工作量！</p>
+
+<pre><code class="language-go">var wg sync.WaitGroup
+var sharedLock sync.Mutex
+const runtime = 1*time.Second
+greedyWorker := func() {
+    defer wg.Done()
+    var count int
+    for begin := time.Now(); time.Since(begin) &lt;= runtime; {
+        sharedLock.Lock()
+        time.Sleep(3*time.Nanosecond)
+        sharedLock.Unlock()
+        count++
+    }
+    fmt.Printf(&quot;Greedy worker was able to execute %v work loops\n&quot;, count)
+}
+politeWorker := func() {
+    defer wg.Done()
+    var count int
+    for begin := time.Now(); time.Since(begin) &lt;= runtime; {
+        sharedLock.Lock()
+        time.Sleep(1*time.Nanosecond)
+        sharedLock.Unlock()
+        sharedLock.Lock()
+        time.Sleep(1*time.Nanosecond)
+        sharedLock.Unlock()
+        sharedLock.Lock()
+        time.Sleep(1*time.Nanosecond)
+        sharedLock.Unlock()
+        count++
+    }
+    fmt.Printf(&quot;Polite worker was able to execute %v work loops.\n&quot;, count)
+}
+wg.Add(2)
+go greedyWorker()
+go politeWorker()
+wg.Wait()
+</code></pre>
+
+<p>如果我们假设两个 worker 都具有相同大小的临界区，而不是认为 <code>greedyWorker</code> 的算法更有效（或者加锁和解锁的开销很大 ），我们得出的结论是，<code>greedyWorker</code> 不必要地扩大了对其临界区之外的共享锁的控制，并通过饥饿阻止了 <code>politeWorker</code> 的 goroutine 有效地执行工作。</p>
+
+<p>我们还应该考虑饥饿来自 Go进程 之外的情况。<strong>请记住</strong>，饥饿也可以应用于CPU，内存，文件句柄，数据库连接：任何必须共享的资源都是饥饿的候选者！</p>
+
+<h1 id="总结">总结</h1>
+
+<p>本部分主要介绍了并发中的基本概念，引入了 Golang 语言中有关解决并发问题的一些方法，但没有深入讲解，接下来的几个教程中重点剖析 Golang 语言有关并发的 API。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:https-en-wikiped"><a href="https://en.wikipedia.org/wiki/Deadlock">https://en.wikipedia.org/wiki/Deadlock</a> <a class="footnote-return" href="#fnref:https-en-wikiped"><sup>↩</sup></a></li>
+</ol>
+</div>
+
+                        </div>
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/2018-11-23-hugo-shortcode-test/">Hugo ShortCode Demo</a></li>
+        
+        <li><a href="/posts/2018-11-23-d3-demo/">D3 Demo</a></li>
+        
+        <li><a href="/about/">关于我</a></li>
+        
+        <li><a href="/learning/">笔记 &amp; 演讲</a></li>
+        
+        <li><a href="/posts/how-to-install-mysql-from-source-on-centos-6/">CentOS6源码安装MySQL</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91">Golang并发</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-24-go-routine-1/" title="Go语言中的并发机制系列-1|并发简介">Go语言中的并发机制系列-1|并发简介</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-23-d3-demo/" title="D3 Demo">D3 Demo</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-23-hugo-shortcode-test/" title="Hugo ShortCode Demo">Hugo ShortCode Demo</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/" title="R实战-决策树">R实战-决策树</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/aphot-rpi/" title="在树莓派上配置AP">在树莓派上配置AP</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/introduction-machine-learning/" title="机器学习简介">机器学习简介</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/opencv-rpi/" title="在树莓派上搭建OpenCV环境">在树莓派上搭建OpenCV环境</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">Golang(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/d3/">d3(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hugo/">hugo(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/shortcode/">shortcode(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/">可视化(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B9%B6%E5%8F%91/">并发(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91/">Golang并发</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/d3/">d3</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/shortcode/">shortcode</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://www.shenhengheng.xyz/" title="申恒恒的博客">申恒恒的博客</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://shenheng.readailib.com/" title="毕业设计project网站">Project</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://dir.readailib.com/" title="Directory Lister">Directory Lister</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    
+</div>
+
+
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">Gopher&#39;s Blog By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rh02/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript" src="/js/app.js" defer></script>
+
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script  type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+<script type="text/javascript" src="/js/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

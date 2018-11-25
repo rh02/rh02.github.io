@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>hadoop on Gopher&#39;s Blog</title>
+    <link>http://shenheng.xyz/tags/hadoop/</link>
+    <description>Recent content in hadoop on Gopher&#39;s Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Sat, 14 Apr 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/hadoop/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hadoop2.x 伪分布式安装&amp;部署</title>
+      <link>http://shenheng.xyz/posts/2018-04-14-hadoop2-setup/</link>
+      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-04-14-hadoop2-setup/</guid>
+      <description>目前主要有以下四种部署方案： 伪分布式 真正分布式 HA分布式 HA分布式+ 本次教程主要说明 Hadoop 伪分布式方案安装与部署，教程相比较来说比较成熟，已经测</description>
+    </item>
+    
+    <item>
+      <title>Hadoop2.x 完全分布式安装&amp;部署</title>
+      <link>http://shenheng.xyz/posts/2018-04-14-hadoop2-setup-2/</link>
+      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-04-14-hadoop2-setup-2/</guid>
+      <description>目前主要有以下四种部署方案： 伪分布式 真正分布式 HA分布式 HA分布式+ 本次教程主要说明 Hadoop 完全分布式方案安装与部署，教程相比较来说比较成熟，已经</description>
+    </item>
+    
+  </channel>
+</rss>

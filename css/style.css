@@ -198,14 +198,23 @@ textarea {
 }
 
 table {
-	font-family: verdana,arial,sans-serif;
+	/* font-family: verdana,arial,sans-serif; */
 	font-size:11px;
 	color:#333333;
-	border-width: 1px;
+    border-width: 1px;
+    /* text-align: center;
+    align-content: center; */
+    margin:auto;
 	border-color: #666666;
 	border-collapse: collapse;
 }
+
+.share-links a {
+ border-bottom: none;
+}
+
 table th {
+    min-width:200px;
 	border-width: 1px;
 	padding: 8px;
 	border-style: solid;

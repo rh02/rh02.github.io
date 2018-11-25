@@ -198,7 +198,7 @@ textarea {
 }
 
 table {
-	/* font-family: verdana,arial,sans-serif; */
+	font-family: verdana,arial,sans-serif;
 	font-size:11px;
 	color:#333333;
     border-width: 1px;

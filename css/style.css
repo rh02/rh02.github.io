@@ -196,6 +196,31 @@ textarea {
 .clearfix, .col-group {
     zoom:1;
 }
+
+table {
+	font-family: verdana,arial,sans-serif;
+	font-size:11px;
+	color:#333333;
+	border-width: 1px;
+	border-color: #666666;
+	border-collapse: collapse;
+}
+table th {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #dedede;
+}
+table td {
+	border-width: 1px;
+	padding: 8px;
+	border-style: solid;
+	border-color: #666666;
+	background-color: #ffffff;
+}
+
+
 .clearfix:before, .col-group:before, .clearfix:after, .col-group:after {
     content:" ";
     display:table;
@@ -473,7 +498,7 @@ textarea {
     /* margin:1.8em 0; */
 }
 .post-content ul li{
-    text-indent: .5em;
+    text-indent: 0em; 
 }
 .archive-title {
     padding-top:20px;
@@ -499,6 +524,7 @@ textarea {
     display:inline-block;
     margin:0 5px 5px 0;
 }
+
 .page-navigator a {
     display:inline-block;
     padding:0 10px;

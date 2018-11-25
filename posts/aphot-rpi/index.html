@@ -633,7 +633,44 @@ sudo service dnsmasq start
         </ul>
     </section>
 
+    <section class="widget">
+        
+<section class="widget">
     
+    <h3 class="widget-title">我的位置</h3>
+    <ul class="widget-list">
+            
+            <li>
+                <div id="allmap">
+                        
+                        <script  type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=AtWkt6iR9uyuODelXUqfXRth"></script>
+                        <script type="text/javascript">
+                            
+                            var map = new BMap.Map("allmap");
+                            var point = new BMap.Point("117.9439850000", "28.4572810000");
+                            var marker = new BMap.Marker(point);  
+                            map.addOverlay(marker);              
+                            map.centerAndZoom(point, 15);
+                            var opts = {
+                                width : 50,     
+                                height: 50,     
+                            }
+                            var infoWindow = new BMap.InfoWindow("地址：上饶市信州区广信大厦A座3楼", opts);  
+                            marker.addEventListener("click", function(){          
+                                map.openInfoWindow(infoWindow,point); 
+                            });
+                        </script>        
+                </div> 
+                            
+            </li>
+            
+        
+    
+
+    </ul>
+</section>
+
+    </section>
 </div>
 
 

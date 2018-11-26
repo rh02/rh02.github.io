@@ -119,6 +119,18 @@
                         </div>
                         
                         
+                            <aside id="toc" class="dismissed">
+                                <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                                <nav id="TableOfContents">
+<ul>
+<li><a href="#初探">初探</a></li>
+<li><a href="#第二次提交">第二次提交</a></li>
+<li><a href="#运行测试">运行测试</a></li>
+<li><a href="#总结">总结</a></li>
+</ul>
+</nav>
+                            </aside>
+                        
                         
                         <div class="post-content">
                             
@@ -138,13 +150,13 @@
 <li>快速构建并进行分析</li>
 </ul>
 
-<h2 id="初探">初探</h2>
+<h1 id="初探">初探</h1>
 
 <p><strong>建议</strong>：对于刚出入开源项目贡献者，对于项目可能不是特别了解的同学，我建议先找个小项目练练手，然后在干票大的.在分析小项目时，建议查看项目的提交历史，从初提交逐步的分析作者的代码思路，这样慢慢就能熟悉项目的目标，这样看作者的代码就有目的性了.</p>
 
 <p>目前 <a href="https://github.com/wagoodman/dive/commits/master">dive</a> 这个项目有 156 个提交，还算小型项目，想从 最近一次提交 要想看懂作者代码并不是很容易，因此我选择了<a href="https://github.com/wagoodman/dive/commit/8f16cb8a712f0fdd0f07ea05a733e65bc6a45116">第二次提交</a>，通过这样的方式循序渐进地深入作者的项目真的思路很清晰！</p>
 
-<h2 id="第二次提交">第二次提交</h2>
+<h1 id="第二次提交">第二次提交</h1>
 
 <p>第二次提交历史里面包含一个 <a href="https://github.com/wagoodman/dive/blob/8f16cb8a712f0fdd0f07ea05a733e65bc6a45116/main.go">main.go</a> 文件和 Dockerfile 文件.</p>
 
@@ -170,7 +182,7 @@ RUN cp /somefile.txt /root/somefile.txt
 <pre><code class="language-bash">docker build -t die-test:latest .
 </code></pre>
 
-<h2 id="运行测试">运行测试</h2>
+<h1 id="运行测试">运行测试</h1>
 
 <p>是用下面的命令进行编译运行.</p>
 

@@ -30,6 +30,15 @@
     </item>
     
     <item>
+      <title>目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</title>
+      <link>http://shenheng.xyz/posts/2018-11-26-object-detection/</link>
+      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-26-object-detection/</guid>
+      <description>概述 目标检测算法 R-CNN Mask Fast R-CNN Fast Mask R-CNN Faster R-CNN YOLO 图像分割应用 参考 https://arxiv.org/pdf/1311.2524.pdf https://arxiv.org/pdf/1504.08083.pdf https://arxiv.org/pdf/1506.01497.pdf https://arxiv.org/pdf/1506.02640v5.pdf http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture11.pdf Introduction 目标检测的应用： 自动驾驶领域 -（工业）机器人领域 姿态估计 室外/内监控 分类算法</description>
+    </item>
+    
+    <item>
       <title>Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</title>
       <link>http://shenheng.xyz/posts/2018-11-25-go-routine-2/</link>
       <pubDate>Sun, 25 Nov 2018 00:00:00 +0000</pubDate>

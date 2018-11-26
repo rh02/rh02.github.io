@@ -1,0 +1,2319 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+     
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO | 申恒恒的博客</title>
+    <meta property="og:title" content="目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO - 申恒恒的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-11-26T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-11-26T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO">
+        <meta name="author" content="申恒恒">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-11-26-object-detection/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script async type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+
+    
+        
+        
+            <script async src="https://www.googletagmanager.com/gtag/js?id=UA-92073513-2"></script>
+            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-92073513-2');
+        </script>
+        
+
+    
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "true",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        申恒恒的博客
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年11月26日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B">目标检测</a>
+                            
+                                <a href="http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95">算法</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                        
+                        <div class="post-content">
+                            
+
+<h1 id="概述">概述</h1>
+
+<ul>
+<li>目标检测算法
+
+<ul>
+<li>R-CNN</li>
+<li>Mask Fast R-CNN</li>
+<li>Fast Mask R-CNN</li>
+<li>Faster R-CNN</li>
+<li>YOLO</li>
+</ul></li>
+<li>图像分割应用
+<br /></li>
+</ul>
+
+<h1 id="参考">参考</h1>
+
+<ul>
+<li><a href="https://arxiv.org/pdf/1311.2524.pdf">https://arxiv.org/pdf/1311.2524.pdf</a></li>
+<li><a href="https://arxiv.org/pdf/1504.08083.pdf">https://arxiv.org/pdf/1504.08083.pdf</a></li>
+<li><a href="https://arxiv.org/pdf/1506.01497.pdf">https://arxiv.org/pdf/1506.01497.pdf</a></li>
+<li><a href="https://arxiv.org/pdf/1506.02640v5.pdf">https://arxiv.org/pdf/1506.02640v5.pdf</a></li>
+<li><a href="http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture11.pdf">http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture11.pdf</a>
+
+
+
+<br /></li>
+</ul>
+
+<h1 id="introduction">Introduction</h1>
+
+<ul>
+<li>目标检测的应用：
+
+<ul>
+<li>自动驾驶领域
+-（工业）机器人领域</li>
+<li>姿态估计</li>
+<li>室外/内监控</li>
+</ul></li>
+
+<li><p>分类算法 vs 目标检测算法</p>
+
+<ul>
+<li>目标检测算法不仅仅在做分类的事情，而且在检测的对象周围画出一个边界，并且
+    目标检测算法事先是不知道在这个场景中有多少感兴趣区域（RoI），这是目标检测比传统的
+    分类算法难的地方。</li>
+<li>那么目标检测算法除了能够确定目标的类别还要能够确定目标的位置以及如何确定目标的大小。
+<br /></li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/classification-task.png" alt="图1：分类问题"/>
+    </div>
+    <a href="/img/classification-task.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图1：分类问题</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li>在计算机视觉领域，往往讲目标检测定为最top的目标，因为 Segmentation $\rightarrow$ Localization$\rightarrow$ Detection<br /></li>
+<li>下面举出几个比较常见的计算机视觉的任务</li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/other-task.png" alt="图2：计算机视觉的其他任务"/>
+    </div>
+    <a href="/img/other-task.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图2：计算机视觉的其他任务</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/detect.png" alt="图3：目标检测实例"/>
+    </div>
+    <a href="/img/detect.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图3：目标检测实例</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li>为什么不能使用CNN来做目标检测？</li>
+<li>通过构建标准卷积神经网络后接一个全连接层无法解决此问题的主要原因：
+
+<ul>
+<li>输出层的长度是可变的，不是常数，这是因为感兴趣对象的出现次数是不固定的。
+
+<ul>
+<li>解决此问题的一种简单方法是从图像中获取不同的感兴趣区域，并使用CNN对该区域存在的对象进行分类。</li>
+<li>该方法的问题在于感兴趣的对象可能在图像内具有不同的空间位置和大小。
+因此必须选择大量的区域，这可能会带来计算爆炸问题。</li>
+<li>目前已经开发出诸如R-CNN，YOLO等算法来发现这些感兴趣对象并快速找到它们。<br /></li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h1 id="r-cnn">R-CNN</h1>
+
+<ul>
+<li>为了绕过“选择大量区域”的问题 <a href="https://arxiv.org/pdf/1311.2524.pdf">Ross Girshick.</a>,
+提出了一种方法，使用选择性搜索从图像中提取2000个区域，
+并将其称为区域提议(region proposal)。因此，现在可以只使用2000个区域，
+而不是尝试对大量区域进行分类。
+使用下面写出的选择性搜索算法生成2000个区域提议(region proposal)。
+
+<ol>
+<li>Generate initial sub-segmentation, we generate many candidate  regions</li>
+<li>Use greedy algorithm to recursively combine similar regions into larger ones</li>
+<li>Use the generated regions to produce the final candidate region proposals
+<br /></li>
+</ol></li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/1_REPHY47zAyzgbNKC6zlvBQ.png" alt="图4：R-CNN Procedure"/>
+    </div>
+    <a href="/img/1_REPHY47zAyzgbNKC6zlvBQ.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图4：R-CNN Procedure</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li>将这2000个候选区域提议扭曲成正方形喂给卷积神经网络，
+该网络产生4096维特征向量作为输出。CNN在这里充当特征提取器，
+输出到dense层由从图像提取的特征组成，并且提取的特征被输送到SVM分类器以对
+该候选区域提议（region proposal）内的对象进行分类。
+除了预测区域提议中存在的对象的之外，
+该算法还预测四个值，这些值是偏移值用来增加边界的精度。
+例如，给定一个区域提议，该算法可以预测一个人的存在，
+但该区域提案中该人的面部可以减少一半。
+因此，偏移值有助于调整区域提议的边界框。</li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/1_NX5yYTi-eQjP0pMWs3UbUg.png" alt="图5：R-CNN Architecture"/>
+    </div>
+    <a href="/img/1_NX5yYTi-eQjP0pMWs3UbUg.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图5：R-CNN Architecture</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li>R-CNN存在的问题
+
+<ul>
+<li>当你对每张图片的2000个区域提议进行分类，仍然需要耗费大量的训练时间.</li>
+<li>它不能实时实现，因为每个测试图像大约需要47秒。</li>
+<li>选择性搜索算法是固定算法，不是学习算法，因此，在那个阶段（第一阶段）没有学习。这可能导致产生不良候选区域提议。</li>
+</ul></li>
+</ul>
+
+<h1 id="fast-r-cnn">Fast R-CNN</h1>
+
+<ul>
+<li>R-CNN的作者解决了R-CNN物体检测算法的一些缺点，该算法被称为 Fast R-CNN。</li>
+<li>该方法类似于R-CNN算法。
+但是，我们不是将区域提议提供给CNN，而是将输入图像提供给CNN以生成卷积特征图。
+从卷积特征图中，我们识别出建议的区域并将它们扭曲成正方形，
+并且通过使用RoI池化层，将它们重新整形(Reshape)为固定大小，
+以便可以将其馈送到全连接层中。从RoI特征向量中，
+我们使用softmax层来预测建议区域的类别以及边界框的偏移值。</li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/1_0pMP3aY8blSpva5tvWbnKA.png" alt="图6：Fast R-CNN Architecture"/>
+    </div>
+    <a href="/img/1_0pMP3aY8blSpva5tvWbnKA.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图6：Fast R-CNN Architecture</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li><p>Why Fast R-CNN More Faster?</p>
+
+<ul>
+<li>“快速R-CNN”比R-CNN更快的原因是因为不必每次都向卷积神经网络
+提供2000个区域提议。
+相反，每个图像只进行一次卷积操作，并从中生成特征图。</li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/1_m2QO_wbUPA05mY2q4v7mjg.png" alt="图7：Comparison of object detection algorithms"/>
+    </div>
+    <a href="/img/1_m2QO_wbUPA05mY2q4v7mjg.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图7：Comparison of object detection algorithms</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li>从上面的图表中，可以看出Fast R-CNN在训练和测试上比R-CNN明显更快。
+通过右图 $\rightarrow$ 测试时间对比图可以看出，Fast R-CNN使用区域提议
+与不使用区域提议相比，
+使用区域提议算法会显着降低算法速度。因此，
+<strong>区域提议成为影响Fast R-CNN算法性能的的瓶颈</strong>。</li>
+</ul></li>
+</ul>
+
+<h1 id="faster-r-cnn">Faster R-CNN</h1>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/1_pSnVmJCyQIRKHDPt3cfnXA.png" alt="图8：Faster R-CNN"/>
+    </div>
+    <a href="/img/1_pSnVmJCyQIRKHDPt3cfnXA.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图8：Faster R-CNN</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li>R-CNN和 Fast R-CNN 都使用选择性搜索算法来找出区域提议。
+选择性搜索是一个影响网络性能的缓慢且耗时的过程。
+因此， <a href="https://arxiv.org/pdf/1506.01497.pdf">Shaoqing Ren et,al.</a>
+提出了一种物体检测算法，该算法移除了选择性搜索算法，
+并让网络自己学习区域提案。</li>
+<li>类似于Fast R-CNN，图像被作为卷积神经网络的输入，卷积神经网络输出则为特征图
+这时不再使用特征图上的选择性搜索算法来提供区域提议，
+而是使用单独的网络来预测区域提议。
+然后使用RoI池化层对预测的区域提议进行整形（Reshape），
+然后使用该池化层对所提议的区域内的图像进行分类并预测边界框的
+偏移值。</li>
+</ul>
+
+<h1 id="yolo-you-only-look-once">YOLO — You Only Look Once</h1>
+
+<ul>
+<li><p>所有先前的对象检测算法使用区域(region)来定位图像内的对象。
+网络不会查看完整的图像。
+相反，图像的一部分具有包含对象的高概率。
+YOLO或You Only Look Once物体检测算法与
+上面提到的基于区域的算法有很大不同。
+在YOLO中，单个卷积神经网络预测这些边界框偏移量和类别概率。</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/1_ZbmrsQJW-Lp72C5KoTnzUg.jpeg" alt="图9：You Only Look Once"/>
+    </div>
+    <a href="/img/1_ZbmrsQJW-Lp72C5KoTnzUg.jpeg" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图9：You Only Look Once</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li>YOLO的工作原理是将我们拍摄一张图像
+分割成一个SxS的网格，在每个网格中我们选择了边界框。
+对于每个边界框，网络输出边界框的类概率和偏移值。
+选择具有高于阈值的类概率的边界框并用于定位图像内的对象。</li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/1_JniWRt-ceWLNlkOULjhdpg.png" alt="图10：You Only Look Once"/>
+    </div>
+    <a href="/img/1_JniWRt-ceWLNlkOULjhdpg.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图10：You Only Look Once</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style></li>
+</ul>
+
+                        </div>
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/2018-11-25-go-routine-2/">Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</a></li>
+        
+        <li><a href="/posts/2018-11-24-go-routine-1/">Go语言中的并发机制系列-1|并发简介</a></li>
+        
+        <li><a href="/posts/2018-11-23-hugo-shortcode-test/">Hugo ShortCode Demo</a></li>
+        
+        <li><a href="/posts/2018-11-23-d3-demo/">D3 Demo</a></li>
+        
+        <li><a href="/about/">关于我</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%AE%97%E6%B3%95">目标检测算法</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    
+    <div class="generic-box">
+            <div class="share-links" style="text-align:center;">
+                <a rel="license"  href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
+                    <img alt="知识共享许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png">
+                </a>
+                <br/>
+                
+                本文章采用<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可。
+                <br />
+                如要转载，请注明出处！
+            </div>
+    </div>
+
+
+<style>
+.generic-box {
+    text-align: center;
+    border: 1px solid #eee;
+    padding: 10px;
+     
+    margin: 30px;
+};
+.share-links a {
+    border-bottom: none;
+}
+</style>
+
+
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-26-object-detection/" title="目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-25-go-routine-2/" title="Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP">Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-24-go-routine-1/" title="Go语言中的并发机制系列-1|并发简介">Go语言中的并发机制系列-1|并发简介</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-23-d3-demo/" title="D3 Demo">D3 Demo</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-23-hugo-shortcode-test/" title="Hugo ShortCode Demo">Hugo ShortCode Demo</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-04-14-hadoop2-setup/" title="Hadoop2.x 伪分布式安装&amp;部署">Hadoop2.x 伪分布式安装&amp;部署</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-04-14-hadoop2-setup-2/" title="Hadoop2.x 完全分布式安装&amp;部署">Hadoop2.x 完全分布式安装&amp;部署</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans">R实战-Kmeans</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">Golang(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/d3/">d3(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hadoop/">hadoop(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hugo/">hugo(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/shortcode/">shortcode(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/">可视化(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">安装教程(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B9%B6%E5%8F%91/">并发(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">目标检测(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95/">算法(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91/">Golang并发</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/d3/">d3</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hadoop/">hadoop</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/shortcode/">shortcode</a>
+    
+    <a href="http://shenheng.xyz/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%AE%97%E6%B3%95/">目标检测算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://www.shenhengheng.xyz/" title="申恒恒的博客">申恒恒的博客</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://shenheng.readailib.com/" title="毕业设计project网站">Project</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://dir.readailib.com/" title="Directory Lister">Directory Lister</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    <section class="widget">
+        
+<section class="widget">
+    
+    <h3 class="widget-title">我的位置</h3>
+    <ul class="widget-list">
+            
+            <li>
+                <div id="allmap">
+                        
+                        <script  type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=AtWkt6iR9uyuODelXUqfXRth"></script>
+                        <script type="text/javascript">
+                            
+                            var map = new BMap.Map("allmap");
+                            var point = new BMap.Point("117.9439850000", "28.4572810000");
+                            var marker = new BMap.Marker(point);  
+                            map.addOverlay(marker);              
+                            map.centerAndZoom(point, 15);
+                            var opts = {
+                                width : 50,     
+                                height: 50,     
+                            }
+                            var infoWindow = new BMap.InfoWindow("地址：上饶市信州区广信大厦A座3楼", opts);  
+                            marker.addEventListener("click", function(){          
+                                map.openInfoWindow(infoWindow,point); 
+                            });
+                        </script>        
+                </div> 
+                            
+            </li>
+            
+        
+    
+
+    </ul>
+</section>
+
+    </section>
+</div>
+
+
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">申恒恒的博客 By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rh02/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript" src="/js/app.js" defer></script>
+
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script  type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+<script type="text/javascript" src="/js/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

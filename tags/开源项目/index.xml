@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>开源项目 on 申恒恒的博客</title>
+    <link>http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/</link>
+    <description>Recent content in 开源项目 on 申恒恒的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Mon, 26 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>开源项目初探-dive</title>
+      <link>http://shenheng.xyz/posts/2018-11-26-dive-2/</link>
+      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-26-dive-2/</guid>
+      <description>今天学习了 Github 上一个 Golang 的开源项目 dive, 这是一个 docker 镜像构建分析工具，详细介绍请参考项目 Github 主页. A tool for exploring a docker image, layer contents, and discovering ways to shrink your Docker image size. 主要有以下功能： dive</description>
+    </item>
+    
+  </channel>
+</rss>

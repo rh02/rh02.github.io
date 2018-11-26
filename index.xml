@@ -30,6 +30,15 @@
     </item>
     
     <item>
+      <title>开源项目初探-dive</title>
+      <link>http://shenheng.xyz/posts/2018-11-26-dive-2/</link>
+      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-26-dive-2/</guid>
+      <description>今天学习了 Github 上一个 Golang 的开源项目 dive, 这是一个 docker 镜像构建分析工具，详细介绍请参考项目 Github 主页. A tool for exploring a docker image, layer contents, and discovering ways to shrink your Docker image size. 主要有以下功能： dive</description>
+    </item>
+    
+    <item>
       <title>目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</title>
       <link>http://shenheng.xyz/posts/2018-11-26-object-detection/</link>
       <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>

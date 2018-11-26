@@ -1,0 +1,55 @@
+---
+title: "深度强化学习算法笔记-1|MDPs + 值迭代 + 策略迭代算法"
+author: 申恒恒
+github: rh01
+date: '2018-11-26'
+notoc: false
+# slug: how-to-install-mysql-from-source-on-centos-6
+categories:
+  - 强化学习算法
+  - 算法
+tags:
+  - 强化学习算法
+# notoc: true
+---
+
+本笔记来自于 2017 年 8 月份开办的 [Deep RL Bootcamp](https://sites.google.com/view/deep-rl-bootcamp/lectures) 课程，这是他们的课程[网站](https://sites.google.com/view/deep-rl-bootcamp/lectures). 那么这一系列笔记是整理自课堂上的，相对来说偏理论，我会在我的博客中陆续展示相关的课程Demo。
+
+# 大纲
+
+- 马尔可夫过程|Markov Decision Process
+- 值迭代算法 | Value Iteration Algorithm
+- 策略迭代算法 | Policy Iteration Algorithm
+
+
+
+# 马尔可夫决策过程
+
+
+  
+
+- An MDP is defined by: 
+  - 状态空间 $\mathcal{S}$
+  - 行动空间 $\mathcal{A}$
+  - 状态转换 $\mathcal{P}(s'|s, a)$
+  - 奖励函数 $\mathcal{R}(s, a, s’)$
+  - 初始状态 $\mathcal{s_0}$
+  - 折扣率 $\gamma$
+  -  Horizon $\mathcal{H}$
+
+    {{< figure src="/img/mdp.png" caption="图1. 马尔科夫决策过程" caption-position="bottom" thumb="-small" size="200x" caption-effect="slide" >}}
+
+## 优化目标
+
+Optimal Control =
+given an MDP (S, A, P, R, γ, H) find the optimal policy $\pi_\star$
+
+**方法**：
+
+- 价值迭代
+- 策略迭代
+
+
+# 强化学习算法一览
+
+  {{< figure src="/img/rl.png" caption="图2. RL Algorithm Landscape" caption-position="bottom" thumb="-small" size="200x" caption-effect="slide" >}}

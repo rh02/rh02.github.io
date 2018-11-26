@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+     
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>开源项目初探-dive | 申恒恒的博客</title>
+    <meta property="og:title" content="开源项目初探-dive - 申恒恒的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-11-26T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-11-26T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="开源项目初探-dive">
+        <meta name="author" content="申恒恒">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-11-26-dive-2/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script async type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+
+    
+        
+        
+            <script async src="https://www.googletagmanager.com/gtag/js?id=UA-92073513-2"></script>
+            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-92073513-2');
+        </script>
+        
+
+    
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "true",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        申恒恒的博客
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">开源项目初探-dive</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年11月26日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE">开源项目</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                        
+                        <div class="post-content">
+                            
+
+<p>今天学习了 Github 上一个 Golang 的开源项目 <a href="https://github.com/wagoodman/dive">dive</a>, 这是一个 docker 镜像构建分析工具，详细介绍请参考项目 Github 主页.</p>
+
+<blockquote>
+<p>A tool for exploring a docker image, layer contents, and discovering ways to shrink your Docker image size.</p>
+</blockquote>
+
+<p>主要有以下功能：</p>
+
+<ul>
+<li>dive 可以打印镜像每层的内容</li>
+<li>标示每层的变化是什么</li>
+<li>评估镜像的“效率”</li>
+<li>快速构建并进行分析</li>
+</ul>
+
+<h2 id="初探">初探</h2>
+
+<p><strong>建议</strong>：对于刚出入开源项目贡献者，对于项目可能不是特别了解的同学，我建议先找个小项目练练手，然后在干票大的.在分析小项目时，建议查看项目的提交历史，从初提交逐步的分析作者的代码思路，这样慢慢就能熟悉项目的目标，这样看作者的代码就有目的性了.</p>
+
+<p>目前 <a href="https://github.com/wagoodman/dive/commits/master">dive</a> 这个项目有 156 个提交，还算小型项目，想从 最近一次提交 要想看懂作者代码并不是很容易，因此我选择了<a href="https://github.com/wagoodman/dive/commit/8f16cb8a712f0fdd0f07ea05a733e65bc6a45116">第二次提交</a>，通过这样的方式循序渐进地深入作者的项目真的思路很清晰！</p>
+
+<h2 id="第二次提交">第二次提交</h2>
+
+<p>第二次提交历史里面包含一个 <a href="https://github.com/wagoodman/dive/blob/8f16cb8a712f0fdd0f07ea05a733e65bc6a45116/main.go">main.go</a> 文件和 Dockerfile 文件.</p>
+
+<ul>
+<li>main.go 主要的目的是分析一个 Docker image 的构建历史和这个镜像的基本情况，类似于</li>
+</ul>
+
+<pre><code class="language-bash">  docker inspect IMAGEID
+  docker history IMAGEID
+</code></pre>
+
+<ul>
+<li>Dockerfile 主要是为了 main.go 来准备一个镜像，下面是 Dockerfile</li>
+</ul>
+
+<pre><code class="language-Dockerfile">FROM alpine:latest
+ADD README.md /somefile.txt
+RUN cp /somefile.txt /root/somefile.txt 
+</code></pre>
+
+<p>是用下面的命令创建一个测试镜像：</p>
+
+<pre><code class="language-bash">docker build -t die-test:latest .
+</code></pre>
+
+<h2 id="运行测试">运行测试</h2>
+
+<p>是用下面的命令进行编译运行.</p>
+
+<pre><code class="language-bash">go build -o dive main.go
+./dive
+</code></pre>
+
+<p>运行结果：</p>
+
+<pre><code class="language-text">Image: die-test:latest
+Id: sha256:28c2451b8bda2e0232fa4d8aeba6f8cbf77055c916ed4ed9c95b9733ca48f1cf
+Parent: sha256:00e7225d54cf78dfa3663e5c6ed1a1ea84e7776317a1dae1606f2f81aafc0bb7
+Layers: 3
+├── sha256:df64d3292fd6194b7865d7326af5255db6d81e9df29f48adde61a918fbd8c332
+├── sha256:9588e70ef8935cfe0525a5e66dd5742f346ca5706606e470655370ecfef06e8a
+└── sha256:20336912dbdb8b9cb2a2e53eb5624de42d0ad5edcba1273850d510e61b523f49
+History: [
+  {
+    &quot;Comment&quot;: &quot;&quot;,
+    &quot;Created&quot;: 1543208163,
+    &quot;CreatedBy&quot;: &quot;/bin/sh -c cp /somefile.txt /root/somefile.txt&quot;,
+    &quot;Id&quot;: &quot;sha256:28c2451b8bda2e0232fa4d8aeba6f8cbf77055c916ed4ed9c95b9733ca48f1cf&quot;,
+    &quot;Size&quot;: 9,
+    &quot;Tags&quot;: [
+      &quot;die-test:latest&quot;
+    ]
+  },
+  {
+    &quot;Comment&quot;: &quot;&quot;,
+    &quot;Created&quot;: 1543208162,
+    &quot;CreatedBy&quot;: &quot;/bin/sh -c #(nop) ADD file:c17284a4a0e7cdbc0874b3cfa0f355532da07fe89c36c035f51fd9d3be9a4454 in /somefile.txt &quot;,
+    &quot;Id&quot;: &quot;sha256:00e7225d54cf78dfa3663e5c6ed1a1ea84e7776317a1dae1606f2f81aafc0bb7&quot;,
+    &quot;Size&quot;: 9,
+    &quot;Tags&quot;: null
+  },
+  {
+    &quot;Comment&quot;: &quot;&quot;,
+    &quot;Created&quot;: 1536704390,
+    &quot;CreatedBy&quot;: &quot;/bin/sh -c #(nop)  CMD [\&quot;/bin/sh\&quot;]&quot;,
+    &quot;Id&quot;: &quot;sha256:196d12cf6ab19273823e700516e98eb1910b03b17840f9d5509f03858484d321&quot;,
+    &quot;Size&quot;: 0,
+    &quot;Tags&quot;: [
+      &quot;alpine:latest&quot;
+    ]
+  },
+  {
+    &quot;Comment&quot;: &quot;&quot;,
+    &quot;Created&quot;: 1536704390,
+    &quot;CreatedBy&quot;: &quot;/bin/sh -c #(nop) ADD file:25c10b1d1b41d46a1827ad0b0d2389c24df6d31430005ff4e9a2d84ea23ebd42 in / &quot;,
+    &quot;Id&quot;: &quot;\u003cmissing\u003e&quot;,
+    &quot;Size&quot;: 4413370,
+    &quot;Tags&quot;: null
+  }
+]
+
+
+Image: sha256:00e7225d54cf78dfa3663e5c6ed1a1ea84e7776317a1dae1606f2f81aafc0bb7
+Id: sha256:00e7225d54cf78dfa3663e5c6ed1a1ea84e7776317a1dae1606f2f81aafc0bb7
+Parent: sha256:196d12cf6ab19273823e700516e98eb1910b03b17840f9d5509f03858484d321
+Layers: 2
+├── sha256:df64d3292fd6194b7865d7326af5255db6d81e9df29f48adde61a918fbd8c332
+└── sha256:9588e70ef8935cfe0525a5e66dd5742f346ca5706606e470655370ecfef06e8a
+History: [
+  {
+    &quot;Comment&quot;: &quot;&quot;,
+    &quot;Created&quot;: 1543208162,
+    &quot;CreatedBy&quot;: &quot;/bin/sh -c #(nop) ADD file:c17284a4a0e7cdbc0874b3cfa0f355532da07fe89c36c035f51fd9d3be9a4454 in /somefile.txt &quot;,
+    &quot;Id&quot;: &quot;sha256:00e7225d54cf78dfa3663e5c6ed1a1ea84e7776317a1dae1606f2f81aafc0bb7&quot;,
+    &quot;Size&quot;: 9,
+    &quot;Tags&quot;: null
+  },
+  {
+    &quot;Comment&quot;: &quot;&quot;,
+    &quot;Created&quot;: 1536704390,
+    &quot;CreatedBy&quot;: &quot;/bin/sh -c #(nop)  CMD [\&quot;/bin/sh\&quot;]&quot;,
+    &quot;Id&quot;: &quot;sha256:196d12cf6ab19273823e700516e98eb1910b03b17840f9d5509f03858484d321&quot;,
+    &quot;Size&quot;: 0,
+    &quot;Tags&quot;: [
+      &quot;alpine:latest&quot;
+    ]
+  },
+  {
+    &quot;Comment&quot;: &quot;&quot;,
+    &quot;Created&quot;: 1536704390,
+    &quot;CreatedBy&quot;: &quot;/bin/sh -c #(nop) ADD file:25c10b1d1b41d46a1827ad0b0d2389c24df6d31430005ff4e9a2d84ea23ebd42 in / &quot;,
+    &quot;Id&quot;: &quot;\u003cmissing\u003e&quot;,
+    &quot;Size&quot;: 4413370,
+    &quot;Tags&quot;: null
+  }
+]
+
+
+Image: sha256:196d12cf6ab19273823e700516e98eb1910b03b17840f9d5509f03858484d321
+Id: sha256:196d12cf6ab19273823e700516e98eb1910b03b17840f9d5509f03858484d321
+Parent:
+Layers: 1
+└── sha256:df64d3292fd6194b7865d7326af5255db6d81e9df29f48adde61a918fbd8c332
+History: [
+  {
+    &quot;Comment&quot;: &quot;&quot;,
+    &quot;Created&quot;: 1536704390,
+    &quot;CreatedBy&quot;: &quot;/bin/sh -c #(nop)  CMD [\&quot;/bin/sh\&quot;]&quot;,
+    &quot;Id&quot;: &quot;sha256:196d12cf6ab19273823e700516e98eb1910b03b17840f9d5509f03858484d321&quot;,
+    &quot;Size&quot;: 0,
+    &quot;Tags&quot;: [
+      &quot;alpine:latest&quot;
+    ]
+  },
+  {
+    &quot;Comment&quot;: &quot;&quot;,
+    &quot;Created&quot;: 1536704390,
+    &quot;CreatedBy&quot;: &quot;/bin/sh -c #(nop) ADD file:25c10b1d1b41d46a1827ad0b0d2389c24df6d31430005ff4e9a2d84ea23ebd42 in / &quot;,
+    &quot;Id&quot;: &quot;\u003cmissing\u003e&quot;,
+    &quot;Size&quot;: 4413370,
+    &quot;Tags&quot;: null
+  }
+]
+</code></pre>
+
+<p>下面是主程序代码:</p>
+
+<p>首先导入必要的包：</p>
+
+<pre><code class="language-go">import (
+	&quot;encoding/json&quot;
+	&quot;fmt&quot;
+ 	&quot;github.com/docker/docker/client&quot;
+	&quot;golang.org/x/net/context&quot;
+)
+</code></pre>
+
+<p>然后定义我们的主函数，在主函数里主要利用 docker client API创建客户端， 然后使用客户端API的方法来操作 docker，当然使用这些API就像使用 docker 客户端命令一样.</p>
+
+<pre><code class="language-go">func main() {
+  ctx := context.Background()
+  cli, err := client.NewEnvClient()
+  if err != nil {
+      panic(err)
+    }
+  imageID := &quot;die-test:latest&quot;
+  for {
+    // 打印出 image 的 inspect 信息
+    inspect, _, err := cli.ImageInspectWithRaw(ctx, imageID)
+    if err != nil {
+      panic(err)
+    }
+    // 打印出镜像的构建历史
+    history, err := cli.ImageHistory(ctx, imageID)
+    if err != nil {
+      panic(err)
+    }
+    // 将history编码为json格式
+    historyStr, err := json.MarshalIndent(history, &quot;&quot;, &quot;  &quot;)
+    if err != nil {
+      panic(err)
+    }
+    layerStr := &quot;&quot;
+    for idx, layer := range inspect.RootFS.Layers {
+      prefix := &quot;├── &quot;
+      if idx == len(inspect.RootFS.Layers)-1 {
+        prefix = &quot;└── &quot;
+      }
+      layerStr += fmt.Sprintf(&quot;%s%s\n&quot;, prefix, layer)
+    }
+    fmt.Printf(&quot;Image: %s\nId: %s\nParent: %s\nLayers: %d\n%sHistory: %s\n&quot;, imageID, inspect.ID, inspect.Parent, len(inspect.RootFS.Layers), layerStr, historyStr)
+    fmt.Println(&quot;\n&quot;)
+    // 遍历镜像构建的每一层
+    if inspect.Parent == &quot;&quot; {
+      break
+    } else {
+      imageID = inspect.Parent
+    }
+  }
+}
+</code></pre>
+
+<p>在运行 main.go 时，可能因为你的docker api版本问题会出现下面的错误：</p>
+
+<pre><code class="language-go">panic: Error response from daemon: client version 1.40 is too new. Maximum supported API version
+ is 1.39
+</code></pre>
+
+<p>该怎么样修改这个错误呢？只需要使用下面的代码创建客户端：</p>
+
+<pre><code class="language-go">cli, err := client.NewClientWithOpts(client.WithVersion(&quot;1.37&quot;))
+</code></pre>
+
+<h1 id="总结">总结</h1>
+
+<p>熟悉了基本的操作后，接下来可以继续查看下一次提交与上次提交的改变，然后慢慢测试，可以跟上项目的进度.也可以直接看最近一次提交，去研究代码，然后尝试修改项目隐藏的 bug 或者 给一个 PR. Good Luck!</p>
+
+                        </div>
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/2018-11-26-object-detection/">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a></li>
+        
+        <li><a href="/posts/2018-11-25-go-routine-2/">Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</a></li>
+        
+        <li><a href="/posts/2018-11-24-go-routine-1/">Go语言中的并发机制系列-1|并发简介</a></li>
+        
+        <li><a href="/posts/2018-11-23-hugo-shortcode-test/">Hugo ShortCode Demo</a></li>
+        
+        <li><a href="/posts/2018-11-23-d3-demo/">D3 Demo</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE">开源项目</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    
+    <div class="generic-box">
+            <div class="share-links" style="text-align:center;">
+                <a rel="license"  href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
+                    <img alt="知识共享许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png">
+                </a>
+                <br/>
+                
+                本文章采用<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可。
+                <br />
+                如要转载，请注明出处！
+            </div>
+    </div>
+
+
+<style>
+.generic-box {
+    text-align: center;
+    border: 1px solid #eee;
+    padding: 10px;
+     
+    margin: 30px;
+};
+.share-links a {
+    border-bottom: none;
+}
+</style>
+
+
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-26-dive-2/" title="开源项目初探-dive">开源项目初探-dive</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-26-object-detection/" title="目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-25-go-routine-2/" title="Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP">Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-24-go-routine-1/" title="Go语言中的并发机制系列-1|并发简介">Go语言中的并发机制系列-1|并发简介</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-23-d3-demo/" title="D3 Demo">D3 Demo</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-23-hugo-shortcode-test/" title="Hugo ShortCode Demo">Hugo ShortCode Demo</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-04-14-hadoop2-setup/" title="Hadoop2.x 伪分布式安装&amp;部署">Hadoop2.x 伪分布式安装&amp;部署</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-04-14-hadoop2-setup-2/" title="Hadoop2.x 完全分布式安装&amp;部署">Hadoop2.x 完全分布式安装&amp;部署</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/" title="CentOS6源码安装MySQL">CentOS6源码安装MySQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/" title="解决sbt更新scala速度慢">解决sbt更新scala速度慢</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">Golang(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/d3/">d3(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hadoop/">hadoop(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hugo/">hugo(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/shortcode/">shortcode(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/">可视化(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">安装教程(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B9%B6%E5%8F%91/">并发(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">目标检测(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95/">算法(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91/">Golang并发</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/d3/">d3</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hadoop/">hadoop</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/shortcode/">shortcode</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目</a>
+    
+    <a href="http://shenheng.xyz/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%AE%97%E6%B3%95/">目标检测算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://www.shenhengheng.xyz/" title="申恒恒的博客">申恒恒的博客</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://shenheng.readailib.com/" title="毕业设计project网站">Project</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://dir.readailib.com/" title="Directory Lister">Directory Lister</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    <section class="widget">
+        
+<section class="widget">
+    
+    <h3 class="widget-title">我的位置</h3>
+    <ul class="widget-list">
+            
+            <li>
+                <div id="allmap">
+                        
+                        <script  type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=AtWkt6iR9uyuODelXUqfXRth"></script>
+                        <script type="text/javascript">
+                            
+                            var map = new BMap.Map("allmap");
+                            var point = new BMap.Point("117.9439850000", "28.4572810000");
+                            var marker = new BMap.Marker(point);  
+                            map.addOverlay(marker);              
+                            map.centerAndZoom(point, 15);
+                            var opts = {
+                                width : 50,     
+                                height: 50,     
+                            }
+                            var infoWindow = new BMap.InfoWindow("地址：上饶市信州区广信大厦A座3楼", opts);  
+                            marker.addEventListener("click", function(){          
+                                map.openInfoWindow(infoWindow,point); 
+                            });
+                        </script>        
+                </div> 
+                            
+            </li>
+            
+        
+    
+
+    </ul>
+</section>
+
+    </section>
+</div>
+
+
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">申恒恒的博客 By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rh02/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript" src="/js/app.js" defer></script>
+
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script  type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+<script type="text/javascript" src="/js/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

@@ -119,18 +119,6 @@
                         </div>
                         
                         
-                            <aside id="toc" class="dismissed">
-                                <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
-                                <nav id="TableOfContents">
-<ul>
-<li><a href="#初探">初探</a></li>
-<li><a href="#第二次提交">第二次提交</a></li>
-<li><a href="#运行测试">运行测试</a></li>
-<li><a href="#总结">总结</a></li>
-</ul>
-</nav>
-                            </aside>
-                        
                         
                         <div class="post-content">
                             
@@ -150,13 +138,13 @@
 <li>快速构建并进行分析</li>
 </ul>
 
-<h1 id="初探">初探</h1>
+<h2 id="初探">初探</h2>
 
 <p><strong>建议</strong>：对于刚出入开源项目贡献者，对于项目可能不是特别了解的同学，我建议先找个小项目练练手，然后在干票大的.在分析小项目时，建议查看项目的提交历史，从初提交逐步的分析作者的代码思路，这样慢慢就能熟悉项目的目标，这样看作者的代码就有目的性了.</p>
 
 <p>目前 <a href="https://github.com/wagoodman/dive/commits/master">dive</a> 这个项目有 156 个提交，还算小型项目，想从 最近一次提交 要想看懂作者代码并不是很容易，因此我选择了<a href="https://github.com/wagoodman/dive/commit/8f16cb8a712f0fdd0f07ea05a733e65bc6a45116">第二次提交</a>，通过这样的方式循序渐进地深入作者的项目真的思路很清晰！</p>
 
-<h1 id="第二次提交">第二次提交</h1>
+<h2 id="第二次提交">第二次提交</h2>
 
 <p>第二次提交历史里面包含一个 <a href="https://github.com/wagoodman/dive/blob/8f16cb8a712f0fdd0f07ea05a733e65bc6a45116/main.go">main.go</a> 文件和 Dockerfile 文件.</p>
 
@@ -182,7 +170,7 @@ RUN cp /somefile.txt /root/somefile.txt
 <pre><code class="language-bash">docker build -t die-test:latest .
 </code></pre>
 
-<h1 id="运行测试">运行测试</h1>
+<h2 id="运行测试">运行测试</h2>
 
 <p>是用下面的命令进行编译运行.</p>
 
@@ -370,7 +358,7 @@ History: [
 <pre><code class="language-go">cli, err := client.NewClientWithOpts(client.WithVersion(&quot;1.37&quot;))
 </code></pre>
 
-<h1 id="总结">总结</h1>
+<h2 id="总结">总结</h2>
 
 <p>熟悉了基本的操作后，接下来可以继续查看下一次提交与上次提交的改变，然后慢慢测试，可以跟上项目的进度.也可以直接看最近一次提交，去研究代码，然后尝试修改项目隐藏的 bug 或者 给一个 PR. Good Luck!</p>
 
@@ -389,9 +377,9 @@ History: [
         
         <li><a href="/posts/2018-11-24-go-routine-1/">Go语言中的并发机制系列-1|并发简介</a></li>
         
-        <li><a href="/posts/2018-11-23-hugo-shortcode-test/">Hugo ShortCode Demo</a></li>
-        
         <li><a href="/posts/2018-11-23-d3-demo/">D3 Demo</a></li>
+        
+        <li><a href="/posts/2018-11-23-hugo-shortcode-test/">Hugo ShortCode Demo</a></li>
         
     </ul>
 </div>

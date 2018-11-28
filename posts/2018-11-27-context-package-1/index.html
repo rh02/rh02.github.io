@@ -390,14 +390,14 @@ call-graph.</li>
 
 </style>
 
-<pre><code class="language-go">    A = context.Background()
-    B = context.WithCancel(A)
-    C = context.WithValue(A, “Value”, “C”)
-    D = context.WithValue(A, “Value”, “D”)
-    E = context.WithValue(B, “B Key”, “E”)
-    ..
-    H = context.WithValue(D, “D Key”, “H”)
-    ..
+<pre><code class="language-go">A = context.Background()
+B = context.WithCancel(A)
+C = context.WithValue(A, “Value”, “C”)
+D = context.WithValue(A, “Value”, “D”)
+E = context.WithValue(B, “B Key”, “E”)
+..
+H = context.WithValue(D, “D Key”, “H”)
+..
 </code></pre>
 
 <p>这提出了一个问题：如果 Context 是不可变的，那么我们如何影响调用堆栈中当前函数下的函数中取消的行为？这是 context 包中的函数变得重要的地方.我们会到源码中，看看的下面三种函数：</p>

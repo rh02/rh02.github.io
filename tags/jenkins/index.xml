@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jenkins on 申恒恒的博客</title>
+    <link>http://shenheng.xyz/tags/jenkins/</link>
+    <description>Recent content in Jenkins on 申恒恒的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Wed, 28 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/jenkins/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>基于 Jenkins 的持续集成与持续开发环境配置</title>
+      <link>http://shenheng.xyz/posts/2018-11-28-jenkins-2/</link>
+      <pubDate>Wed, 28 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-28-jenkins-2/</guid>
+      <description>自动化构建生产环境下的 Docker 镜像 本教程将会学习如何配置 Jenkins 来基于 Dockerfile 构建的 Docker 镜像，和如何使用 Docker 来实现（CICD）持续集成与开发。使用自动化镜像构建，</description>
+    </item>
+    
+  </channel>
+</rss>

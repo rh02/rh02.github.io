@@ -1,0 +1,2655 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+     
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>基于 Jenkins 的持续集成与持续开发环境配置 | 申恒恒的博客</title>
+    <meta property="og:title" content="基于 Jenkins 的持续集成与持续开发环境配置 - 申恒恒的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-11-28T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-11-28T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="基于 Jenkins 的持续集成与持续开发环境配置">
+        <meta name="author" content="申恒恒">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-11-28-jenkins-2/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script async type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+
+    
+        
+        
+            <script async src="https://www.googletagmanager.com/gtag/js?id=UA-92073513-2"></script>
+            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-92073513-2');
+        </script>
+        
+
+    
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "true",
+        enable_page_level_ads: true
+    });
+    </script>
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        申恒恒的博客
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">基于 Jenkins 的持续集成与持续开发环境配置</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年11月28日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/jenkins">Jenkins</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                            <aside id="toc" class="dismissed">
+                                <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                                <nav id="TableOfContents">
+<ul>
+<li><a href="#自动化构建生产环境下的-docker-镜像">自动化构建生产环境下的 Docker 镜像</a></li>
+<li><a href="#linux下部署安装">Linux下部署安装</a>
+<ul>
+<li><a href="#环境准备">环境准备</a></li>
+<li><a href="#启动-jenkins">启动 Jenkins</a></li>
+<li><a href="#启动jenkins-仪表盘">启动Jenkins 仪表盘</a></li>
+<li><a href="#安装与配置插件">安装与配置插件</a>
+<ul>
+<li><a href="#安装">安装</a></li>
+<li><a href="#添加-docker-agent">添加 docker agent</a></li>
+<li><a href="#配置-docker-agent-template">配置 Docker Agent Template</a></li>
+</ul></li>
+<li><a href="#create-new-job">Create New Job</a></li>
+<li><a href="#开始构建项目">开始构建项目</a></li>
+<li><a href="#查看构建完成的镜像">查看构建完成的镜像</a></li>
+</ul></li>
+<li><a href="#缺点">缺点</a></li>
+<li><a href="#优点">优点</a></li>
+<li><a href="#常遇到的坑总结">常遇到的坑总结</a></li>
+<li><a href="#总结">总结</a></li>
+</ul>
+</nav>
+                            </aside>
+                        
+                        
+                        <div class="post-content">
+                            
+
+<h1 id="自动化构建生产环境下的-docker-镜像">自动化构建生产环境下的 Docker 镜像</h1>
+
+<p>本教程将会学习如何配置 Jenkins 来基于 Dockerfile 构建的 Docker 镜像，和如何使用 Docker 来实现（CICD）持续集成与开发。使用自动化镜像构建，在企业生产环境下将可以完成高效的升级与部署。</p>
+
+<blockquote>
+<p><strong>说明：</strong> 本教程借鉴于 <a href="https://www.katacoda.com/courses/cicd/build-docker-images-using-jenkins">katacoda</a> 创建的关于CICD的教程.</p>
+</blockquote>
+
+<p>这次教程主要我尝试了两个版本：</p>
+
+<ul>
+<li>宿主机是 x86 架构的系统（系统：Ubuntu，Arch）</li>
+<li>宿主机是 给予Arm 的系统（树莓派，系统为Hypriot）</li>
+</ul>
+
+<h1 id="linux下部署安装">Linux下部署安装</h1>
+
+<h2 id="环境准备">环境准备</h2>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/arch1.png" alt="三种安装部署方案"/>
+    </div>
+    <a href="/img/arch1.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>三种安装部署方案</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<blockquote>
+<p>说明：这三种方案均测试过，大家可以从图中看到方案2可能是生产中所使用到的方案，方案 1 较为冗余，比较传统， 方案三是我本次教程所要使用的部署方案。</p>
+</blockquote>
+
+<p>是用这三种方案都需要安装 Docker， 并提供一个供外部访问的 REST API 守护程序（Docker daemon）， 类似于 kubernetes 的 kube-api-server一样。在 ubuntu 和 Hyproiot 中需要这样操作：</p>
+
+<pre><code class="language-bash">sudo mkdir -pv /etc/systemd/system/docker.service.d
+cat &lt;&lt; EOF &gt; /etc/systemd/system/docker.service.d/remote-api.conf
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.sock
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+</code></pre>
+
+<p>可以使用下面的命令测试</p>
+
+<pre><code class="language-bash"># 查看端口是否打开
+netstat -an | grep 2375
+ss -ntlp | grep 2375
+# 检查守护程序能否正常工作
+docker -H  172.16.3.16:2375 info
+</code></pre>
+
+<p>简便方法：可以直接是用下面命令启动守护程序，但在生产中是不允许的。</p>
+
+<pre><code class="language-bash"># listen using the default unix socket, and on 2 specific IP addresses on this host.
+$ sudo dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375
+</code></pre>
+
+<h2 id="启动-jenkins">启动 Jenkins</h2>
+
+<p>首先创建一个数据卷，用来保存 Jenkins 安装的插件。</p>
+
+<pre><code class="language-bash">docker create -v /data --name jenkinsdata busybox
+</code></pre>
+
+<p>使用下面的命令启动一个 Jenkins 的docker容器，并关联/挂着到之前创建的数据卷。此时 Jenkins 容器中所有插件和配置文件都将会持久化到我们的 jenkinssdata 这个数据卷中。</p>
+
+<pre><code class="language-bash">docker run -d -u root --name jenkins \
+    -p 8080:8080 -p 50000:50000 \
+    --volumes-from jenkinsdata\
+    --restart always \
+    jenkins/jenkins:2.112-alpine
+</code></pre>
+
+<p><strong>注意</strong>: 当然可以直接挂载到指定的宿主机上的目录</p>
+
+<h2 id="启动jenkins-仪表盘">启动Jenkins 仪表盘</h2>
+
+<p>可以通过访问 <a href="http://172.16.3.32:8080/">http://172.16.3.32:8080/</a> 来访问 Jenkins 的仪表板</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/login.png" alt="login page"/>
+    </div>
+    <a href="/img/login.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>login page</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<p>这里需要输入 admin 的密码，密码是随机的，需要通过下面的命令查看初始密码。</p>
+
+<pre><code class="language-bash">docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+</code></pre>
+
+<p>Jenkins 可能需要几秒钟才能完成启动。在接下来的步骤中，将使用仪表板配置插件并开始构建Docker镜像。</p>
+
+<h2 id="安装与配置插件">安装与配置插件</h2>
+
+<p>第一步是配置 Docker 插件。该插件基于 Jenkins Cloud 插件。当构建需要 Docker 时，它将通过插件创建“Cloud Agent”。代理将是一个 Docker 容器，需要经过配置与我们的前面配置的 Docker 守护进程通信。</p>
+
+<h3 id="安装">安装</h3>
+
+<ul>
+<li>在仪表板中，选择左侧的 系统管理。</li>
+<li>在“管理Jenkins”页面上，选择“管理插件”。</li>
+<li>“管理插件”页面将为您提供选项卡式界面。单击“可选插件”以查看可以安装的所有Jenkins插件。</li>
+<li>使用搜索框搜索Docker。有多个Docker插件，使用Cloud Providers标题下的复选框选择Docker。</li>
+<li>点击直接安装</li>
+<li>插件将会自动下载并安装，安装完成后点击返回即可完成安装。</li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/docker.png" alt="docker plugin"/>
+    </div>
+    <a href="/img/docker.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>docker plugin</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h3 id="添加-docker-agent">添加 docker agent</h3>
+
+<ul>
+<li>在仪表板中，选择左侧的 <strong>系统管理</strong> ；</li>
+<li>在系统管理中，选择 <strong>系统设置</strong> ；</li>
+<li>在底部，有一个下拉菜单叫 <strong>增加一个云</strong> ，从下拉列表中选择 Docker.</li>
+<li>Docker Host URI 是 Jenkins 启动 agent 容器的位置，在本教程中，我们将使用我们前面定义好的  <code>tcp://172.16.3.32:2375</code></li>
+<li>使用 Test Connection 来验证 Jenkins 是否可以与 Docker Daemon 通讯， 如果正常的话，你可以看到返回过来的 Docker version.</li>
+</ul>
+
+<!-- 
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/docker.png" alt="docker plugin"/>
+    </div>
+    <a href="/img/docker.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>docker plugin</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style> -->
+
+<h3 id="配置-docker-agent-template">配置 Docker Agent Template</h3>
+
+<p>Docker Agent Template 是将会处理应用构建（比如自动化构建 Docker 镜像）的Container。</p>
+
+<ul>
+<li>单击 Docker Agent 模板&hellip;然后添加Docker模板。</li>
+<li>配置容器
+
+<ul>
+<li>将 agent 的标签设置为 docker-agent。表示我们的 Jenkins 将使用具有该标签的容器来构建我们的应用程序。（类似于 k8s 中的标签选择器）</li>
+<li>在 Docker Image 选项里填写 <code>benhall/dind-jenkins-agent:v2</code> 。 镜像可以从 <a href="https://hub.docker.com/r/benhall/dind-jenkins-agent/">https://hub.docker.com/r/benhall/dind-jenkins-agent/</a> 获取。</li>
+</ul></li>
+<li>在容器设置下，在 Volumn 文本框中输入 <code>/var/run/docker.sock:/var/run/docker.sock</code> 。这允许我们的构建容器与主机通信。</li>
+<li>在 Connect Method 选项里选择 <code>Connect with SSH</code> 选项。由于上一步填写的镜像基于 <code>Jenkins SSH Slave</code> 映像，这意味着默认的 Inject SSH 密钥将处理身份验证。</li>
+<li>单击保存。</li>
+</ul>
+
+<p>Jenkins现在可以在需要时将Build Agent作为容器启动。</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/docker-agent.png" alt="Configuration of docker agent"/>
+    </div>
+    <a href="/img/docker-agent.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>Configuration of docker agent</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h2 id="create-new-job">Create New Job</h2>
+
+<ul>
+<li>选择新建一个 jobs</li>
+<li>填写 job 的名字为 Katacoda Jenkins Demo, 然后选择 自由项目，点击 OK.</li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/job.png" alt="New a job"/>
+    </div>
+    <a href="/img/job.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>New a job</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li>接下来在 job 配置页中，选择 &ldquo;Restrict where this project can be run&rdquo;， 这时需要在标签表达式（类似于标签选择器）填写我们配置 Docker Agent 时填写的标签： docker-agent， 如果一切正常的话，你会看到&rdquo;Label is serviced by no nodes and 1 cloud&rdquo;.</li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/docker-agent-label-select.png" alt="标签选择"/>
+    </div>
+    <a href="/img/docker-agent-label-select.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>标签选择</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<blockquote>
+<p>If you see the error message There’s no agent/cloud that matches this assignment. Did you mean ‘master’ instead of ‘docker-agent’?, then the Docker plugin and the Docker Agent has not been Enabled. Go back to configure the system options and enable both checkboxes.</p>
+</blockquote>
+
+<ul>
+<li>选择存储库（Repository）类型为 Git，并且设置仓库位置为 <a href="https://github.com/katacoda/katacoda-jenkins-demo">https://github.com/katacoda/katacoda-jenkins-demo</a>.</li>
+<li>接下来添加一个构建步骤，选择执行 Shell 选项。Shell 命令如下</li>
+</ul>
+
+<pre><code class="language-bash">docker info
+docker build -t katacoda/jenkins-demo:${BUILD_NUMBER} .
+docker tag katacoda/jenkins-demo:${BUILD_NUMBER} katacoda/jenkins-demo:latest
+docker images
+</code></pre>
+
+<h2 id="开始构建项目">开始构建项目</h2>
+
+<p>现在我们可以回到我们刚刚新创建工作的主目录中，选择立即构建。一般情况下，初次构建过程时间比较长，因为要 pull 下来我们之前定义的Docker Agent的镜像，并且还要pull 下我们构建项目的 Docker镜像。</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/build.png" alt="构建项目"/>
+    </div>
+    <a href="/img/build.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>构建项目</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/build-success.png" alt="构建成功"/>
+    </div>
+    <a href="/img/build-success.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>构建成功</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/build-procedure.png" alt="查看构建过程"/>
+    </div>
+    <a href="/img/build-procedure.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>查看构建过程</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h2 id="查看构建完成的镜像">查看构建完成的镜像</h2>
+
+<p>这时候可以查看宿主机的docker镜像，打印结果如下</p>
+
+<div class="window">
+    <div class="titlebar">
+        <div class="buttons">
+        <div class="bclose">
+            <a class="closebutton" href="#"><span><strong>x</strong></span></a>
+        </div>
+        <div class="minimize">
+            <a class="minimizebutton" href="#"><span><strong>&ndash;</strong></span></a>
+        </div>
+        <div class="zoom">
+            <a class="zoombutton" href="#"><span><strong>+</strong></span></a>
+        </div>
+        </div>
+        zsh~
+    </div>
+    <div class="terminal">
+        <ul>
+        
+        
+        <li></li>
+        
+        
+        <li>$&nbsp;docker&nbsp;images</li>
+        
+        
+        <li>REPOSITORY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TAG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IMAGE&nbsp;ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CREATED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SIZE</li>
+        
+        
+        <li>katacoda/jenkins-demo&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;63b4e5d2500e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;About&nbsp;a&nbsp;minute&nbsp;ago&nbsp;&nbsp;&nbsp;5.81MB</li>
+        
+        
+        <li>postgres&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;67ebc8a2f066&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;months&nbsp;ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;237MB</li>
+        
+        
+        <li>redis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4e8db158f18d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;months&nbsp;ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;83.4MB</li>
+        
+        
+        <li>golang&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d0e7a411e3da&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;months&nbsp;ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;794MB</li>
+        
+        
+        <li>benhall/dind-jenkins-agent&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8f582645af33&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;months&nbsp;ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.14GB</li>
+        
+        
+        <li>jenkins/jenkins&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.112-alpine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;481b49e06417&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8&nbsp;months&nbsp;ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;223MB</li>
+        
+        
+        <li>$&nbsp;_</li>
+        
+        
+        <li></li>
+          
+        </ul>
+    </div>
+</div>
+<style>
+ 
+.window {
+    background: #fff;
+     
+    margin-top: 3.5vh;
+    margin-bottom: 3.5vh;
+    border: 1px solid #acacac;
+    border-radius: 6px;
+    box-shadow: 0px 0px 20px #acacac;
+  }
+  
+  .window a {
+    text-decoration: none;
+  }
+  
+  .window span {
+    line-height: 9px;
+    vertical-align: 50%;
+  }
+  
+  .titlebar {
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.0, #ebebeb, color-stop(1.0, #d5d5d5)));
+    background: -webkit-linear-gradient(top, #ebebeb, #d5d5d5);
+    background: -moz-linear-gradient(top, #ebebeb, #d5d5d5);
+    background: -ms-linear-gradient(top, #ebebeb, #d5d5d5);
+    background: -o-linear-gradient(top, #ebebeb, #d5d5d5);
+    background: linear-gradient(top, #ebebeb, #d5d5d5);
+    color: #4d494d;
+    font-size: 11pt;
+    line-height: 22px;
+    text-align: center;
+    width: 100%;
+    height: 22px;
+    border-top: 1px solid #f3f1f3;
+    border-bottom: 1px solid #b1aeb1;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    cursor: default;
+  }
+  
+  .buttons {
+    padding-left: 8px;
+    padding-top: 5px;
+    float: left;
+    line-height: 0px;
+  }
+  
+  .buttons:hover a {
+    visibility: visible;
+  }
+  
+  .bclose {
+    background: #ff5c5c;
+    font-size: 9pt;
+    line-height: 11px;
+    margin-left: 4px;
+    width: 11px;
+    height: 11px;
+    border: 1px solid #e33e41;
+    border-radius: 50%;
+    float: left;
+    display: inline-block;
+  }
+  
+  .bclose:active {
+    background: #c14645;
+    border: 1px solid #b03537;
+  }
+  
+  .bclose:active .closebutton {
+    color: #4e0002;
+  }
+  
+  .closebutton {
+    color: #820005;
+    visibility: hidden;
+    cursor: default;
+  }
+  
+  .minimize {
+    background: #ffbd4c;
+    font-size: 9pt;
+    line-height: 11px;
+    margin-left: 8px;
+    width: 11px;
+    height: 11px;
+    border: 1px solid #e09e3e;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+  .minimize:active {
+    background: #c08e38;
+    border: 1px solid #af7c33;
+  }
+  
+  .minimize:active .minimizebutton {
+    color: #5a2607;
+  }
+  
+  .minimizebutton {
+    color: #9a5518;
+    visibility: hidden;
+    cursor: default;
+  }
+  
+  .zoom {
+    background: #00ca56;
+    font-size: 9pt;
+    line-height: 11px;
+    margin-left: 4px;
+    width: 11px;
+    height: 11px;
+    border: 1px solid #14ae46;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+  .zoom:active {
+    background: #029740;
+    border: 1px solid #128435;
+  }
+  
+  .zoom:active .zoombutton {
+    color: #003107;
+  }
+  
+  .zoombutton {
+    color: #006519;
+    visibility: hidden;
+    cursor: default;
+  }
+   
+  
+   
+  .terminal {
+    margin: 0;
+    padding: 5px;
+    list-style: none;
+    background: #141414;
+    color: #45D40C;
+    font-family: "Courier New", "Courier", monospace;
+    font-size: 0.6rem;
+    line-height: 1.6em;
+   
+    -webkit-border-bottom-right-radius: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    -moz-border-radius-bottomright: 3px;
+    -moz-border-radius-bottomleft: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+  
+  .terminal ul {
+    padding-left: 0;
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+   
+  .terminal li {
+    width: 100%;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    position: relative;
+    padding: 0 0 0 15px;
+    list-style: none;
+  }
+   
+</style>
+
+<h1 id="缺点">缺点</h1>
+
+<ul>
+<li>Jenkins 还没有达到完全自动化构建的目的</li>
+<li>Jenkins 配置较为复杂，坑比较多</li>
+</ul>
+
+<h1 id="优点">优点</h1>
+
+<ul>
+<li>分布式的CICD解决方案</li>
+<li>强大的社区</li>
+</ul>
+
+<h1 id="常遇到的坑总结">常遇到的坑总结</h1>
+
+<ul>
+<li>jenkins启动一直显示 Jenkins正在启动,请稍后&hellip;</li>
+</ul>
+
+<p><strong>解决方法：</strong></p>
+
+<pre><code class="language-bash">docker exec -it jenkins bash
+cd /var/jenkins_home/updates/ #到jenkins的工作目录下
+vim default.json
+# 把 &quot;connectionCheckUrl&quot;:&quot;http://www.google.com/&quot; 改为&quot;connectionCheckUrl&quot;:&quot;http://www.baidu.com/&quot;
+</code></pre>
+
+<ul>
+<li>最新版Jenkins首次安装一直停在向导界面问题</li>
+</ul>
+
+<p>jenkins启动后一直停在那个获取网络界面。 你需要修改下配置文件，因为你所在网络被限制了。配置文件是<code>$JENKINS_HOME/hudson.model.UpdateCenter.xml</code>，默认内容如下：</p>
+
+<pre><code class="language-xml">&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+ &lt;sites&gt;
+   &lt;site&gt;
+    &lt;id&gt;default&lt;/id&gt;
+    &lt;url&gt;http://updates.jenkins-ci.org/update-center.json&lt;/url&gt;
+   &lt;/site&gt;
+&lt;/sites&gt;
+</code></pre>
+
+<p>只需要将 url 改为 <a href="http://mirror.xmission.com/jenkins/updates/update-center.json">http://mirror.xmission.com/jenkins/updates/update-center.json</a> 即可</p>
+
+<ul>
+<li><p>遇到问题有哪些 debug 方法</p>
+
+<ul>
+<li>在 Jenkins 的系统配置中的日志记录中查看</li>
+<li>在宿主机中，运行下面的命令</li>
+</ul></li>
+</ul>
+
+<pre><code class="language-bash">docker logs jenkins
+</code></pre>
+
+<h1 id="总结">总结</h1>
+
+<p>Jenkins 是 自动化运维和DevOps不可缺少的工具，它会使你的工作变得轻松，不在纠结环境配置等等，它也作为很多开源项目的项目管理工具，推荐使用！！！</p>
+
+<p>接下来我将会介绍更加自动化构建项目的一种方案。</p>
+
+<!-- 树莓派源：
+编辑/etc/apt/sources.list文件。删除原文件所有内容，用以下内容取代：
+
+deb http://mirrors.ustc.edu.cn/raspbian/raspbian/ jessie main non-free contrib
+deb-src http://mirrors.ustc.edu.cn/raspbian/raspbian/ jessie main non-free contrib
+编辑此文件后，请使用sudo apt-get update命令，更新软件列表。 -->
+
+<!-- 本次教程，我使用了树莓派作为 Docker 的宿主机，所有的环境全部放在树莓派中。 -->
+
+                        </div>
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/2018-11-28-context-package-1/">Go语言中的并发机制系列-4/1 | 深入理解 context 包</a></li>
+        
+        <li><a href="/posts/2018-11-27-object-detection/">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a></li>
+        
+        <li><a href="/posts/2018-11-26-dive-2/">开源项目初探-dive</a></li>
+        
+        <li><a href="/posts/2018-11-25-go-routine-2/">Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</a></li>
+        
+        <li><a href="/posts/2018-11-24-go-routine-1/">Go语言中的并发机制系列-1|并发简介</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/jenkins">Jenkins</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/devops">DevOps</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/docker">Docker</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    
+    <div class="generic-box">
+            <div class="share-links" style="text-align:center;">
+                <a rel="license"  href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
+                    <img alt="知识共享许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png">
+                </a>
+                <br/>
+                
+                本文章采用<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可。
+                <br />
+                如要转载，请注明出处！
+            </div>
+    </div>
+
+
+<style>
+.generic-box {
+    text-align: center;
+    border: 1px solid #eee;
+    padding: 10px;
+     
+    margin: 30px;
+};
+.share-links a {
+    border-bottom: none;
+}
+</style>
+
+
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-28-context-package-1/" title="Go语言中的并发机制系列-4/1 | 深入理解 context 包">Go语言中的并发机制系列-4/1 | 深入理解 context 包</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-28-jenkins-2/" title="基于 Jenkins 的持续集成与持续开发环境配置">基于 Jenkins 的持续集成与持续开发环境配置</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-27-object-detection/" title="目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-26-dive-2/" title="开源项目初探-dive">开源项目初探-dive</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-25-go-routine-2/" title="Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP">Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-24-go-routine-1/" title="Go语言中的并发机制系列-1|并发简介">Go语言中的并发机制系列-1|并发简介</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-23-d3-demo/" title="D3 Demo">D3 Demo</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-23-hugo-shortcode-test/" title="Hugo ShortCode Demo">Hugo ShortCode Demo</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-04-14-hadoop2-setup/" title="Hadoop2.x 伪分布式安装&amp;部署">Hadoop2.x 伪分布式安装&amp;部署</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-04-14-hadoop2-setup-2/" title="Hadoop2.x 完全分布式安装&amp;部署">Hadoop2.x 完全分布式安装&amp;部署</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/go-%E5%8C%85%E8%AE%B2%E8%A7%A3/">Go 包讲解(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/go-%E5%B9%B6%E5%8F%91/">Go 并发(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">Golang(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/jenkins/">Jenkins(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/d3/">d3(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hadoop/">hadoop(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hugo/">hugo(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/shortcode/">shortcode(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/">可视化(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">安装教程(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B9%B6%E5%8F%91/">并发(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">目标检测(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95/">算法(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/devops/">DevOps</a>
+    
+    <a href="http://shenheng.xyz/tags/docker/">Docker</a>
+    
+    <a href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91/">Golang并发</a>
+    
+    <a href="http://shenheng.xyz/tags/jenkins/">Jenkins</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/d3/">d3</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/hadoop/">hadoop</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/shortcode/">shortcode</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目</a>
+    
+    <a href="http://shenheng.xyz/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%AE%97%E6%B3%95/">目标检测算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://www.shenhengheng.xyz/" title="申恒恒的博客">申恒恒的博客</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://shenheng.readailib.com/" title="毕业设计project网站">Project</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://dir.readailib.com/" title="Directory Lister">Directory Lister</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    <section class="widget">
+        
+<section class="widget">
+    
+    <h3 class="widget-title">我的位置</h3>
+    <ul class="widget-list">
+            
+            <li>
+                <div id="allmap">
+                        
+                        <script  type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=AtWkt6iR9uyuODelXUqfXRth"></script>
+                        <script type="text/javascript">
+                            
+                            var map = new BMap.Map("allmap");
+                            var point = new BMap.Point("117.9439850000", "28.4572810000");
+                            var marker = new BMap.Marker(point);  
+                            map.addOverlay(marker);              
+                            map.centerAndZoom(point, 15);
+                            var opts = {
+                                width : 50,     
+                                height: 50,     
+                            }
+                            var infoWindow = new BMap.InfoWindow("地址：上饶市信州区广信大厦A座3楼", opts);  
+                            marker.addEventListener("click", function(){          
+                                map.openInfoWindow(infoWindow,point); 
+                            });
+                        </script>        
+                </div> 
+                            
+            </li>
+            
+        
+    
+
+    </ul>
+</section>
+
+    </section>
+</div>
+
+
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">申恒恒的博客 By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rh02/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript" src="/js/app.js" defer></script>
+
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script  type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+<script type="text/javascript" src="/js/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

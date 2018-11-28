@@ -32,7 +32,7 @@
     <item>
       <title>Go 包讲解</title>
       <link>http://shenheng.xyz/categories/go-%E5%8C%85%E8%AE%B2%E8%A7%A3/</link>
-      <pubDate>Tue, 27 Nov 2018 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 28 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/categories/go-%E5%8C%85%E8%AE%B2%E8%A7%A3/</guid>
       <description></description>
@@ -41,7 +41,7 @@
     <item>
       <title>Go 并发</title>
       <link>http://shenheng.xyz/categories/go-%E5%B9%B6%E5%8F%91/</link>
-      <pubDate>Tue, 27 Nov 2018 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 28 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/categories/go-%E5%B9%B6%E5%8F%91/</guid>
       <description></description>
@@ -50,9 +50,18 @@
     <item>
       <title>Golang</title>
       <link>http://shenheng.xyz/categories/golang/</link>
-      <pubDate>Tue, 27 Nov 2018 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 28 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/categories/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Jenkins</title>
+      <link>http://shenheng.xyz/categories/jenkins/</link>
+      <pubDate>Wed, 28 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/categories/jenkins/</guid>
       <description></description>
     </item>
     
@@ -221,7 +230,7 @@
     <item>
       <title>目标检测</title>
       <link>http://shenheng.xyz/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/</link>
-      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 27 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/</guid>
       <description></description>
@@ -230,7 +239,7 @@
     <item>
       <title>算法</title>
       <link>http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95/</link>
-      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 27 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95/</guid>
       <description></description>

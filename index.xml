@@ -31,11 +31,29 @@
     
     <item>
       <title>Go语言中的并发机制系列-4/1 | 深入理解 context 包</title>
-      <link>http://shenheng.xyz/posts/2018-11-27-context-package-1/</link>
+      <link>http://shenheng.xyz/posts/2018-11-28-context-package-1/</link>
+      <pubDate>Wed, 28 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-28-context-package-1/</guid>
+      <description>本系列阅读笔记是主要基于 Golang 经典图书 Concurrency in GO ，主要有6个章节： An Introduction to Concurrency Modeling Your Code: Communicating Sequential Processes** Go’s Concurrency Building Blocks Concurrency Patterns in Go Concurrency at Scale Goroutines and the Go Runtime 本部分主要摘选自第 4 章：</description>
+    </item>
+    
+    <item>
+      <title>基于 Jenkins 的持续集成与持续开发环境配置</title>
+      <link>http://shenheng.xyz/posts/2018-11-28-jenkins-2/</link>
+      <pubDate>Wed, 28 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-28-jenkins-2/</guid>
+      <description>自动化构建生产环境下的 Docker 镜像 本教程将会学习如何配置 Jenkins 来基于 Dockerfile 构建的 Docker 镜像，和如何使用 Docker 来实现（CICD）持续集成与开发。使用自动化镜像构建，</description>
+    </item>
+    
+    <item>
+      <title>目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</title>
+      <link>http://shenheng.xyz/posts/2018-11-27-object-detection/</link>
       <pubDate>Tue, 27 Nov 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/2018-11-27-context-package-1/</guid>
-      <description>本系列阅读笔记是主要基于 Golang 经典图书 Concurrency in GO ，主要有6个章节： An Introduction to Concurrency Modeling Your Code: Communicating Sequential Processes** Go’s Concurrency Building Blocks Concurrency Patterns in Go Concurrency at Scale Goroutines and the Go Runtime 本部分主要摘选自第 4 章：</description>
+      <guid>http://shenheng.xyz/posts/2018-11-27-object-detection/</guid>
+      <description>概述 目标检测算法 R-CNN Mask Fast R-CNN Fast Mask R-CNN Faster R-CNN YOLO 图像分割应用 参考 https://arxiv.org/pdf/1311.2524.pdf https://arxiv.org/pdf/1504.08083.pdf https://arxiv.org/pdf/1506.01497.pdf https://arxiv.org/pdf/1506.02640v5.pdf http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture11.pdf Introduction 目标检测的应用： 自动驾驶领域 -（工业）机器人领域 姿态估计 室外/内监控 分类算法</description>
     </item>
     
     <item>
@@ -45,15 +63,6 @@
       
       <guid>http://shenheng.xyz/posts/2018-11-26-dive-2/</guid>
       <description>今天学习了 Github 上一个 Golang 的开源项目 dive, 这是一个 docker 镜像构建分析工具，详细介绍请参考项目 Github 主页. A tool for exploring a docker image, layer contents, and discovering ways to shrink your Docker image size. 主要有以下功能： dive</description>
-    </item>
-    
-    <item>
-      <title>目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</title>
-      <link>http://shenheng.xyz/posts/2018-11-26-object-detection/</link>
-      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/2018-11-26-object-detection/</guid>
-      <description>概述 目标检测算法 R-CNN Mask Fast R-CNN Fast Mask R-CNN Faster R-CNN YOLO 图像分割应用 参考 https://arxiv.org/pdf/1311.2524.pdf https://arxiv.org/pdf/1504.08083.pdf https://arxiv.org/pdf/1506.01497.pdf https://arxiv.org/pdf/1506.02640v5.pdf http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture11.pdf Introduction 目标检测的应用： 自动驾驶领域 -（工业）机器人领域 姿态估计 室外/内监控 分类算法</description>
     </item>
     
     <item>

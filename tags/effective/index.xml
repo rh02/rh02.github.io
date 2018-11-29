@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Effective on 申恒恒的博客</title>
+    <link>http://shenheng.xyz/tags/effective/</link>
+    <description>Recent content in Effective on 申恒恒的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Thu, 29 Nov 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/effective/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>构建高效率的 Docker 镜像</title>
+      <link>http://shenheng.xyz/posts/2018-11-29-effective-docker-1/</link>
+      <pubDate>Thu, 29 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-29-effective-docker-1/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

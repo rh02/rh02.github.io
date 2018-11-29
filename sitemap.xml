@@ -13,6 +13,11 @@
   </url>
   
   <url>
+    <loc>http://shenheng.xyz/posts/2018-11-29-effective-docker-1/</loc>
+    <lastmod>2018-11-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://shenheng.xyz/posts/2018-11-28-context-package-1/</loc>
     <lastmod>2018-11-28T00:00:00+00:00</lastmod>
   </url>
@@ -108,6 +113,11 @@
   </url>
   
   <url>
+    <loc>http://shenheng.xyz/posts/2018-11-29-git-tutorial-1/</loc>
+    <lastmod>2017-08-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://shenheng.xyz/categories/2018/</loc>
     <lastmod>2018-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
@@ -143,7 +153,31 @@
   
   <url>
     <loc>http://shenheng.xyz/tags/docker/</loc>
-    <lastmod>2018-11-28T00:00:00+00:00</lastmod>
+    <lastmod>2018-11-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://shenheng.xyz/categories/docker/</loc>
+    <lastmod>2018-11-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://shenheng.xyz/tags/effective/</loc>
+    <lastmod>2018-11-29T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://shenheng.xyz/tags/git/</loc>
+    <lastmod>2017-08-23T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://shenheng.xyz/categories/git/</loc>
+    <lastmod>2017-08-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -197,7 +231,7 @@
   
   <url>
     <loc>http://shenheng.xyz/posts/</loc>
-    <lastmod>2018-11-28T00:00:00+00:00</lastmod>
+    <lastmod>2018-11-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

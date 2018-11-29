@@ -121,12 +121,796 @@
                         
                             <aside id="toc" class="dismissed">
                                 <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
-                                
+                                <nav id="TableOfContents">
+<ul>
+<li><a href="#docker-容器的-layer">Docker 容器的 layer</a>
+<ul>
+<li><a href="#镜像-images-与层-layers">镜像(images)与层(layers):</a></li>
+<li><a href="#容器与层级的联系">容器与层级的联系</a></li>
+</ul></li>
+<li><a href="#如何构建最小镜像">如何构建最小镜像</a>
+<ul>
+<li><a href="#认识-dockerfile">认识 Dockerfile</a></li>
+<li><a href="#优化">优化</a></li>
+</ul></li>
+<li><a href="#good-bad-bloated-dockerfile">Good/Bad/Bloated Dockerfile</a>
+<ul>
+<li><a href="#玩个例子">玩个例子</a></li>
+<li><a href="#更高效的使用-run-指令">更高效的使用 RUN 指令</a></li>
+<li><a href="#避免使用-add-指令添加大文件">避免使用 ADD 指令添加大文件</a></li>
+</ul></li>
+<li><a href="#构建面向-golang-的-dockerfile">构建面向 Golang 的 Dockerfile</a></li>
+</ul>
+</nav>
                             </aside>
                         
                         
                         <div class="post-content">
                             
+
+<p>今天要学习主题是:如何构建高效的 Docker 镜像, 更小，更快！今天学习的大纲如下。</p>
+
+<ul>
+<li>Docker 镜像和容器的层的工作原理</li>
+<li>构建最小镜像的基础知识</li>
+<li>什么是好的、坏的和臃肿的 Dokcerfile</li>
+<li>如何构建面向特定编程语言环境的镜像</li>
+</ul>
+
+<blockquote>
+<p>主要参考 Dockercon 大会 @abbyfuller 的 “Creating Effective Images” 演讲。 <a href="https://www.youtube.com/watch?v=vlS5EiapiII&amp;t=396s">大会视频</a></p>
+</blockquote>
+
+<h1 id="docker-容器的-layer">Docker 容器的 layer</h1>
+
+<h2 id="镜像-images-与层-layers">镜像(images)与层(layers):</h2>
+
+<p>Docker 镜像是由多个文件系统(只读层)叠加而成，每个层仅包含了前一层的差异部分。当我们启动
+一个容器的时候，Docker 会加载镜像层并在其上添加一个可写层。容器上所做的任何更改，比如新建文件、更改文件、删除文件，都将记录与可写层上<sup class="footnote-ref" id="fnref:https-docs-docke"><a href="#fn:https-docs-docke">1</a></sup>。容器层与镜像层的结构如下图所示。</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/1031517-20170818160738428-270877903.png" alt="容器层与镜像层的结构图"/>
+    </div>
+    <a href="/img/1031517-20170818160738428-270877903.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>容器层与镜像层的结构图</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h2 id="容器与层级的联系">容器与层级的联系</h2>
+
+<p>容器与镜像最大的区别就在于可写层上。如果运行中的容器修改了现有的一个已存在的文件，那该文件
+将会从可写层下的只读层复制到可写层，该文件的只读版本仍然存在，只是已经被可写层中该文件的副
+本所隐藏。其中，多个容器共享镜像的结构如下所示。</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/1031517-20170818160746662-307561193.png" alt="容器层与镜像层的结构图"/>
+    </div>
+    <a href="/img/1031517-20170818160746662-307561193.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>容器层与镜像层的结构图</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h1 id="如何构建最小镜像">如何构建最小镜像</h1>
+
+<p><strong>问题：</strong> 构建的层数越多真的好吗?</p>
+
+<blockquote>
+<p>更多的层意味着你的构建的 镜像就越大，同时也意味着你构建的时间就越长，并且你 pull 到本地 或者 push 到 registry 的时间就越长。 通常来讲，小镜像的层数都是比较少的，他会占用你很少的资源。</p>
+</blockquote>
+
+<p>那么如何减小镜像的体积呢？</p>
+
+<p>我们在构建自己的镜像时，可能都会使用一些 base image (基础镜像)来开始构建，比如</p>
+
+<pre><code class="language-docker">FROM ubuntu:14.04
+</code></pre>
+
+<p>等等， 这些镜像可能是官方给出的，或者是别人构建的，那么这些基础镜像我们真的选对了吗?除了合理的选择基础镜像意外，还需要做到如下几点：</p>
+
+<ul>
+<li>第一、限制写入容器的数据</li>
+<li>第二、 链式化 RUN 语句</li>
+<li>第三、尽可能出现防止在构建的时候 cache 未命中的情况</li>
+</ul>
+
+<h2 id="认识-dockerfile">认识 Dockerfile</h2>
+
+<p>什么是Dockerfile？Dockerfile 是记录着你构建镜像的一系列的操作步骤。</p>
+
+<p>首先我们先认识一下 Dockerdfile， 下面的 Dockerfile 主要是 构建一个 python 的应用程序。</p>
+
+<pre><code class="language-docker">FROM ubuntu:latest
+LABEL maintainer abbyfull@amazon.com
+RUN apt-get update -y &amp;&amp; apt-get install -y python-pip python-dev build-essential
+COPY . /app
+WORKDIR /app
+RUN pip install –r requirements.txt
+EXPOSE 5000
+ENTRYPOINT [&quot;python&quot;]
+CMD [&quot;application.py&quot;]
+</code></pre>
+
+<h2 id="优化">优化</h2>
+
+<p>我们要根据上面的规则，开始优化它！</p>
+
+<p>第一步，选择一个合适的基础镜像，使用不同基镜像构建出来的镜像大小差距还是很悬殊的。</p>
+
+<pre><code class="language-bash">ubuntu latest 2b1dc137b502
+52 seconds ago 458 MB
+From python:2.7-alpine:
+alpine latest d3145c9ba1fa
+2 minutes ago 86.8 MB
+</code></pre>
+
+<p>从上面可以看出，使用 ubuntu 作为基础镜像构建的应用镜像是 458MB，而使用 python:2.7-alpine 作为基础镜像构建的镜像才 85.8MB。因此选择一个合适的镜像是非常重要的一步。</p>
+
+<p>那么这些基础镜像原来有多大呢，下面列出了常用到的基础镜像的大小：</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/base-image.png" alt="常用的基础镜像列表"/>
+    </div>
+    <a href="/img/base-image.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>常用的基础镜像列表</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<p>那么什么是时候使用一个具有完整操作系统功能的镜像，比如ubuntu，centos等镜像呢？需要满足几点，建议使用。</p>
+
+<ul>
+<li>安全性</li>
+<li>开发</li>
+<li>部署大型应用程序，分布式应用程序</li>
+</ul>
+
+<p>下面是使用ubuntu镜像构建的程序：</p>
+
+<pre><code class="language-docker">FROM ubuntu:latest
+RUN apt-get update -y &amp;&amp; apt-get install -y python-pip python-dev build-essential
+COPY . /app
+WORKDIR /app
+RUN pip install –r requirements.txt
+EXPOSE 5000
+ENTRYPOINT [&quot;python&quot;]
+CMD [&quot;application.py&quot;]
+</code></pre>
+
+<p>下面是使用 python 镜像构建的：</p>
+
+<pre><code class="language-docker">FROM python:2.7-alpine
+COPY . /app
+WORKDIR /app
+RUN pip install –r requirements.txt
+EXPOSE 5000
+ENTRYPOINT [&quot;python&quot;]
+CMD [&quot;application.py&quot;]
+</code></pre>
+
+<p>可以发现使用 python 镜像的Dockerfile 更加简单，并且避免了安装了 python 环境，因为 python 镜像已经整合了 python 的开发环境。</p>
+
+<p>等等！我们还可以改进它！我们可以发现 <code>COPY . /app</code> 会占用我们很多的缓存资源，因为我们只用了<code>requirements.txt</code> 文件，记住：更少的缓存利用，说明你构建的镜像会更小。改进后的 Dockerfile如下：</p>
+
+<pre><code class="language-docker">FROM python:2.7-alpine
+COPY requirements.txt /app
+RUN pip install –r /app/requirements.txt
+COPY . /app
+WORKDIR /app
+EXPOSE 5000
+ENTRYPOINT [&quot;python&quot;]
+CMD [&quot;application.py&quot;]
+</code></pre>
+
+<p>接下来我们将使用 ONBUILD 指令来更好的重用我们的环境，使后期开发更加高效。</p>
+
+<blockquote>
+<p>The <code>ONBUILD</code> instruction adds to the image a trigger instruction to be executed at a later time, when the image is used as the base for another build. The trigger will be executed in the context of the downstream build, as if it had been inserted immediately after the <code>FROM</code> instruction in the downstream <code>Dockerfile</code>.</p>
+
+<p>Any build instruction can be registered as a trigger.</p>
+
+<p>This is useful if you are building an image which will be used as a base to build other images, for example an application build environment or a daemon which may be customized with user-specific configuration.</p>
+
+<p>For example, if your image is a reusable Python application builder, it will require application source code to be added in a particular directory, and it might require a build script to be called after that. You can’t just call <code>ADD</code> and <code>RUN</code> now, because you don’t yet have access to the application source code, and it will be different for each application build. You could simply provide application developers with a boilerplate <code>Dockerfile</code> to copy-paste into their application, but that is inefficient, error-prone and difficult to update because it mixes with application-specific code.</p>
+</blockquote>
+
+<pre><code class="language-docker">FROM python:2.7-alpine
+ONBUILD ADD requirements.txt /app
+ONBUILD RUN pip install –r /app/requirements.txt
+ONBUILD COPY . /app
+WORKDIR /app
+EXPOSE 5000
+ENTRYPOINT [&quot;python&quot;]
+CMD [&quot;application.py&quot;]
+</code></pre>
+
+<h1 id="good-bad-bloated-dockerfile">Good/Bad/Bloated Dockerfile</h1>
+
+<h2 id="玩个例子">玩个例子</h2>
+
+<p>现在让我们看个大一点的 Dockerfile，记住镜像的层越多越大！我们可以数一数它的行数！必须优化它！</p>
+
+<pre><code class="language-docker">FROM ubuntu:latest
+RUN apt-get update -y
+RUN apt-get install -y python-pip python-dev build-essential
+COPY . /app
+WORKDIR /app
+RUN pip install -r requirements.txt
+EXPOSE 5000
+ENTRYPOINT [&quot;python&quot;]
+CMD [&quot;application.py&quot;]
+</code></pre>
+
+<p>可以看到两个连续的 <code>RUN</code> 指令。</p>
+
+<pre><code class="language-docker">RUN apt-get update -y
+RUN apt-get install -y python-pip python-dev build-essential
+</code></pre>
+
+<p>我们可以链式 <code>RUN</code> 指令！</p>
+
+<pre><code class="language-docker">FROM ubuntu:latest
+RUN apt-get update -y &amp;&amp; apt-get install -y python-pip python-dev build-essential –no-install-recommends
+COPY . /app
+WORKDIR /app
+RUN pip install -r requirements.txt
+EXPOSE 5000
+ENTRYPOINT [&quot;python&quot;]
+CMD [&quot;application.py&quot;]
+</code></pre>
+
+<p>现在尝试一下其他的基础镜像，比如 python 镜像：</p>
+
+<pre><code class="language-docker">FROM python:2.7-alpine
+COPY . /app
+WORKDIR /app
+RUN pip install -r requirements.txt
+EXPOSE 5000
+ENTRYPOINT [&quot;python&quot;]
+CMD [&quot;application.py&quot;]
+</code></pre>
+
+<h2 id="更高效的使用-run-指令">更高效的使用 RUN 指令</h2>
+
+<pre><code class="language-docker">RUN apt-get update &amp;&amp; apt-get install -y \ aufs-tools \
+  automake \ 
+  build-essential \ 
+  ruby1.9.1 \
+  ruby1.9.1-dev \
+  s3cmd=1.1.* \
+&amp;&amp; rm -rf /var/lib/apt/lists/*
+</code></pre>
+
+<p>在使用 RUN 指令时，需要注意语句的顺序很重要！</p>
+
+<h2 id="避免使用-add-指令添加大文件">避免使用 ADD 指令添加大文件</h2>
+
+<p>下面是一种不推荐的方法，因为如果添加大文件，不避免地会使用很大的缓存，劲儿会使得我们得到的镜像会很大。</p>
+
+<pre><code class="language-docker">ADD http://cruft.com/bigthing.tar.xz /app/cruft/
+RUN tar -xvf /app/cruft/bigthing.tar.xz -C /app/cruft/
+RUN make -C /app/cruft/ all
+</code></pre>
+
+<p>更好推荐方案是将你要添加的文件放在互联网上，使用 curl 或者 wget 下载，最好避免使用 ADD。</p>
+
+<pre><code class="language-docker">RUN mkdir -p /app/cruft/ \
+    &amp;&amp; curl -SL http://cruft.com/bigthing.tar.xz \ | tar -xJC /
+app/cruft/ &amp;&amp; make -C /app/cruft/ all
+</code></pre>
+
+<h1 id="构建面向-golang-的-dockerfile">构建面向 Golang 的 Dockerfile</h1>
+
+<p>有两种构建特定语言的 Docker 镜像方式：</p>
+
+<ul>
+<li>从头开始构建</li>
+<li>从一个基础镜像开始构建
+
+<ul>
+<li>选择基础镜像有一点说明：编程语言官方镜像可能会比较大，但是稳定。自己构建的镜像可能小但是不一定稳定，需要平衡选择。</li>
+</ul></li>
+</ul>
+
+<p>下面会讲解 Golang 应用程序的构建方法。</p>
+
+<p>稍微熟悉 Golang 的同学都应噶了解，Go 的执行方式很简单，只需要一个二进制文件即可，这也意味着构建的 Docker 镜像会非常的简单。</p>
+
+<p><strong>步骤：</strong>编译，然后拷贝编译好的二进制文件</p>
+
+<pre><code class="language-bash">go build -o dockercon .
+docker build -t dockercon .
+</code></pre>
+
+<p>Dockerfile 文件内容为：</p>
+
+<pre><code class="language-docker">FROM scratch
+COPY ./dockercon /dockercon
+ENTRYPOINT [&quot;/dockercon&quot;]
+</code></pre>
+
+<blockquote>
+<p><code>scratch</code> 镜像非常特殊，构建它的 Dockerfile 是空的。一般开发人员喜欢使用 <code>scratch</code> 镜像构建收于自己的基础镜像。</p>
+</blockquote>
+
+<p>比如下面的例子，只需要执行打印一个 helloworld 的二进制文件的镜像构建过程，这时使用 <code>scratch</code> 最合适不过了。</p>
+
+<pre><code class="language-docker">FROM scratch
+COPY hello /
+CMD [ “/hello” ]
+</code></pre>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:https-docs-docke"><a href="https://docs.docker.com">https://docs.docker.com</a> <a class="footnote-return" href="#fnref:https-docs-docke"><sup>↩</sup></a></li>
+</ol>
+</div>
+
                         </div>
 
 

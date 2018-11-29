@@ -35,7 +35,7 @@
       <pubDate>Thu, 29 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/2018-11-29-effective-docker-1/</guid>
-      <description></description>
+      <description>今天要学习主题是:如何构建高效的 Docker 镜像, 更小，更快！今天学习的大纲如下。 Docker 镜像和容器的层的工作原理 构建最小镜像的基础知识 什么是好的、坏的和臃</description>
     </item>
     
     <item>

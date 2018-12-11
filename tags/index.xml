@@ -111,6 +111,24 @@
     </item>
     
     <item>
+      <title>elastic search</title>
+      <link>http://shenheng.xyz/tags/elastic-search/</link>
+      <pubDate>Mon, 03 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/elastic-search/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>elk</title>
+      <link>http://shenheng.xyz/tags/elk/</link>
+      <pubDate>Mon, 03 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/elk/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>gittalk</title>
       <link>http://shenheng.xyz/tags/gittalk/</link>
       <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
@@ -138,11 +156,29 @@
     </item>
     
     <item>
+      <title>kibana</title>
+      <link>http://shenheng.xyz/tags/kibana/</link>
+      <pubDate>Mon, 03 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/kibana/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>linux</title>
       <link>http://shenheng.xyz/tags/linux/</link>
       <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>logstash</title>
+      <link>http://shenheng.xyz/tags/logstash/</link>
+      <pubDate>Mon, 03 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/logstash/</guid>
       <description></description>
     </item>
     

@@ -1,0 +1,1525 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+     
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>ELK学习笔记|安裝ElasticSearch、Logstash、Kibana | 申恒恒的博客</title>
+    <meta property="og:title" content="ELK学习笔记|安裝ElasticSearch、Logstash、Kibana - 申恒恒的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-12-03T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-12-03T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="ELK学习笔记|安裝ElasticSearch、Logstash、Kibana">
+        <meta name="author" content="申恒恒">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-12-11-elk-1/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script async type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+
+    
+        
+        
+            <script async src="https://www.googletagmanager.com/gtag/js?id=UA-92073513-2"></script>
+            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-92073513-2');
+        </script>
+        
+
+    
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9076793735164845",
+            enable_page_level_ads: true
+        });
+    </script>
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        申恒恒的博客
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">ELK学习笔记|安裝ElasticSearch、Logstash、Kibana</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年12月3日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/elk">elk</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                            <aside id="toc" class="dismissed">
+                                <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                                <nav id="TableOfContents">
+<ul>
+<li><a href="#什么是elk">什么是ELK？</a></li>
+<li><a href="#单个安装">单个安装</a>
+<ul>
+<li><a href="#安装-elasticsearch">安装 ElasticSearch</a></li>
+<li><a href="#安装-kibana">安装 kibana</a></li>
+<li><a href="#安装-logstash">安装 Logstash</a></li>
+</ul></li>
+<li><a href="#安装-elk-docker">安装 ELK Docker</a>
+<ul>
+<li><a href="#启动elk">启动ELK</a></li>
+</ul></li>
+<li><a href="#使用-docker-compose-安装">使用 docker-compose 安装</a></li>
+<li><a href="#参考">参考</a></li>
+</ul>
+</nav>
+                            </aside>
+                        
+                        
+                        <div class="post-content">
+                            
+
+<p>本系列主要是ELK的实操笔记部分，主要分享一下近期关于ELK的知识，包括它的运行原理、工作方式、基本特性和 Lucence的相关知识。希望以博客的形式能够保存下来，供后期查阅。</p>
+
+<p>本序列借以希望能够提供该应用支持云上多主机多用户部署，以及kubernetes部署解决方案。</p>
+
+<h1 id="什么是elk">什么是ELK？</h1>
+
+<p><strong>ELK</strong> 是三个开源软件的缩写，分别是：Elasticsearch，Logstash 和 Kibana。Elasticsearch 是一个搜索和分析引擎，底层的搜索引擎是 Lucence。 Logstash 是一个日志数据处理系统，可以从多数据源获取数据，并将数据转发给 Elasticsearch 的存储系统。 Kibana是一个数据可视化软件，可以让用户对Elasticsearch中数据进行图表的可视化展示。</p>
+
+<p>ELK 经常被用于作为日志数据的存储系统，工作方式为将主机中的日志通过文件或者系统日志（syslog）的方式传递给 Logstach 进行解析（简单的讲，正则表达式）， 然后在存入 ElasticSearch 进行查询和统计，最后经过 Kibana 将统计的结果进行可视化展示。工作流程图如下图：</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/elk-2.png" alt="工作流程图"/>
+    </div>
+    <a href="/img/elk-2.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>工作流程图</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<p>在学习ELK组件之前，需要了解以下名词和专业术语：</p>
+
+<table>
+<thead>
+<tr>
+<th>名词/术语</th>
+<th>解释</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>index</td>
+<td>Elasticsearch的index相当于一个数据库。</td>
+</tr>
+
+<tr>
+<td>type</td>
+<td>数据库中的一张表。</td>
+</tr>
+
+<tr>
+<td>id</td>
+<td>唯一，类似于 Primary Key。</td>
+</tr>
+
+<tr>
+<td>node</td>
+<td>节点是Elasticsearch实例(Instance)，可以看成集群(Cluster)中的一個节点。一台机器可以运行多个实例，但是同一台机器上的实例在配置上要确保http和tcp Port不同。</td>
+</tr>
+
+<tr>
+<td>cluster</td>
+<td>表示一个集群，集群中有多个节点，其中有一个节点为 master， 该主节点类似于分布式中的大多数主节点一样是经过选举产生，主节点是针对该集群内部来讲的。</td>
+</tr>
+
+<tr>
+<td>document</td>
+<td>表示文档，代表了能够被索引的最小数据单元。在一个Index或者Type中，可以存储多个文档。虽然文档是存储在Index中的，但是实际上，它需要被索引或者分配到Index上的一个Type上。</td>
+</tr>
+
+<tr>
+<td>shards</td>
+<td>代表索引的分片，Elasticsearch 可以把一个完整的索引分成多个粉片，有点事能够讲一个大的索引拆分到多个，并且分布到多个节点上，对于分布式系统是非常有用的，可以实现分布式搜索，加快处理速度。分片的数量只能在创建前指定，如果索引创建后不能更改。</td>
+</tr>
+
+<tr>
+<td>replicas</td>
+<td>代表索引副本，Elasticsearch可以设置多个索引副本，副本的作用一是提高系统的容错性，当某个节点的分片损坏或者缺水，这时可以从副本中进行恢复。二是可以提高 ElasticSearch的查询效率，Elasticsearch会自动的对搜索请求进行负载均衡。</td>
+</tr>
+</tbody>
+</table>
+
+<p>实操部分主要针对kubernetes安装与部署（后期更新），和容器化安装与部署。容器安装又分成单个组件安装和docker-compose部署。</p>
+
+<h1 id="单个安装">单个安装</h1>
+
+<h2 id="安装-elasticsearch">安装 ElasticSearch</h2>
+
+<p>从官方镜像源拉取 ElasticSearch 镜像。</p>
+
+<pre><code class="language-bash">docker pull docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+</code></pre>
+
+<p>启动 ElasticSearch。</p>
+
+<pre><code class="language-bash">docker run -p 9200:9200 -p 9300:9300 --name elasticsearch -e &quot;discovery.type=single-node&quot; \
+  docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+</code></pre>
+
+<blockquote>
+<p>具体启动参数以及配置详见： <a href="https://hub.docker.com/_/elasticsearch/">https://hub.docker.com/_/elasticsearch/</a></p>
+</blockquote>
+
+<p>在elasticsearch的docker版本文档中，官方提到了vm.max_map_count的值在生产环境最少要设置成262144。设置的方式有两种</p>
+
+<ol>
+<li><p>永久性的修改,在/etc/sysctl.conf文件中添加一行：</p>
+
+<pre><code class="language-text">vm.max_map_count=262144
+</code></pre></li>
+
+<li><p>临时修改，进入正在运行的机器。</p>
+
+<pre><code class="language-bash">sysctl -w vm.max_map_count=262144
+</code></pre></li>
+</ol>
+
+<h2 id="安装-kibana">安装 kibana</h2>
+
+<pre><code class="language-bash">docker pull docker.elastic.co/kibana/kibana:6.2.4
+docker run -d -p 5601:5601 --link elasticsearch -e \
+  ELASTICSEARCH_URL=http://elasticsearch:9200 docker.elastic.co/kibana/kibana:6.2.4
+</code></pre>
+
+<h2 id="安装-logstash">安装 Logstash</h2>
+
+<p>logstash我们只让它进行日志处理，处理完之后将其输出到elasticsearch。</p>
+
+<pre><code class="language-bash">docker pull docker.elastic.co/logstash/logstash:6.2.4
+docker run --rm -it --name logstash --link elasticsearch -d  \
+  docker.elastic.co/logstash/logstash:6.2.4
+</code></pre>
+
+<h1 id="安装-elk-docker">安装 ELK Docker</h1>
+
+<pre><code class="language-bash">docker pull sebp/elk
+</code></pre>
+
+<h2 id="启动elk">启动ELK</h2>
+
+<pre><code class="language-bash">docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk sebp/elk
+</code></pre>
+
+<blockquote>
+<p>第一次启动时，出现了 <code>Starting Elasticsearch Server  [fail]</code>的错误，解决方案：内存小造成的，另一个原因就是沒有配置 <code>vm.max_map_count</code> 选项，经过上面修改就可以正常启动了。</p>
+</blockquote>
+
+<p>检查 ElasticSearch 能否正常启动，可以在浏览器上输入：</p>
+
+<pre><code class="language-url">http://your_ip:9200
+</code></pre>
+
+<p>初始用户名和密码是 elastic / password</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/es.png" />
+    </div>
+    <a href="/img/es.png" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<p>检查 Kibana 能否正常启动，可以在浏览器上输入：</p>
+
+<pre><code class="language-url">http://your_ip:5601
+</code></pre>
+
+<p>如果出现下面的情景，就证明启动成功。</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/kibana.png" />
+    </div>
+    <a href="/img/kibana.png" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h1 id="使用-docker-compose-安装">使用 docker-compose 安装</h1>
+
+<p>docker-compose.yml</p>
+
+<div dir="ltr" style="margin-left: 0pt;">
+    <table style="border-collapse: collapse; border: none; width: 468pt;">
+        <colgroup><col width="*"></colgroup>
+        <tbody>
+            <tr style="height: 0pt;">
+                <td style="border-bottom: solid #000000 1pt; border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-top: solid #000000 1pt; padding: 5pt 5pt 5pt 5pt; vertical-align: top;">
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            version:&nbsp;'2'
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            services:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;elasticsearch:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;image:&nbsp;docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;ports:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;"9200:9200"
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;"9300:9300"
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;environment:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ES_JAVA_OPTS:&nbsp;"-Xms1g&nbsp;-Xmx1g"
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;networks:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elk
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;logstash:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;image:&nbsp;docker.elastic.co/logstash/logstash:6.2.4
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;ports:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;"5000:5000"
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;networks:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elk
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;depends_on:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elasticsearch
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;kibana:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;image:&nbsp;docker.elastic.co/kibana/kibana:6.2.4
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;ports:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;"5601:5601"
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;networks:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elk
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;depends_on:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elasticsearch
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            networks:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;elk:
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;driver:&nbsp;bridge
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                     
+                    
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<p><br></p>
+
+<p>如果使用 elk 套装安裝，<code>docker-compose.yml</code> 內容如下：</p>
+
+<pre><code class="language-yaml">elk:
+  image: sebp/elk
+  ports:
+    - &quot;5601:5601&quot;
+    - &quot;9200:9200&quot;
+    - &quot;5044:5044&quot;
+</code></pre>
+
+<p>启动或重新启动定义在docker-compose.yml 的所有软件，可以加上 <code>-d</code>，改成在后台启动。</p>
+
+<pre><code class="language-bash">$ docker-compose up -d
+</code></pre>
+
+<h1 id="参考">参考</h1>
+
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/32559371">https://zhuanlan.zhihu.com/p/32559371</a></li>
+<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html</a></li>
+<li><a href="https://elk-docker.readthedocs.io/#installation">https://elk-docker.readthedocs.io/#installation</a></li>
+</ul>
+
+                        </div>
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/2018-11-29-effective-docker-1/">构建高效率的 Docker 镜像</a></li>
+        
+        <li><a href="/posts/2018-11-28-context-package-1/">Go语言中的并发机制系列-4/1 | 深入理解 context 包</a></li>
+        
+        <li><a href="/posts/2018-11-28-jenkins-2/">基于 Jenkins 的持续集成与持续开发环境配置</a></li>
+        
+        <li><a href="/posts/2018-11-27-object-detection/">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a></li>
+        
+        <li><a href="/posts/2018-11-26-deep-rf-note-1/">深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/elk">elk</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/elastic-search">elastic search</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/logstash">logstash</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/kibana">kibana</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    
+    <div class="generic-box">
+            <div class="share-links" style="text-align:center;">
+                <a rel="license"  href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
+                    <img alt="知识共享许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png">
+                </a>
+                <br/>
+                
+                本文章采用<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可。
+                <br />
+                如要转载，请注明出处！
+            </div>
+    </div>
+
+
+<style>
+.generic-box {
+    text-align: center;
+    border: 1px solid #eee;
+    padding: 10px;
+     
+    margin: 30px;
+};
+.share-links a {
+    border-bottom: none;
+}
+</style>
+
+
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-starlight/" title="starlight 介绍">starlight 介绍</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/" title="管道化 SQL">管道化 SQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-elk-1/" title="ELK学习笔记|安裝ElasticSearch、Logstash、Kibana">ELK学习笔记|安裝ElasticSearch、Logstash、Kibana</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-29-effective-docker-1/" title="构建高效率的 Docker 镜像">构建高效率的 Docker 镜像</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-28-context-package-1/" title="Go语言中的并发机制系列-4/1 | 深入理解 context 包">Go语言中的并发机制系列-4/1 | 深入理解 context 包</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-28-jenkins-2/" title="基于 Jenkins 的持续集成与持续开发环境配置">基于 Jenkins 的持续集成与持续开发环境配置</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-27-object-detection/" title="目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-26-dive-2/" title="开源项目初探-dive">开源项目初探-dive</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-26-deep-rf-note-1/" title="深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法">深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-25-go-routine-2/" title="Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP">Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/docker/">Docker(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/git/">Git(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/go-%E5%8C%85%E8%AE%B2%E8%A7%A3/">Go 包讲解(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/go-%E5%B9%B6%E5%8F%91/">Go 并发(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">Golang(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/jenkins/">Jenkins(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/d3/">d3(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/elk/">elk(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">golang(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hadoop/">hadoop(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hugo/">hugo(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/shortcode/">shortcode(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/">可视化(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">安装教程(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B7%A5%E4%BD%9C%E6%95%88%E7%8E%87/">工作效率(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B9%B6%E5%8F%91/">并发(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/">强化学习算法(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">目标检测(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95/">算法(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/devops/">DevOps</a>
+    
+    <a href="http://shenheng.xyz/tags/docker/">Docker</a>
+    
+    <a href="http://shenheng.xyz/tags/effective/">Effective</a>
+    
+    <a href="http://shenheng.xyz/tags/git/">Git</a>
+    
+    <a href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91/">Golang并发</a>
+    
+    <a href="http://shenheng.xyz/tags/jenkins/">Jenkins</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/d3/">d3</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/elastic-search/">elastic search</a>
+    
+    <a href="http://shenheng.xyz/tags/elk/">elk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/golang/">golang</a>
+    
+    <a href="http://shenheng.xyz/tags/hadoop/">hadoop</a>
+    
+    <a href="http://shenheng.xyz/tags/kibana/">kibana</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/logstash/">logstash</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/shortcode/">shortcode</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/">强化学习算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%AE%97%E6%B3%95/">目标检测算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://lzzrpi.xin/" title="一个程序员">一个程序员</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://www.shenhengheng.xyz/" title="申恒恒的博客">申恒恒的博客</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://shenheng.readailib.com/" title="毕业设计project网站">Project</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://dir.readailib.com/" title="Directory Lister">Directory Lister</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    <section class="widget">
+        
+<section class="widget">
+    
+    <h3 class="widget-title">我的位置</h3>
+    <ul class="widget-list">
+            
+            <li>
+                <div id="allmap">
+                        
+                        <script  type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=AtWkt6iR9uyuODelXUqfXRth"></script>
+                        <script type="text/javascript">
+                            
+                            var map = new BMap.Map("allmap");
+                            var point = new BMap.Point("117.9439850000", "28.4572810000");
+                            var marker = new BMap.Marker(point);  
+                            map.addOverlay(marker);              
+                            map.centerAndZoom(point, 15);
+                            var opts = {
+                                width : 50,     
+                                height: 50,     
+                            }
+                            var infoWindow = new BMap.InfoWindow("地址：上饶市信州区广信大厦A座3楼", opts);  
+                            marker.addEventListener("click", function(){          
+                                map.openInfoWindow(infoWindow,point); 
+                            });
+                        </script>        
+                </div> 
+                            
+            </li>
+            
+        
+    
+
+    </ul>
+</section>
+
+    </section>
+</div>
+
+
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">申恒恒的博客 By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rh02/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript" src="/js/app.js" defer></script>
+
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script  type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+<script type="text/javascript" src="/js/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

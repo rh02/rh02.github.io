@@ -6,10 +6,19 @@
     <description>Recent content in elastic search on 申恒恒的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>shenheng.xyz &amp;copy; 2018</copyright>
-    <lastBuildDate>Mon, 03 Dec 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 04 Dec 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://shenheng.xyz/tags/elastic-search/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>ELK学习笔记3|Kibana可视化展示</title>
+      <link>http://shenheng.xyz/posts/2018-12-11-elk-3/</link>
+      <pubDate>Tue, 04 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-11-elk-3/</guid>
+      <description>本篇文章主要介绍如何使用 Kibana 来制作不同的图表，Kibana是ELK套件中的可视化工具，里面内嵌了很多图表，比如：条形图、饼图等等。 Kibana</description>
+    </item>
     
     <item>
       <title>ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana</title>

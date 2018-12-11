@@ -10,8 +10,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana | 申恒恒的博客</title>
-    <meta property="og:title" content="ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana - 申恒恒的博客">
+    <title>ELK学习笔记2|数据的导入与查询 | 申恒恒的博客</title>
+    <meta property="og:title" content="ELK学习笔记2|数据的导入与查询 - 申恒恒的博客">
     <meta property="og:type" content="article">
         
     <meta property="article:published_time" content="2018-12-03T00:00:00&#43;08:00">
@@ -20,10 +20,10 @@
     <meta property="article:modified_time" content="2018-12-03T00:00:00&#43;08:00">
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
-    <meta name="description" content="ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana">
+    <meta name="description" content="ELK学习笔记2|数据的导入与查询">
         <meta name="author" content="申恒恒">
         
-    <meta property="og:url" content="http://shenheng.xyz/posts/2018-12-11-elk-1/">
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-12-11-elk-2/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -100,7 +100,7 @@
                 <div class="res-cons">
                     <article class="post">
                         <header>
-                            <h1 class="post-title">ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana</h1>
+                            <h1 class="post-title">ELK学习笔记2|数据的导入与查询</h1>
                         </header>
                         <date class="post-meta meta-date">
                             2018年12月3日
@@ -119,328 +119,67 @@
                         </div>
                         
                         
-                            <aside id="toc" class="dismissed">
-                                <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
-                                <nav id="TableOfContents">
-<ul>
-<li><a href="#什么是elk">什么是ELK？</a></li>
-<li><a href="#单个安装">单个安装</a>
-<ul>
-<li><a href="#安装-elasticsearch">安装 ElasticSearch</a></li>
-<li><a href="#安装-kibana">安装 kibana</a></li>
-<li><a href="#安装-logstash">安装 Logstash</a></li>
-</ul></li>
-<li><a href="#安装-elk-docker">安装 ELK Docker</a>
-<ul>
-<li><a href="#启动elk">启动ELK</a></li>
-</ul></li>
-<li><a href="#使用-docker-compose-安装">使用 docker-compose 安装</a></li>
-<li><a href="#参考">参考</a></li>
-</ul>
-</nav>
-                            </aside>
-                        
                         
                         <div class="post-content">
                             
 
-<p>本系列主要是ELK的实操笔记部分，主要分享一下近期关于ELK的知识，包括它的运行原理、工作方式、基本特性和 Lucence的相关知识。希望以博客的形式能够保存下来，供后期查阅。</p>
-
-<p>本序列借以希望能够提供该应用支持云上多主机多用户部署，以及kubernetes部署解决方案。</p>
-
-<h1 id="什么是elk">什么是ELK？</h1>
-
-<p><strong>ELK</strong> 是三个开源软件的缩写，分别是：Elasticsearch，Logstash 和 Kibana。Elasticsearch 是一个搜索和分析引擎，底层的搜索引擎是 Lucence。 Logstash 是一个日志数据处理系统，可以从多数据源获取数据，并将数据转发给 Elasticsearch 的存储系统。 Kibana是一个数据可视化软件，可以让用户对Elasticsearch中数据进行图表的可视化展示。</p>
-
-<p>ELK 经常被用于作为日志数据的存储系统，工作方式为将主机中的日志通过文件或者系统日志（syslog）的方式传递给 Logstach 进行解析（简单的讲，正则表达式）， 然后在存入 ElasticSearch 进行查询和统计，最后经过 Kibana 将统计的结果进行可视化展示。工作流程图如下图：</p>
-
-
-
-
-<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
-  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-    <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/elk-2.png" alt="工作流程图"/>
-    </div>
-    <a href="/img/elk-2.png" itemprop="contentUrl"></a>
-      <figcaption>
-          <p>工作流程图</p>
-      </figcaption>
-  </figure>
-</div>
-
-<style>
- .gallery {
-     overflow: hidden;
-     margin: 10px;
-     max-width: 768px;
- }
- .gallery .box {
-     float: left;
-     position: relative;
-     width: 100%;
-     padding-bottom: 100%; 
- }
-
-
- @media only screen and (min-width : 365px) {
-     .gallery .box {
-         width: 50%;
-         padding-bottom: 50%;
-     }
- }
- @media only screen and (min-width : 480px) {
-      
-     .gallery .box {
-         width: 33.3%;
-         padding-bottom: 33.3%;  
-     }
- }
- @media only screen and (min-width : 9999px) {
-     
-    .box {
-       width: 25%;
-       padding-bottom: 25%;
-    }
- }
- figure a {
-     border-bottom: none;
- }
- 
-  
- .gallery.hover-transition figure,
- .gallery.hover-effect-zoom .img, 
- .gallery:not(.caption-effect-appear) figcaption,
- .fancy-figure:not(.caption-effect-appear) figcaption {
-     -webkit-transition: all 0.3s ease-in-out;
-     -moz-transition: all 0.3s ease-in-out;
-     -o-transition: all 0.3s ease-in-out;
-     transition: all 0.3s ease-in-out;
- }
-  
- figure {
-     position:relative;  
-     overflow: hidden;
- }
- .gallery figure {
-     position: absolute;
-     left: 5px;
-     right: 5px;
-     top: 5px;
-     bottom: 5px;
- }
- .gallery.hover-effect-grow figure:hover {
-     transform: scale(1.05);
- }
- .gallery.hover-effect-shrink figure:hover {
-     transform: scale(0.95);
- }
- .gallery.hover-effect-slidedown figure:hover {
-     transform: translateY(5px);
- }
- .gallery.hover-effect-slideup figure:hover {
-     transform: translateY(-5px);
- }
- 
-  
- 
- .gallery .img {
-     position: absolute;
-     left: 0;
-     right: 0;
-     top: 0;
-     bottom: 0;
-     background-size: cover;
-     background-position: 50% 50%;
-     background-repeat: no-repeat;
- }
- .gallery.hover-effect-zoom figure:hover .img {
-     transform: scale(1.05);
- }
- .gallery img {
-     display: none;  
- }
- figure a {
-     position: absolute;
-     left: 0;
-     right: 0;
-     top: 0;
-     bottom: 0;
- }
- 
-  
- .gallery figcaption,
- .fancy-figure figcaption {
-     position: absolute;
-     bottom: 0;
-     left: 0;
-     right: 0;
-     background: #000;
-     color: #FFF;
-     text-align: center;
-     font-size: 75%;  
-     background: rgba(0, 0, 0, 0.5);
-     opacity: 1;
-     cursor: pointer;
- }
- .gallery.caption-position-none figcaption,
- .fancy-figure.caption-position-none figcaption  {
-     display: none;
- }
- .gallery.caption-position-center figcaption,
- .fancy-figure.caption-position-center figcaption {
-     top: 0;
-     padding: 40% 5px;
- }
- .gallery.caption-position-bottom figcaption,
- .fancy-figure.caption-position-bottom figcaption {
-     padding: 5px;
- }
- .gallery.caption-effect-fade figure:not(:hover) figcaption,
- .gallery.caption-effect-appear figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
-     background: rgba(0, 0, 0, 0);
-     opacity: 0;
- }
- .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
-     margin-bottom: -100%;
- }
- .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
-     top: 100%;
- }
- figcaption p {
-     margin: auto;  
- }
-
-</style>
-
-<p>在学习ELK组件之前，需要了解以下名词和专业术语：</p>
+<p>本部分使用的数据可以从 es 网站上直接获得，本实例使用的数据文件如下：</p>
 
 <table>
 <thead>
 <tr>
-<th>名词/术语</th>
-<th>解释</th>
+<th>描述</th>
+<th>下载</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td>index</td>
-<td>Elasticsearch的index相当于一个数据库。</td>
+<td>莎士比亚的全部作品</td>
+<td><a href="https://download.elastic.co/demos/kibana/gettingstarted/shakespeare_6.0.json">shakespeare.json</a></td>
 </tr>
 
 <tr>
-<td>type</td>
-<td>数据库中的一张表。</td>
+<td>随即数据生成的虚拟账户</td>
+<td><a href="https://download.elastic.co/demos/kibana/gettingstarted/accounts.zip">accounts.zip</a></td>
 </tr>
 
 <tr>
-<td>id</td>
-<td>唯一，类似于 Primary Key。</td>
-</tr>
-
-<tr>
-<td>node</td>
-<td>节点是Elasticsearch实例(Instance)，可以看成集群(Cluster)中的一個节点。一台机器可以运行多个实例，但是同一台机器上的实例在配置上要确保http和tcp Port不同。</td>
-</tr>
-
-<tr>
-<td>cluster</td>
-<td>表示一个集群，集群中有多个节点，其中有一个节点为 master， 该主节点类似于分布式中的大多数主节点一样是经过选举产生，主节点是针对该集群内部来讲的。</td>
-</tr>
-
-<tr>
-<td>document</td>
-<td>表示文档，代表了能够被索引的最小数据单元。在一个Index或者Type中，可以存储多个文档。虽然文档是存储在Index中的，但是实际上，它需要被索引或者分配到Index上的一个Type上。</td>
-</tr>
-
-<tr>
-<td>shards</td>
-<td>代表索引的分片，Elasticsearch 可以把一个完整的索引分成多个粉片，有点事能够讲一个大的索引拆分到多个，并且分布到多个节点上，对于分布式系统是非常有用的，可以实现分布式搜索，加快处理速度。分片的数量只能在创建前指定，如果索引创建后不能更改。</td>
-</tr>
-
-<tr>
-<td>replicas</td>
-<td>代表索引副本，Elasticsearch可以设置多个索引副本，副本的作用一是提高系统的容错性，当某个节点的分片损坏或者缺水，这时可以从副本中进行恢复。二是可以提高 ElasticSearch的查询效率，Elasticsearch会自动的对搜索请求进行负载均衡。</td>
+<td>一组随机生成的日志文件</td>
+<td><a href="https://download.elastic.co/demos/kibana/gettingstarted/logs.jsonl.gz">logs.jsonl.gz</a></td>
 </tr>
 </tbody>
 </table>
 
-<p>实操部分主要针对kubernetes安装与部署（后期更新），和容器化安装与部署。容器安装又分成单个组件安装和docker-compose部署。</p>
+<p>可以使用 wget 命令下载上述文件，比如下面的命令：</p>
 
-<h1 id="单个安装">单个安装</h1>
-
-<h2 id="安装-elasticsearch">安装 ElasticSearch</h2>
-
-<p>从官方镜像源拉取 ElasticSearch 镜像。</p>
-
-<pre><code class="language-bash">docker pull docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+<pre><code class="language-bash">wget https://download.elastic.co/demos/kibana/gettingstarted/shakespeare_6.0.json
 </code></pre>
 
-<p>启动 ElasticSearch。</p>
+<p>或者使用 cURL 工具。</p>
 
-<pre><code class="language-bash">docker run -p 9200:9200 -p 9300:9300 --name elasticsearch -e &quot;discovery.type=single-node&quot; \
-  docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+<pre><code class="language-bash">curl https://download.elastic.co/demos/kibana/gettingstarted/shakespeare_6.0.json -O shakespeare_6.0.json
 </code></pre>
 
-<blockquote>
-<p>具体启动参数以及配置详见： <a href="https://hub.docker.com/_/elasticsearch/">https://hub.docker.com/_/elasticsearch/</a></p>
-</blockquote>
+<p>解压数据：</p>
 
-<p>在elasticsearch的docker版本文档中，官方提到了vm.max_map_count的值在生产环境最少要设置成262144。设置的方式有两种</p>
-
-<ol>
-<li><p>永久性的修改,在/etc/sysctl.conf文件中添加一行：</p>
-
-<pre><code class="language-text">vm.max_map_count=262144
-</code></pre></li>
-
-<li><p>临时修改，进入正在运行的机器。</p>
-
-<pre><code class="language-bash">sysctl -w vm.max_map_count=262144
-</code></pre></li>
-</ol>
-
-<h2 id="安装-kibana">安装 kibana</h2>
-
-<pre><code class="language-bash">docker pull docker.elastic.co/kibana/kibana:6.2.4
-docker run -d -p 5601:5601 --link elasticsearch -e \
-  ELASTICSEARCH_URL=http://elasticsearch:9200 docker.elastic.co/kibana/kibana:6.2.4
+<pre><code class="language-bash">unzip accounts.zip
+gunzip logs.jsonl.gz
 </code></pre>
 
-<h2 id="安装-logstash">安装 Logstash</h2>
+<p>接着通过 cURL 命令上传文件，cURL是一个利用URL语法在命令行下工作的文件传输工具，它支持文件的上传与下载。命令如下：</p>
 
-<p>logstash我们只让它进行日志处理，处理完之后将其输出到elasticsearch。</p>
-
-<pre><code class="language-bash">docker pull docker.elastic.co/logstash/logstash:6.2.4
-docker run --rm -it --name logstash --link elasticsearch -d  \
-  docker.elastic.co/logstash/logstash:6.2.4
+<pre><code class="language-bash">curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/bank/account/_bulk?pretty' --data-binary @accounts.json
+curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/shakespeare/doc/_bulk?pretty' --data-binary @shakespeare_6.0.json
+curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/_bulk?pretty' --data-binary @logs.jsonl
 </code></pre>
 
-<h1 id="安装-elk-docker">安装 ELK Docker</h1>
+<p>可以使用以下命令获取查询的数据：</p>
 
-<pre><code class="language-bash">docker pull sebp/elk
+<pre><code class="language-bash">curl -X GET &quot;localhost:9200/_cat/indices?v&quot;
 </code></pre>
 
-<h2 id="启动elk">启动ELK</h2>
-
-<pre><code class="language-bash">docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 -it --name elk sebp/elk
-</code></pre>
-
-<blockquote>
-<p>第一次启动时，出现了 <code>Starting Elasticsearch Server  [fail]</code>的错误，解决方案：内存小造成的，另一个原因就是沒有配置 <code>vm.max_map_count</code> 选项，经过上面修改就可以正常启动了。</p>
-</blockquote>
-
-<p>检查 ElasticSearch 能否正常启动，可以在浏览器上输入：</p>
-
-<pre><code class="language-url">http://your_ip:9200
-</code></pre>
-
-<p>初始用户名和密码是 elastic / password</p>
+<p>导入后可以看到 es 中如下画面：</p>
 
 
 
@@ -448,9 +187,9 @@ docker run --rm -it --name logstash --link elasticsearch -d  \
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es.png" />
+      <img itemprop="thumbnail" src="/img/es-2.png" />
     </div>
-    <a href="/img/es.png" itemprop="contentUrl"></a>
+    <a href="/img/es-2.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -602,12 +341,7 @@ docker run --rm -it --name logstash --link elasticsearch -d  \
 
 </style>
 
-<p>检查 Kibana 能否正常启动，可以在浏览器上输入：</p>
-
-<pre><code class="language-url">http://your_ip:5601
-</code></pre>
-
-<p>如果出现下面的情景，就证明启动成功。</p>
+<p>成功导入数据后，首先需要建立索引，在左方的 <code>[Management] → [Index Pattern]</code>，再点击 <code>[Create Index Pattern]</code>，会看到如下画面，已经有 5 个 索引，可以输入 Index Pattern的名字，比如下面所示的，输入 <code>logstash*</code>。</p>
 
 
 
@@ -615,9 +349,9 @@ docker run --rm -it --name logstash --link elasticsearch -d  \
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/kibana.png" />
+      <img itemprop="thumbnail" src="/img/es-3.png" />
     </div>
-    <a href="/img/kibana.png" itemprop="contentUrl"></a>
+    <a href="/img/es-3.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -769,299 +503,497 @@ docker run --rm -it --name logstash --link elasticsearch -d  \
 
 </style>
 
-<h1 id="使用-docker-compose-安装">使用 docker-compose 安装</h1>
+<p>按 <code>[Next Step]</code> ，下拉菜单选择 <code>@timestamp</code> 作为时间过滤的字段，再按下 <code>[Create index pattern]</code>。</p>
 
-<p>docker-compose.yml</p>
 
-<div dir="ltr" style="margin-left: 0pt;">
-    <table style="border-collapse: collapse; border: none; width: 468pt;">
-        <colgroup><col width="*"></colgroup>
-        <tbody>
-            <tr style="height: 0pt;">
-                <td style="border-bottom: solid #000000 1pt; border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-top: solid #000000 1pt; padding: 5pt 5pt 5pt 5pt; vertical-align: top;">
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            version:&nbsp;'2'
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            services:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;elasticsearch:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;image:&nbsp;docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;ports:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;"9200:9200"
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;"9300:9300"
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;environment:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ES_JAVA_OPTS:&nbsp;"-Xms1g&nbsp;-Xmx1g"
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;networks:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elk
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;logstash:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;image:&nbsp;docker.elastic.co/logstash/logstash:6.2.4
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;ports:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;"5000:5000"
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;networks:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elk
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;depends_on:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elasticsearch
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;kibana:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;image:&nbsp;docker.elastic.co/kibana/kibana:6.2.4
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;ports:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;"5601:5601"
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;networks:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elk
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;depends_on:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;elasticsearch
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            networks:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;elk:
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            &nbsp;&nbsp;&nbsp;&nbsp;driver:&nbsp;bridge
-                        </span>
-                    </div>      
-                      
-                    
-                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
-                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
-                            
-                        </span>
-                    </div>      
-                     
-                    
-                </td>
-            </tr>
-        </tbody>
-    </table>
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/es-4.png" />
+    </div>
+    <a href="/img/es-4.png" itemprop="contentUrl"></a>
+  </figure>
 </div>
 
-<p><br></p>
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
 
-<p>如果使用 elk 套装安裝，<code>docker-compose.yml</code> 內容如下：</p>
 
-<pre><code class="language-yaml">elk:
-  image: sebp/elk
-  ports:
-    - &quot;5601:5601&quot;
-    - &quot;9200:9200&quot;
-    - &quot;5044:5044&quot;
-</code></pre>
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
 
-<p>启动或重新启动定义在docker-compose.yml 的所有软件，可以加上 <code>-d</code>，改成在后台启动。</p>
+</style>
 
-<pre><code class="language-bash">$ docker-compose up -d
-</code></pre>
+<p>接着在 <code>Discover</code> 选项中查询数据，时间范围需要选择 <code>2015/5/18 - 2015/5/20</code>，设置日期可按右上方 [Last 15 minutes]，改成 <code>Absolute</code> 的时间范围，可以出现下面画面：</p>
 
-<h1 id="参考">参考</h1>
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/es-5.png" />
+    </div>
+    <a href="/img/es-5.png" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<p>如果想要查看更多字段，可以在左侧 <code>Available Fields</code> 中选择想查看的字段，按 <code>Add</code> 选项即可。如下所示：</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/es-6.png" />
+    </div>
+    <a href="/img/es-6.png" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h1 id="参考文献">参考文献</h1>
 
 <ul>
-<li><a href="https://zhuanlan.zhihu.com/p/32559371">https://zhuanlan.zhihu.com/p/32559371</a></li>
-<li><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html">https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html</a></li>
-<li><a href="https://elk-docker.readthedocs.io/#installation">https://elk-docker.readthedocs.io/#installation</a></li>
+<li><a href="https://atceiling.blogspot.com/2018/05/linux3elasticsearch-sample-data.html">https://atceiling.blogspot.com/2018/05/linux3elasticsearch-sample-data.html</a></li>
+<li><a href="https://www.elastic.co/guide/en/kibana/6.x/tutorial-load-dataset.html">https://www.elastic.co/guide/en/kibana/6.x/tutorial-load-dataset.html</a></li>
 </ul>
 
                         </div>
@@ -1073,13 +1005,13 @@ docker run --rm -it --name logstash --link elasticsearch -d  \
     <h2>See Also</h2>
     <ul class="listing">
         
-        <li><a href="/posts/2018-12-11-elk-2/">ELK学习笔记2|数据的导入与查询</a></li>
+        <li><a href="/posts/2018-12-11-elk-1/">ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana</a></li>
         
         <li><a href="/posts/2018-11-29-effective-docker-1/">构建高效率的 Docker 镜像</a></li>
         
-        <li><a href="/posts/2018-11-28-jenkins-2/">基于 Jenkins 的持续集成与持续开发环境配置</a></li>
-        
         <li><a href="/posts/2018-11-28-context-package-1/">Go语言中的并发机制系列-4/1 | 深入理解 context 包</a></li>
+        
+        <li><a href="/posts/2018-11-28-jenkins-2/">基于 Jenkins 的持续集成与持续开发环境配置</a></li>
         
         <li><a href="/posts/2018-11-27-object-detection/">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a></li>
         

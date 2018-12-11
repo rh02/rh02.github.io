@@ -48,12 +48,21 @@
     </item>
     
     <item>
-      <title>ELK学习笔记|安裝ElasticSearch、Logstash、Kibana</title>
+      <title>ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana</title>
       <link>http://shenheng.xyz/posts/2018-12-11-elk-1/</link>
       <pubDate>Mon, 03 Dec 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/2018-12-11-elk-1/</guid>
       <description>本系列主要是ELK的实操笔记部分，主要分享一下近期关于ELK的知识，包括它的运行原理、工作方式、基本特性和 Lucence的相关知识。希望以博</description>
+    </item>
+    
+    <item>
+      <title>ELK学习笔记2|数据的导入与查询</title>
+      <link>http://shenheng.xyz/posts/2018-12-11-elk-2/</link>
+      <pubDate>Mon, 03 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-11-elk-2/</guid>
+      <description>本部分使用的数据可以从 es 网站上直接获得，本实例使用的数据文件如下： 描述 下载 莎士比亚的全部作品 shakespeare.json 随即数据生成的虚拟账户 accounts.zip 一组随机生成的日志文件</description>
     </item>
     
     <item>

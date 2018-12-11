@@ -39,6 +39,15 @@
     </item>
     
     <item>
+      <title>管道化 SQL</title>
+      <link>http://shenheng.xyz/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/</link>
+      <pubDate>Tue, 11 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/</guid>
+      <description>本文对原文章有所取舍，如有问题可以详见原文. 在这篇博文中，我想分享两个工具： sql 和 chart ，我们最近一直在使用它们.它们共同组成了一个有趣的模式，用</description>
+    </item>
+    
+    <item>
       <title>构建高效率的 Docker 镜像</title>
       <link>http://shenheng.xyz/posts/2018-11-29-effective-docker-1/</link>
       <pubDate>Thu, 29 Nov 2018 00:00:00 +0000</pubDate>

@@ -20,5 +20,14 @@
       <description>翻译自 https://npf.io/2018/12/starlight. 翻译水平能力有限，还望包涵。本次主要讲解 starlight. Starlight 主要封装了 google 的 Go语言实现的 Starlark, Startlark 是一种类 python 语言的语言（可以看成 python 语言的子集），最初是出现</description>
     </item>
     
+    <item>
+      <title>管道化 SQL</title>
+      <link>http://shenheng.xyz/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/</link>
+      <pubDate>Tue, 11 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/</guid>
+      <description>本文对原文章有所取舍，如有问题可以详见原文. 在这篇博文中，我想分享两个工具： sql 和 chart ，我们最近一直在使用它们.它们共同组成了一个有趣的模式，用</description>
+    </item>
+    
   </channel>
 </rss>

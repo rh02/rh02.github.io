@@ -30,6 +30,15 @@
     </item>
     
     <item>
+      <title>starlight 介绍</title>
+      <link>http://shenheng.xyz/posts/2018-12-11-starlight/</link>
+      <pubDate>Tue, 11 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-11-starlight/</guid>
+      <description>翻译自 https://npf.io/2018/12/starlight. 翻译水平能力有限，还望包涵。本次主要讲解 starlight. Starlight 主要封装了 google 的 Go语言实现的 Starlark, Startlark 是一种类 python 语言的语言（可以看成 python 语言的子集），最初是出现</description>
+    </item>
+    
+    <item>
       <title>构建高效率的 Docker 镜像</title>
       <link>http://shenheng.xyz/posts/2018-11-29-effective-docker-1/</link>
       <pubDate>Thu, 29 Nov 2018 00:00:00 +0000</pubDate>
@@ -72,6 +81,15 @@
       
       <guid>http://shenheng.xyz/posts/2018-11-26-dive-2/</guid>
       <description>今天学习了 Github 上一个 Golang 的开源项目 dive, 这是一个 docker 镜像构建分析工具，详细介绍请参考项目 Github 主页. A tool for exploring a docker image, layer contents, and discovering ways to shrink your Docker image size. 主要有以下功能： dive</description>
+    </item>
+    
+    <item>
+      <title>深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法</title>
+      <link>http://shenheng.xyz/posts/2018-11-26-deep-rf-note-1/</link>
+      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-11-26-deep-rf-note-1/</guid>
+      <description>本笔记来自于 2017 年 8 月份开办的 Deep RL Bootcamp 课程，这是他们的课程网站. 那么这一系列笔记是整理自课堂上的，相对来说偏理论，我会在我的博客中陆续展示相关的</description>
     </item>
     
     <item>

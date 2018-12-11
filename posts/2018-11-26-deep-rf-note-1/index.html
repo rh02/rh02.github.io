@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+     
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法 | 申恒恒的博客</title>
+    <meta property="og:title" content="深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法 - 申恒恒的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-11-26T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-11-26T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法">
+        <meta name="author" content="申恒恒">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-11-26-deep-rf-note-1/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script async type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+
+    
+        
+        
+            <script async src="https://www.googletagmanager.com/gtag/js?id=UA-92073513-2"></script>
+            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-92073513-2');
+        </script>
+        
+
+    
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9076793735164845",
+            enable_page_level_ads: true
+        });
+    </script>
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        申恒恒的博客
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年11月26日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95">强化学习算法</a>
+                            
+                                <a href="http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95">算法</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                            <aside id="toc" class="dismissed">
+                                <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                                <nav id="TableOfContents">
+<ul>
+<li><a href="#大纲">大纲</a></li>
+<li><a href="#马尔可夫决策过程">马尔可夫决策过程</a>
+<ul>
+<li><a href="#优化目标">优化目标</a></li>
+</ul></li>
+<li><a href="#强化学习算法一览">强化学习算法一览</a></li>
+</ul>
+</nav>
+                            </aside>
+                        
+                        
+                        <div class="post-content">
+                            
+
+<p>本笔记来自于 2017 年 8 月份开办的 <a href="https://sites.google.com/view/deep-rl-bootcamp/lectures">Deep RL Bootcamp</a> 课程，这是他们的课程<a href="https://sites.google.com/view/deep-rl-bootcamp/lectures">网站</a>. 那么这一系列笔记是整理自课堂上的，相对来说偏理论，我会在我的博客中陆续展示相关的课程Demo。</p>
+
+<h1 id="大纲">大纲</h1>
+
+<ul>
+<li>马尔可夫过程|Markov Decision Process</li>
+<li>值迭代算法 | Value Iteration Algorithm</li>
+<li>策略迭代算法 | Policy Iteration Algorithm</li>
+</ul>
+
+<h1 id="马尔可夫决策过程">马尔可夫决策过程</h1>
+
+<div dir="ltr" style="margin-left: 0pt;">
+    <table style="border-collapse: collapse; border: none; width: 468pt;">
+        <colgroup><col width="*"></colgroup>
+        <tbody>
+            <tr style="height: 0pt;">
+                <td style="border-bottom: solid #000000 1pt; border-left: solid #000000 1pt; border-right: solid #000000 1pt; border-top: solid #000000 1pt; padding: 5pt 5pt 5pt 5pt; vertical-align: top;">
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            void&nbsp;fuzz(char*&nbsp;buf,&nbsp;int&nbsp;len){
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;<br>
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;int&nbsp;q&nbsp;=&nbsp;rand()%10;
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;<br>
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;if&nbsp;(q&nbsp;==&nbsp;7){
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;int&nbsp;ind&nbsp;=&nbsp;rand()%len;
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;buf[ind]&nbsp;=&nbsp;rand();
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;}
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;<br>
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;if(q&nbsp;==&nbsp;5){
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;for(int&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;<&nbsp;len;&nbsp;i++)
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;&nbsp;buf[i]&nbsp;=&nbsp;rand();
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            &nbsp;&nbsp;<br>
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            }
+                        </span>
+                    </div>      
+                      
+                    
+                    <div dir="ltr" style="line-height: 1.2; margin-bottom: 0pt; margin-top: 0pt;">
+                        <span style="background-color: transparent; color: black; font-family: 'Courier New'; font-size: 11pt; font-style: normal; font-variant: normal; font-weight: 400; text-decoration: none; vertical-align: baseline;">
+                            
+                        </span>
+                    </div>      
+                     
+                    
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<p><br></p>
+
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        if&nbsp;(frame->frame_type()&nbsp;==&nbsp;kVideoFrameKey)&nbsp;{
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        &nbsp;&nbsp;&nbsp;...
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        &nbsp;&nbsp;&nbsp;GofInfo&nbsp;info&nbsp;=&nbsp;gof_info_.find(codec_header.tl0_pic_idx)->second;
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        &nbsp;&nbsp;&nbsp;FrameReceivedVp9(frame->id.picture_id,&nbsp;&info);
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        &nbsp;&nbsp;&nbsp;UnwrapPictureIds(frame);
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        &nbsp;&nbsp;&nbsp;return&nbsp;kHandOff;
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        }
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        
+    </span>
+</div>
+
+
+<ul>
+<li><p>An MDP is defined by:</p>
+
+<ul>
+<li>状态空间 $\mathcal{S}$</li>
+<li>行动空间 $\mathcal{A}$</li>
+<li>状态转换 $\mathcal{P}(s&rsquo;|s, a)$</li>
+<li>奖励函数 $\mathcal{R}(s, a, s’)$</li>
+<li>初始状态 $\mathcal{s_0}$</li>
+<li>折扣率 $\gamma$</li>
+<li>Horizon $\mathcal{H}$</li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/mdp.png" alt="图1. 马尔科夫决策过程"/>
+    </div>
+    <a href="/img/mdp.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图1. 马尔科夫决策过程</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style></li>
+</ul>
+
+<h2 id="优化目标">优化目标</h2>
+
+<p>Optimal Control =
+given an MDP (S, A, P, R, γ, H) find the optimal policy $\pi_\star$</p>
+
+<p><strong>方法</strong>：</p>
+
+<ul>
+<li>价值迭代</li>
+<li>策略迭代</li>
+</ul>
+
+<h1 id="强化学习算法一览">强化学习算法一览</h1>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/rl.png" alt="图2. RL Algorithm Landscape"/>
+    </div>
+    <a href="/img/rl.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>图2. RL Algorithm Landscape</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+                        </div>
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/2018-11-26-dive-2/">开源项目初探-dive</a></li>
+        
+        <li><a href="/posts/2018-11-25-go-routine-2/">Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</a></li>
+        
+        <li><a href="/posts/2018-11-24-go-routine-1/">Go语言中的并发机制系列-1|并发简介</a></li>
+        
+        <li><a href="/posts/2018-11-23-d3-demo/">D3 Demo</a></li>
+        
+        <li><a href="/posts/2018-11-23-hugo-shortcode-test/">Hugo ShortCode Demo</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95">强化学习算法</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    
+    <div class="generic-box">
+            <div class="share-links" style="text-align:center;">
+                <a rel="license"  href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
+                    <img alt="知识共享许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png">
+                </a>
+                <br/>
+                
+                本文章采用<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可。
+                <br />
+                如要转载，请注明出处！
+            </div>
+    </div>
+
+
+<style>
+.generic-box {
+    text-align: center;
+    border: 1px solid #eee;
+    padding: 10px;
+     
+    margin: 30px;
+};
+.share-links a {
+    border-bottom: none;
+}
+</style>
+
+
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-starlight/" title="starlight 介绍">starlight 介绍</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-29-effective-docker-1/" title="构建高效率的 Docker 镜像">构建高效率的 Docker 镜像</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-28-context-package-1/" title="Go语言中的并发机制系列-4/1 | 深入理解 context 包">Go语言中的并发机制系列-4/1 | 深入理解 context 包</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-28-jenkins-2/" title="基于 Jenkins 的持续集成与持续开发环境配置">基于 Jenkins 的持续集成与持续开发环境配置</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-27-object-detection/" title="目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-26-dive-2/" title="开源项目初探-dive">开源项目初探-dive</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-26-deep-rf-note-1/" title="深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法">深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-25-go-routine-2/" title="Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP">Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-24-go-routine-1/" title="Go语言中的并发机制系列-1|并发简介">Go语言中的并发机制系列-1|并发简介</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-11-23-d3-demo/" title="D3 Demo">D3 Demo</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/docker/">Docker(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/git/">Git(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/go-%E5%8C%85%E8%AE%B2%E8%A7%A3/">Go 包讲解(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/go-%E5%B9%B6%E5%8F%91/">Go 并发(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">Golang(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/jenkins/">Jenkins(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/d3/">d3(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">golang(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hadoop/">hadoop(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hugo/">hugo(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/shortcode/">shortcode(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/">可视化(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">安装教程(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B9%B6%E5%8F%91/">并发(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/">强化学习算法(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">目标检测(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95/">算法(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/devops/">DevOps</a>
+    
+    <a href="http://shenheng.xyz/tags/docker/">Docker</a>
+    
+    <a href="http://shenheng.xyz/tags/effective/">Effective</a>
+    
+    <a href="http://shenheng.xyz/tags/git/">Git</a>
+    
+    <a href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91/">Golang并发</a>
+    
+    <a href="http://shenheng.xyz/tags/jenkins/">Jenkins</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/d3/">d3</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/golang/">golang</a>
+    
+    <a href="http://shenheng.xyz/tags/hadoop/">hadoop</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/shortcode/">shortcode</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/">强化学习算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%AE%97%E6%B3%95/">目标检测算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://www.shenhengheng.xyz/" title="申恒恒的博客">申恒恒的博客</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://shenheng.readailib.com/" title="毕业设计project网站">Project</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://dir.readailib.com/" title="Directory Lister">Directory Lister</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    <section class="widget">
+        
+<section class="widget">
+    
+    <h3 class="widget-title">我的位置</h3>
+    <ul class="widget-list">
+            
+            <li>
+                <div id="allmap">
+                        
+                        <script  type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=AtWkt6iR9uyuODelXUqfXRth"></script>
+                        <script type="text/javascript">
+                            
+                            var map = new BMap.Map("allmap");
+                            var point = new BMap.Point("117.9439850000", "28.4572810000");
+                            var marker = new BMap.Marker(point);  
+                            map.addOverlay(marker);              
+                            map.centerAndZoom(point, 15);
+                            var opts = {
+                                width : 50,     
+                                height: 50,     
+                            }
+                            var infoWindow = new BMap.InfoWindow("地址：上饶市信州区广信大厦A座3楼", opts);  
+                            marker.addEventListener("click", function(){          
+                                map.openInfoWindow(infoWindow,point); 
+                            });
+                        </script>        
+                </div> 
+                            
+            </li>
+            
+        
+    
+
+    </ul>
+</section>
+
+    </section>
+</div>
+
+
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">申恒恒的博客 By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rh02/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript" src="/js/app.js" defer></script>
+
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script  type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+<script type="text/javascript" src="/js/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

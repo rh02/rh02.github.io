@@ -120,6 +120,15 @@
     </item>
     
     <item>
+      <title>golang</title>
+      <link>http://shenheng.xyz/tags/golang/</link>
+      <pubDate>Tue, 11 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/golang/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>hadoop</title>
       <link>http://shenheng.xyz/tags/hadoop/</link>
       <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
@@ -197,6 +206,15 @@
       <pubDate>Wed, 28 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>强化学习算法</title>
+      <link>http://shenheng.xyz/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Mon, 26 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/</guid>
       <description></description>
     </item>
     

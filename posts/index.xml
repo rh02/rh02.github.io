@@ -30,7 +30,25 @@
     </item>
     
     <item>
-      <title>ELK学习笔记3|Kibana可视化展示1</title>
+      <title>ELK学习笔记5|Kibana可视化-数据表、仪表盘</title>
+      <link>http://shenheng.xyz/posts/2018-12-11-elk-5/</link>
+      <pubDate>Thu, 06 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-11-elk-5/</guid>
+      <description>数据表(Data Table) 在 Visualize 选择 Data Table 建立数据表，接着选择索引或过滤条件，使用 logstash 作为实例，这时会看到有一个加总的数值。Buckets有两个 选项：Sp</description>
+    </item>
+    
+    <item>
+      <title>ELK学习笔记4|Kibana可视化-饼图、测度图和标签云</title>
+      <link>http://shenheng.xyz/posts/2018-12-11-elk-4/</link>
+      <pubDate>Wed, 05 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-11-elk-4/</guid>
+      <description>圓餅图(Pie) 在 Visualize 选择 Pie 创建饼图，接著选择索引或过滤条件，使用 logstash* 作为制作可视化的实例，这时你会看到类似一个甜甜圈的形状的图。 Buckets 类型有两个选</description>
+    </item>
+    
+    <item>
+      <title>ELK学习笔记3|Kibana可视化-条形图、线图和区域图</title>
       <link>http://shenheng.xyz/posts/2018-12-11-elk-3/</link>
       <pubDate>Tue, 04 Dec 2018 00:00:00 +0000</pubDate>
       

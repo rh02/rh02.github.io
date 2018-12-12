@@ -10,17 +10,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>ELK学习笔记4|Kibana可视化展示2 | 申恒恒的博客</title>
-    <meta property="og:title" content="ELK学习笔记4|Kibana可视化展示2 - 申恒恒的博客">
+    <title>ELK学习笔记4|Kibana可视化-饼图、测度图和标签云 | 申恒恒的博客</title>
+    <meta property="og:title" content="ELK学习笔记4|Kibana可视化-饼图、测度图和标签云 - 申恒恒的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2018-12-04T00:00:00&#43;08:00">
+    <meta property="article:published_time" content="2018-12-05T00:00:00&#43;08:00">
         
         
-    <meta property="article:modified_time" content="2018-12-04T00:00:00&#43;08:00">
+    <meta property="article:modified_time" content="2018-12-05T00:00:00&#43;08:00">
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
-    <meta name="description" content="ELK学习笔记4|Kibana可视化展示2">
+    <meta name="description" content="ELK学习笔记4|Kibana可视化-饼图、测度图和标签云">
         <meta name="author" content="申恒恒">
         
     <meta property="og:url" content="http://shenheng.xyz/posts/2018-12-11-elk-4/">
@@ -100,10 +100,10 @@
                 <div class="res-cons">
                     <article class="post">
                         <header>
-                            <h1 class="post-title">ELK学习笔记4|Kibana可视化展示2</h1>
+                            <h1 class="post-title">ELK学习笔记4|Kibana可视化-饼图、测度图和标签云</h1>
                         </header>
                         <date class="post-meta meta-date">
-                            2018年12月4日
+                            2018年12月5日
                         </date>
                         
                         <div class="post-meta meta-category">
@@ -123,9 +123,12 @@
                         <div class="post-content">
                             
 
-<p>本篇文章主要介绍如何使用 Kibana 来制作不同的图表，Kibana是ELK套件中的可视化工具，里面内嵌了很多图表，比如：条形图、饼图等等。</p>
+<h2 id="圓餅图-pie">圓餅图(Pie)</h2>
 
-<p>Kibana可以展示的图表类型有10+种，其中有三个图表被列为实验性质，包括：Visual Builder, Controls 和Vega。图表如下：</p>
+<p>在 <code>Visualize</code> 选择 <code>Pie</code> 创建饼图，接著选择索引或过滤条件，使用 <code>logstash*</code> 作为制作可视化的实例，这时你会看到类似一个甜甜圈的形状的图。</p>
+
+<p>Buckets 类型有两个选项：Split Slices 和 Split Chart 两种，下面会分别说明这两者的区别。
+先选择 <code>[Split Slices]</code> 出现 Aggregation 选择 <code>[Terms]</code>，Field 选择 <code>[machie.os.keyword]</code>，可以看到实例中使用不同操作系统的比例。</p>
 
 
 
@@ -133,9 +136,9 @@
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es-7.png" />
+      <img itemprop="thumbnail" src="/img/es-16.png" />
     </div>
-    <a href="/img/es-7.png" itemprop="contentUrl"></a>
+    <a href="/img/es-16.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -287,20 +290,7 @@
 
 </style>
 
-<p>在制作可视化效果图之前，需要记住以下几点：</p>
-
-<ul>
-<li>Y轴一般用作度量聚合(Metric Aggregations)的维度，例如 count、average、sum、min、max、standard deviation等。</li>
-<li>X轴一般使用的统计方法为：Date Histogram、Histogram、Range、Date Range、IPv4 Range、Terms 及 Filters 等。</li>
-</ul>
-
-<p>首先让我们看看垂直条形图(Vertical Bar)如何制作：</p>
-
-<h1 id="vertical-bar">Vertical Bar</h1>
-
-<p>使用前一篇文章 <a href="http://localhost:1313/posts/2018-12-11-elk-2/">EELK学习笔记2|数据的导入与查询</a> 导入的数据来做实例，在前一篇文章提到建立索引的方法，建立 <code>logstash*</code> 的索引，或是利用查询条件，來当作视觉图像的实例。</p>
-
-<p>按下左方 <code>[Visualize]</code>，再按 + 增加視覺圖像，選擇 [Vertical Bar]，此時需要選擇索引或查詢式，我們以選擇 Logstash*索引，這時你會看到一個度量維度(Y-Axis)，沒有分桶(Buckets)的情況下，圖形只有一大塊區域。</p>
+<p>按下 <code>[Option]</code> ，有几个选项 <code>[Donut]</code> 是否选中，表示展现全满的圆心圈。</p>
 
 
 
@@ -308,9 +298,9 @@
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es-8.png" />
+      <img itemprop="thumbnail" src="/img/es-17.png" />
     </div>
-    <a href="/img/es-8.png" itemprop="contentUrl"></a>
+    <a href="/img/es-17.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -462,7 +452,7 @@
 
 </style>
 
-<p>在 Buckets 區塊按下 [X-Asis]，出現 [Aggregation] 選項，選擇 [Terms]，Field選擇 machie.os.keyword，表示統計各作業系統的Count數，如下圖：</p>
+<p><code>[Legend Position]</code> 选择 <code>[Right]</code> 表示图放在右边，也可以选择放在右边和上下两边。如果选中 <code>[Show Labels]</code> 选项，则会出现百分比的标签。</p>
 
 
 
@@ -470,9 +460,9 @@
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es-9.png" />
+      <img itemprop="thumbnail" src="/img/es-18.png" />
     </div>
-    <a href="/img/es-9.png" itemprop="contentUrl"></a>
+    <a href="/img/es-18.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -624,7 +614,7 @@
 
 </style>
 
-<p>按下 [Add sub-buckets]，選擇 [Split Series]，出現 Aggregation 選擇 [Terms]，Field選擇 geo.src.keyword，表示要將上圖的作業系統統計數字，再細分來源地理位置，按下 ►[Apply Changes]，結果如下圖：</p>
+<p>回到 <code>[Data]</code> 的侧边栏，按下 <code>[Add sub-buckets]</code>，选择 <code>[Split Slices]</code>，出现 Aggregation 选择 <code>[Terms]</code>，Field 选择 <code>[geo.src.keyword]</code>，表示要上图的操作系统在通过来源的地理位置细分，按下 <code>[Apply Changes]</code>。</p>
 
 
 
@@ -632,9 +622,9 @@
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es-10.png" />
+      <img itemprop="thumbnail" src="/img/es-19.png" />
     </div>
-    <a href="/img/es-10.png" itemprop="contentUrl"></a>
+    <a href="/img/es-19.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -786,11 +776,11 @@
 
 </style>
 
-<p>Chart Type: 視覺圖像的選擇，有三種圖可選 (1) Line (2) Area (3)Bar；
-Mode: 模式的選項 (1) normal：將各Aggreation的統計值分開顯示 (2) stacked：將各Aggreation的統計值疊在一起。
-Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
+<p>上图可以使用不同操作系统的国家分布，还可以对数据进行二维分析，如果要对数据进行三维或更高维度的分析，只需要 <code>[sub-buckets]</code>就可以了。</p>
 
-<p>上圖為 Mode設為stacked的圖形，下圖則為設定normal。</p>
+<p><strong>Split Chart 是將 sub-buckets 的图形分别呈现，也就是选择 Size 來决定有几个图形。</strong></p>
+
+<p>选择 <code>[Split Chart]</code> 出现 Aggregation 选择 <code>[Terms]</code>，Field 选择 <code>[machie.os.keyword]</code>，按下 <code>[Add sub-buckets]</code>，选择 <code>[Split Slices]</code>， 出现 Aggregation 选择 <code>[Terms]</code>，Field选择 geo.src.keyword，这两个步驟跟前面提到的一样，只是呈现的 图表 不同。</p>
 
 
 
@@ -798,9 +788,9 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es-11.png" />
+      <img itemprop="thumbnail" src="/img/es-20.png" />
     </div>
-    <a href="/img/es-11.png" itemprop="contentUrl"></a>
+    <a href="/img/es-20.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -952,7 +942,9 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
 
 </style>
 
-<p>如果 Chart Type選擇 Bar圖形，會多出一個選項是 Line Mode，表示顯示區域圖的格線模式，有三種可選擇：(1) straight 直線 (2) smoothed平滑線 (3) stepped 梯形階梯狀，下圖就是選擇堆疊模式平滑線的結果呈現：</p>
+<h2 id="度量图-metric">度量图(Metric)</h2>
+
+<p>在 Visualize 选择 Metric 建立度量图，接著选择索引或过滤条件，使用 <code>logstash*</code> 作为实例，这是你会看到一个汇总后的计数。</p>
 
 
 
@@ -960,9 +952,9 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es-12.png" />
+      <img itemprop="thumbnail" src="/img/es-21.png" />
     </div>
-    <a href="/img/es-12.png" itemprop="contentUrl"></a>
+    <a href="/img/es-21.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -1114,7 +1106,7 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
 
 </style>
 
-<p>如果 Chart Type選擇 Line 圖形，會多出三個選項為 (1) Show Line顯示連續線條 (2) Show Circles 顯示線條上與X軸統計值的交叉點 (3) Line Width設定線條寬度。以下是線條圖形的呈現：</p>
+<p>再设置 Buckets 的 Split Group 值，按下<code>[Split Group]</code> 后会出现 Aggregation的选项，选择 Terms，按下 Terms 后，Field 选择 <code>[machine.os.keyword]</code>，就会依照这个字段进行类别的统计，每个类别会出现COunt 汇总后的统计。以本例而言，会出现五种操作系统的分别汇总值。</p>
 
 
 
@@ -1122,9 +1114,9 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es-13.png" />
+      <img itemprop="thumbnail" src="/img/es-22.png" />
     </div>
-    <a href="/img/es-13.png" itemprop="contentUrl"></a>
+    <a href="/img/es-22.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -1276,9 +1268,9 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
 
 </style>
 
-<p>另外，來看一個常見以時間為X軸的長條圖的例子：</p>
+<h2 id="标签云-tag-cloud">标签云(Tag Cloud)</h2>
 
-<p>在 [Buckets] 區塊按下 [X-Asis]，會出現 [Aggregation] 選項，再選擇 [Date Histogram]，Field 選擇 @timestamp，按下三角形的 [Apply Change]，現在計數已經按時間進行分隔，如果要設定時間間隔，可以在下拉選單設定需要的時間間隔， 就會看到以下的圖：</p>
+<p>标签依照各个字段出现的次数进行汇总，总数越大，标签字体显示就会越大。</p>
 
 
 
@@ -1286,9 +1278,9 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es-14.png" />
+      <img itemprop="thumbnail" src="/img/es-23.png" />
     </div>
-    <a href="/img/es-14.png" itemprop="contentUrl"></a>
+    <a href="/img/es-23.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -1440,7 +1432,9 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
 
 </style>
 
-<p>如果我們想要知道，在各個時間的 Count數字，不同的作業系統各佔多少？我們可以按下[Buckets]下方的[Add sub-buckets]，選擇 [Split Series]，出現 Sub Aggregation後，選擇[Term]當作統計的欄位選項，此時選擇 Fields 選擇 [machine.os.keyword]，其他不變，按下►[Apply Change]，就會看到以下的圖：</p>
+<p>选择 bank* 索引后，再设置 Buckets 的 Tags值，按下 Tags后会出现 Aggregation的选项，只能选 Terms，按下 Terms后，Field 选择 <code>[city.keyword]</code>，就会依照这个字段进行统计，出现统计的城市数量越多的，字体越大。</p>
+
+<p>可以修改 Size 的值，默认为 5，仅出现排名前5大的 city 名称，可改成其他数量，以上图为例，改成1 00，则会出现前 100 大的城市名称。</p>
 
 
 
@@ -1448,9 +1442,9 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es-15.png" />
+      <img itemprop="thumbnail" src="/img/es-24.png" />
     </div>
-    <a href="/img/es-15.png" itemprop="contentUrl"></a>
+    <a href="/img/es-24.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -1601,10 +1595,6 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
  }
 
 </style>
-
-<p>可以呈現各作業系統在每個統計時間的 Count數比較。</p>
-
-<p>除了上述 Terms 用欄位 跟 Date Histogram日期直方圖來作為資料分群之外，還有以下幾種分群的方式，包括：Histogram直方圖、Range範圍、Date Range日期範圍、IPv4範圍、Filters 過濾器及重要欄位Significant Terms等幾種，之後的各種圖形範例中，再逐項說明各種用法。</p>
 
                         </div>
 
@@ -1615,11 +1605,11 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
     <h2>See Also</h2>
     <ul class="listing">
         
-        <li><a href="/posts/2018-12-11-elk-3/">ELK学习笔记3|Kibana可视化展示1</a></li>
-        
-        <li><a href="/posts/2018-12-11-elk-2/">ELK学习笔记2|数据的导入与查询</a></li>
+        <li><a href="/posts/2018-12-11-elk-3/">ELK学习笔记3|Kibana可视化-条形图、线图和区域图</a></li>
         
         <li><a href="/posts/2018-12-11-elk-1/">ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana</a></li>
+        
+        <li><a href="/posts/2018-12-11-elk-2/">ELK学习笔记2|数据的导入与查询</a></li>
         
         <li><a href="/posts/2018-11-29-effective-docker-1/">构建高效率的 Docker 镜像</a></li>
         
@@ -1714,11 +1704,15 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
     </li>
     
     <li>
-        <a href="http://shenheng.xyz/posts/2018-12-11-elk-3/" title="ELK学习笔记3|Kibana可视化展示1">ELK学习笔记3|Kibana可视化展示1</a>
+        <a href="http://shenheng.xyz/posts/2018-12-11-elk-5/" title="ELK学习笔记5|Kibana可视化-数据表、仪表盘">ELK学习笔记5|Kibana可视化-数据表、仪表盘</a>
     </li>
     
     <li>
-        <a href="http://shenheng.xyz/posts/2018-12-11-elk-4/" title="ELK学习笔记4|Kibana可视化展示2">ELK学习笔记4|Kibana可视化展示2</a>
+        <a href="http://shenheng.xyz/posts/2018-12-11-elk-4/" title="ELK学习笔记4|Kibana可视化-饼图、测度图和标签云">ELK学习笔记4|Kibana可视化-饼图、测度图和标签云</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-elk-3/" title="ELK学习笔记3|Kibana可视化-条形图、线图和区域图">ELK学习笔记3|Kibana可视化-条形图、线图和区域图</a>
     </li>
     
     <li>
@@ -1739,10 +1733,6 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
     
     <li>
         <a href="http://shenheng.xyz/posts/2018-11-28-jenkins-2/" title="基于 Jenkins 的持续集成与持续开发环境配置">基于 Jenkins 的持续集成与持续开发环境配置</a>
-    </li>
-    
-    <li>
-        <a href="http://shenheng.xyz/posts/2018-11-27-object-detection/" title="目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a>
     </li>
     
 </ul>
@@ -1803,7 +1793,7 @@ Value Axis：Y軸的刻度比例，顯示在左方或右方</p>
     </li>
     
     <li>
-        <a href="http://shenheng.xyz/categories/elk/">elk(4)</a>
+        <a href="http://shenheng.xyz/categories/elk/">elk(5)</a>
     </li>
     
     <li>

@@ -155,7 +155,60 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
-                                    <a href="http://shenheng.xyz/posts/2018-12-11-elk-3/" title="ELK学习笔记3|Kibana可视化展示1" >ELK学习笔记3|Kibana可视化展示1</a>
+                                    <a href="http://shenheng.xyz/posts/2018-12-11-elk-5/" title="ELK学习笔记5|Kibana可视化-数据表、仪表盘" >ELK学习笔记5|Kibana可视化-数据表、仪表盘</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年12月6日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="http://shenheng.xyz/categories/elk">elk</a>
+                                
+                            </div>
+                            
+                            <div class="post-content-index">
+                                <h2 id="数据表-data-table">数据表(Data Table)</h2>
+
+<p>在 Visualize 选择 Data Table 建立数据表，接着选择索引或过滤条件，使用 <code>logstash</code> 作为实例，这时会看到有一个加总的数值。Buckets有两个 选项：Split Rows 和 Split Table。前者是用列的方式分隔字段的统计值，后者可以让使用者自己决定 要用<code>[Row]</code>或<code>[Column]</code>来展示 …</p>
+                            </div>
+                            <p class="readmore"><a href="http://shenheng.xyz/posts/2018-12-11-elk-5/">阅读全文</a></p>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="http://shenheng.xyz/posts/2018-12-11-elk-4/" title="ELK学习笔记4|Kibana可视化-饼图、测度图和标签云" >ELK学习笔记4|Kibana可视化-饼图、测度图和标签云</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年12月5日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="http://shenheng.xyz/categories/elk">elk</a>
+                                
+                            </div>
+                            
+                            <div class="post-content-index">
+                                <h2 id="圓餅图-pie">圓餅图(Pie)</h2>
+
+<p>在 <code>Visualize</code> 选择 <code>Pie</code> 创建饼图，接著选择索引或过滤条件，使用 <code>logstash*</code> 作为制作可视化的实例，这时你会看到类似一个甜甜圈的形状的图。</p>
+
+<p>Buckets 类型有两个选项：Split Slices 和 Split Chart 两种，下面会分别说明这两者的区别。
+先选择 <code>[Split Slices] …</code></p>
+                            </div>
+                            <p class="readmore"><a href="http://shenheng.xyz/posts/2018-12-11-elk-4/">阅读全文</a></p>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="http://shenheng.xyz/posts/2018-12-11-elk-3/" title="ELK学习笔记3|Kibana可视化-条形图、线图和区域图" >ELK学习笔记3|Kibana可视化-条形图、线图和区域图</a>
                                 </h1>
                             </header>
                             <date class="post-meta meta-date">
@@ -204,92 +257,6 @@
 <p><strong>ELK</strong> 是三个开源软件的缩写，分别 …</p>
                             </div>
                             <p class="readmore"><a href="http://shenheng.xyz/posts/2018-12-11-elk-1/">阅读全文</a></p>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="http://shenheng.xyz/posts/2018-12-11-elk-2/" title="ELK学习笔记2|数据的导入与查询" >ELK学习笔记2|数据的导入与查询</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年12月3日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="http://shenheng.xyz/categories/elk">elk</a>
-                                
-                            </div>
-                            
-                            <div class="post-content-index">
-                                <p>本部分使用的数据可以从 es 网站上直接获得，本实例使用的数据文件如下：</p>
-
-<table>
-<thead>
-<tr>
-<th>描述</th>
-<th>下载</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>莎士比亚的全部作品</td>
-<td><a href="https://download.elastic.co/demos/kibana/gettingstarted/shakespeare_6.0.json">shakespeare.json</a></td>
-</tr>
-
-<tr>
-<td>随即数据生成的虚拟账户</td>
-<td><a href="https://download.elastic.co/demos/kibana/gettingstarted/accounts.zip">accounts.zip</a></td>
-</tr>
-
-<tr>
-<td>一组随机生成的日志文件</td>
-<td><a href="https://download.elastic.co/demos/kibana/gettingstarted/logs.jsonl.gz">logs.jsonl.gz</a></td>
-</tr>
-</tbody>
-</table>
-
-<p>可以使用 wget 命令下载上述文件，比如下面的命令：</p>
-
-<pre><code class="language-bash">wget …</code></pre>
-                            </div>
-                            <p class="readmore"><a href="http://shenheng.xyz/posts/2018-12-11-elk-2/">阅读全文</a></p>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="http://shenheng.xyz/posts/2018-11-29-effective-docker-1/" title="构建高效率的 Docker 镜像" >构建高效率的 Docker 镜像</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年11月29日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="http://shenheng.xyz/categories/docker">Docker</a>
-                                
-                            </div>
-                            
-                            <div class="post-content-index">
-                                <p>今天要学习主题是:如何构建高效的 Docker 镜像, 更小，更快！今天学习的大纲如下。</p>
-
-<ul>
-<li>Docker 镜像和容器的层的工作原理</li>
-<li>构建最小镜像的基础知识</li>
-<li>什么是好的、坏的和臃肿的 Dokcerfile</li>
-<li>如何构建面向特定编程语言环境的镜像</li>
-</ul>
-
-<blockquote>
-<p>主要参考 Dockercon 大会 @abbyfuller 的 “Creating Effective …</p></blockquote>
-                            </div>
-                            <p class="readmore"><a href="http://shenheng.xyz/posts/2018-11-29-effective-docker-1/">阅读全文</a></p>
                         </article>
                     
 
@@ -352,7 +319,15 @@
     </li>
     
     <li>
-        <a href="http://shenheng.xyz/posts/2018-12-11-elk-3/" title="ELK学习笔记3|Kibana可视化展示1">ELK学习笔记3|Kibana可视化展示1</a>
+        <a href="http://shenheng.xyz/posts/2018-12-11-elk-5/" title="ELK学习笔记5|Kibana可视化-数据表、仪表盘">ELK学习笔记5|Kibana可视化-数据表、仪表盘</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-elk-4/" title="ELK学习笔记4|Kibana可视化-饼图、测度图和标签云">ELK学习笔记4|Kibana可视化-饼图、测度图和标签云</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-elk-3/" title="ELK学习笔记3|Kibana可视化-条形图、线图和区域图">ELK学习笔记3|Kibana可视化-条形图、线图和区域图</a>
     </li>
     
     <li>
@@ -373,14 +348,6 @@
     
     <li>
         <a href="http://shenheng.xyz/posts/2018-11-28-jenkins-2/" title="基于 Jenkins 的持续集成与持续开发环境配置">基于 Jenkins 的持续集成与持续开发环境配置</a>
-    </li>
-    
-    <li>
-        <a href="http://shenheng.xyz/posts/2018-11-27-object-detection/" title="目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a>
-    </li>
-    
-    <li>
-        <a href="http://shenheng.xyz/posts/2018-11-26-dive-2/" title="开源项目初探-dive">开源项目初探-dive</a>
     </li>
     
 </ul>
@@ -441,7 +408,7 @@
     </li>
     
     <li>
-        <a href="http://shenheng.xyz/categories/elk/">elk(3)</a>
+        <a href="http://shenheng.xyz/categories/elk/">elk(5)</a>
     </li>
     
     <li>

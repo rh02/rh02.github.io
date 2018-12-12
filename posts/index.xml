@@ -44,7 +44,7 @@
       <pubDate>Wed, 05 Dec 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/2018-12-11-elk-4/</guid>
-      <description>圓餅图(Pie) 在 Visualize 选择 Pie 创建饼图，接著选择索引或过滤条件，使用 logstash* 作为制作可视化的实例，这时你会看到类似一个甜甜圈的形状的图。 Buckets 类型有两个选</description>
+      <description>饼图(Pie) 在 Visualize 选择 Pie 创建饼图，接着选择索引或过滤条件，使用 logstash* 作为制作可视化的实例，这时你会看到类似一个甜甜圈的形状的图。 Buckets 类型有两个选项</description>
     </item>
     
     <item>

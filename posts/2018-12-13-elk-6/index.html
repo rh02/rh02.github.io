@@ -10,20 +10,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>构建高效率的 Docker 镜像 | 申恒恒的博客</title>
-    <meta property="og:title" content="构建高效率的 Docker 镜像 - 申恒恒的博客">
+    <title>ELK学习笔记6|ElasticSearch基本概念与架构 | 申恒恒的博客</title>
+    <meta property="og:title" content="ELK学习笔记6|ElasticSearch基本概念与架构 - 申恒恒的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2018-11-29T00:00:00&#43;08:00">
+    <meta property="article:published_time" content="2018-12-13T00:00:00&#43;08:00">
         
         
-    <meta property="article:modified_time" content="2018-11-29T00:00:00&#43;08:00">
+    <meta property="article:modified_time" content="2018-12-13T00:00:00&#43;08:00">
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
-    <meta name="description" content="构建高效率的 Docker 镜像">
+    <meta name="description" content="ELK学习笔记6|ElasticSearch基本概念与架构">
         <meta name="author" content="申恒恒">
         
-    <meta property="og:url" content="http://shenheng.xyz/posts/2018-11-29-effective-docker-1/">
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-12-13-elk-6/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -100,16 +100,16 @@
                 <div class="res-cons">
                     <article class="post">
                         <header>
-                            <h1 class="post-title">构建高效率的 Docker 镜像</h1>
+                            <h1 class="post-title">ELK学习笔记6|ElasticSearch基本概念与架构</h1>
                         </header>
                         <date class="post-meta meta-date">
-                            2018年11月29日
+                            2018年12月13日
                         </date>
                         
                         <div class="post-meta meta-category">
                             |
                             
-                                <a href="http://shenheng.xyz/categories/docker">Docker</a>
+                                <a href="http://shenheng.xyz/categories/elk">elk</a>
                             
                         </div>
                         
@@ -123,23 +123,18 @@
                                 <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
                                 <nav id="TableOfContents">
 <ul>
-<li><a href="#docker-容器的-layer">Docker 容器的 layer</a>
+<li><a href="#基本概念">基本概念</a></li>
+<li><a href="#e构">E构</a></li>
+<li><a href="#工作流程">工作流程</a>
 <ul>
-<li><a href="#镜像-images-与层-layers">镜像(images)与层(layers):</a></li>
-<li><a href="#容器与层级的联系">容器与层级的联系</a></li>
-</ul></li>
-<li><a href="#如何构建最小镜像">如何构建最小镜像</a>
+<li><a href="#启动流程">启动流程</a></li>
+<li><a href="#故障检测">故障检测</a></li>
+<li><a href="#与es通信">与ES通信</a>
 <ul>
-<li><a href="#认识-dockerfile">认识 Dockerfile</a></li>
-<li><a href="#优化">优化</a></li>
+<li><a href="#索引数据">索引数据</a></li>
+<li><a href="#查询数据">查询数据</a></li>
 </ul></li>
-<li><a href="#good-bad-bloated-dockerfile">Good/Bad/Bloated Dockerfile</a>
-<ul>
-<li><a href="#玩个例子">玩个例子</a></li>
-<li><a href="#更高效的使用-run-指令">更高效的使用 RUN 指令</a></li>
-<li><a href="#避免使用-add-指令添加大文件">避免使用 ADD 指令添加大文件</a></li>
 </ul></li>
-<li><a href="#构建面向-golang-的-dockerfile">构建面向 Golang 的 Dockerfile</a></li>
 </ul>
 </nav>
                             </aside>
@@ -148,38 +143,78 @@
                         <div class="post-content">
                             
 
-<p>今天要学习主题是:如何构建高效的 Docker 镜像, 更小，更快！今天学习的大纲如下。</p>
-
-<ul>
-<li>Docker 镜像和容器的层的工作原理</li>
-<li>构建最小镜像的基础知识</li>
-<li>什么是好的、坏的和臃肿的 Dokcerfile</li>
-<li>如何构建面向特定编程语言环境的镜像</li>
-</ul>
+<p>我们都知道ElasticSearch是基于Lucencee实现的一个成品式的分布式文档搜索引擎，下面我会重点介绍ElasticSearch中的基本概念、工作流程以及整体架构。</p>
 
 <blockquote>
-<p>主要参考 Dockercon 大会 @abbyfuller 的 “Creating Effective Images” 演讲。 <a href="https://www.youtube.com/watch?v=vlS5EiapiII&amp;t=396s">大会视频</a></p>
+<p>下面为了方便，我将ElasticSearch简写为ES。</p>
 </blockquote>
 
-<h1 id="docker-容器的-layer">Docker 容器的 layer</h1>
+<h1 id="基本概念">基本概念</h1>
 
-<h2 id="镜像-images-与层-layers">镜像(images)与层(layers):</h2>
+<ul>
+<li>索引
 
-<p>Docker 镜像是由多个文件系统(只读层)叠加而成，每个层仅包含了前一层的差异部分。当我们启动
-一个容器的时候，Docker 会加载镜像层并在其上添加一个可写层。容器上所做的任何更改，比如新建文件、更改文件、删除文件，都将记录与可写层上<sup class="footnote-ref" id="fnref:https-docs-docke"><a href="#fn:https-docs-docke">1</a></sup>。容器层与镜像层的结构如下图所示。(这段话的<a href="https://blog.csdn.net/shengjmm/article/details/77411253">来源</a>)</p>
+<ul>
+<li>类似于SQL中的数据库的概念，可以在索引中读取、写入以及查询数据</li>
+<li>ES主要在内部使用Lucence语法将数据写入索引中，并在索引中检索数据</li>
+<li>ES中的索引可能在内部是由一个或者多个Lucence索引构成，具体如何划分，可能会由ES的分片，复制机制决定。</li>
+</ul></li>
+<li>文档
 
+<ul>
+<li>是ES中最基本的实体/单元，在Lucence中也是如此</li>
+<li>文档是由字段构成的，而字段是由多个字段名构成，每个字段名由很多字段值构成</li>
+<li>每个文档有各自的字段集合，没有固定的模式以及强制的结构</li>
+<li>对客户端来讲，文档是一种JSON对象</li>
+</ul></li>
+<li>类型
+
+<ul>
+<li>类似于SQL中数据表的概念</li>
+<li>允许用户在一个缩阴中存储多种文档类型，并为不同文档类型提供不同的映射</li>
+</ul></li>
+<li>映射
+
+<ul>
+<li>映射可以看成定义在不同文档上的操作</li>
+<li>映射主要提供一些参数，决定如何去处理文档，（比如：如何将输入文本分割为词条，如何过滤特定条件下的词条）</li>
+</ul></li>
+<li>节点
+
+<ul>
+<li>一个节点表示一个ES实例</li>
+<li>节点从功能和指责上可以划分为</li>
+<li>数据节点：持有数据，提供这些数据的搜索功能</li>
+<li>主节点（管理节点）：主要负责监督和控制其他节点的工作</li>
+<li>部落节点：主要负责跨集群间协作</li>
+</ul></li>
+<li>集群
+
+<ul>
+<li>多个ES节点构成一个集群</li>
+<li>像分布式集群一样，主要能够处理超过单台主机的负载能力的数据量</li>
+<li>可以无间断的提供服务</li>
+</ul></li>
+<li>分片
+
+<ul>
+<li>分片在多节点中是非常重要的概念，因为集群可以轻松的处理超过单台主机的负载能力的数据量，那么必不可少的就会涉及到将数据分散到不同的物理的Lucence索引上，这些Lucence索引被称为分片</li>
+<li>散布这些分片的工作叫做分片（sharding）</li>
+<li>ES会自动的做分片，除此之外，用户也可以根据业务和应用需要，自定义和优化ES配置。</li>
+</ul></li>
+<li>副本
+
+<ul>
+<li>主要用于解决集群访问压力过大导致的单机无法处理请求的问题，解决该问题的办法就是为每一个分片制作副本，其中要制作的分片被称作主分片，主要的工作流程如下：
 
 
 
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
     <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/1031517-20170818160738428-270877903.png" alt="容器层与镜像层的结构图"/>
+      <img itemprop="thumbnail" src="/img/es-backup.png" />
     </div>
-    <a href="/img/1031517-20170818160738428-270877903.png" itemprop="contentUrl"></a>
-      <figcaption>
-          <p>容器层与镜像层的结构图</p>
-      </figcaption>
+    <a href="/img/es-backup.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -331,585 +366,709 @@
 
 </style>
 
-<h2 id="容器与层级的联系">容器与层级的联系</h2>
-
-<p>容器与镜像最大的区别就在于可写层上。如果运行中的容器修改了现有的一个已存在的文件，那该文件
-将会从可写层下的只读层复制到可写层，该文件的只读版本仍然存在，只是已经被可写层中该文件的副
-本所隐藏。其中，多个容器共享镜像的结构如下所示。</p>
-
-
-
-
-<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
-  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-    <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/1031517-20170818160746662-307561193.png" alt="容器层与镜像层的结构图"/>
-    </div>
-    <a href="/img/1031517-20170818160746662-307561193.png" itemprop="contentUrl"></a>
-      <figcaption>
-          <p>容器层与镜像层的结构图</p>
-      </figcaption>
-  </figure>
-</div>
-
-<style>
- .gallery {
-     overflow: hidden;
-     margin: 10px;
-     max-width: 768px;
- }
- .gallery .box {
-     float: left;
-     position: relative;
-     width: 100%;
-     padding-bottom: 100%; 
- }
-
-
- @media only screen and (min-width : 365px) {
-     .gallery .box {
-         width: 50%;
-         padding-bottom: 50%;
-     }
- }
- @media only screen and (min-width : 480px) {
-      
-     .gallery .box {
-         width: 33.3%;
-         padding-bottom: 33.3%;  
-     }
- }
- @media only screen and (min-width : 9999px) {
-     
-    .box {
-       width: 25%;
-       padding-bottom: 25%;
-    }
- }
- figure a {
-     border-bottom: none;
- }
- 
-  
- .gallery.hover-transition figure,
- .gallery.hover-effect-zoom .img, 
- .gallery:not(.caption-effect-appear) figcaption,
- .fancy-figure:not(.caption-effect-appear) figcaption {
-     -webkit-transition: all 0.3s ease-in-out;
-     -moz-transition: all 0.3s ease-in-out;
-     -o-transition: all 0.3s ease-in-out;
-     transition: all 0.3s ease-in-out;
- }
-  
- figure {
-     position:relative;  
-     overflow: hidden;
- }
- .gallery figure {
-     position: absolute;
-     left: 5px;
-     right: 5px;
-     top: 5px;
-     bottom: 5px;
- }
- .gallery.hover-effect-grow figure:hover {
-     transform: scale(1.05);
- }
- .gallery.hover-effect-shrink figure:hover {
-     transform: scale(0.95);
- }
- .gallery.hover-effect-slidedown figure:hover {
-     transform: translateY(5px);
- }
- .gallery.hover-effect-slideup figure:hover {
-     transform: translateY(-5px);
- }
- 
-  
- 
- .gallery .img {
-     position: absolute;
-     left: 0;
-     right: 0;
-     top: 0;
-     bottom: 0;
-     background-size: cover;
-     background-position: 50% 50%;
-     background-repeat: no-repeat;
- }
- .gallery.hover-effect-zoom figure:hover .img {
-     transform: scale(1.05);
- }
- .gallery img {
-     display: none;  
- }
- figure a {
-     position: absolute;
-     left: 0;
-     right: 0;
-     top: 0;
-     bottom: 0;
- }
- 
-  
- .gallery figcaption,
- .fancy-figure figcaption {
-     position: absolute;
-     bottom: 0;
-     left: 0;
-     right: 0;
-     background: #000;
-     color: #FFF;
-     text-align: center;
-     font-size: 75%;  
-     background: rgba(0, 0, 0, 0.5);
-     opacity: 1;
-     cursor: pointer;
- }
- .gallery.caption-position-none figcaption,
- .fancy-figure.caption-position-none figcaption  {
-     display: none;
- }
- .gallery.caption-position-center figcaption,
- .fancy-figure.caption-position-center figcaption {
-     top: 0;
-     padding: 40% 5px;
- }
- .gallery.caption-position-bottom figcaption,
- .fancy-figure.caption-position-bottom figcaption {
-     padding: 5px;
- }
- .gallery.caption-effect-fade figure:not(:hover) figcaption,
- .gallery.caption-effect-appear figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
-     background: rgba(0, 0, 0, 0);
-     opacity: 0;
- }
- .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
-     margin-bottom: -100%;
- }
- .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
-     top: 100%;
- }
- figcaption p {
-     margin: auto;  
- }
-
-</style>
-
-<h1 id="如何构建最小镜像">如何构建最小镜像</h1>
-
-<p><strong>问题：</strong> 构建的层数越多真的好吗?</p>
-
-<blockquote>
-<p>更多的层意味着你的构建的 镜像就越大，同时也意味着你构建的时间就越长，并且你 pull 到本地 或者 push 到 registry 的时间就越长。 通常来讲，小镜像的层数都是比较少的，他会占用你很少的资源。</p>
-</blockquote>
-
-<p>那么如何减小镜像的体积呢？</p>
-
-<p>我们在构建自己的镜像时，可能都会使用一些 base image (基础镜像)来开始构建，比如</p>
-
-<pre><code class="language-docker">FROM ubuntu:14.04
-</code></pre>
-
-<p>等等， 这些镜像可能是官方给出的，或者是别人构建的，那么这些基础镜像我们真的选对了吗?除了合理的选择基础镜像意外，还需要做到如下几点：</p>
-
 <ul>
-<li>第一、限制写入容器的数据</li>
-<li>第二、 链式化 RUN 语句</li>
-<li>第三、尽可能出现防止在构建的时候 cache 未命中的情况</li>
-</ul>
-
-<h2 id="认识-dockerfile">认识 Dockerfile</h2>
-
-<p>什么是Dockerfile？Dockerfile 是记录着你构建镜像的一系列的操作步骤。</p>
-
-<p>首先我们先认识一下 Dockerdfile， 下面的 Dockerfile 主要是 构建一个 python 的应用程序。</p>
-
-<pre><code class="language-docker">FROM ubuntu:latest
-LABEL maintainer abbyfull@amazon.com
-RUN apt-get update -y &amp;&amp; apt-get install -y python-pip python-dev build-essential
-COPY . /app
-WORKDIR /app
-RUN pip install –r requirements.txt
-EXPOSE 5000
-ENTRYPOINT [&quot;python&quot;]
-CMD [&quot;application.py&quot;]
-</code></pre>
-
-<h2 id="优化">优化</h2>
-
-<p>我们要根据上面的规则，开始优化它！</p>
-
-<p>第一步，选择一个合适的基础镜像，使用不同基镜像构建出来的镜像大小差距还是很悬殊的。</p>
-
-<pre><code class="language-bash">ubuntu latest 2b1dc137b502
-52 seconds ago 458 MB
-From python:2.7-alpine:
-alpine latest d3145c9ba1fa
-2 minutes ago 86.8 MB
-</code></pre>
-
-<p>从上面可以看出，使用 ubuntu 作为基础镜像构建的应用镜像是 458MB，而使用 python:2.7-alpine 作为基础镜像构建的镜像才 85.8MB。因此选择一个合适的镜像是非常重要的一步。</p>
-
-<p>那么这些基础镜像原来有多大呢，下面列出了常用到的基础镜像的大小：</p>
-
-
-
-
-<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
-  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-    <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/base-image.png" alt="常用的基础镜像列表"/>
-    </div>
-    <a href="/img/base-image.png" itemprop="contentUrl"></a>
-      <figcaption>
-          <p>常用的基础镜像列表</p>
-      </figcaption>
-  </figure>
-</div>
-
-<style>
- .gallery {
-     overflow: hidden;
-     margin: 10px;
-     max-width: 768px;
- }
- .gallery .box {
-     float: left;
-     position: relative;
-     width: 100%;
-     padding-bottom: 100%; 
- }
-
-
- @media only screen and (min-width : 365px) {
-     .gallery .box {
-         width: 50%;
-         padding-bottom: 50%;
-     }
- }
- @media only screen and (min-width : 480px) {
-      
-     .gallery .box {
-         width: 33.3%;
-         padding-bottom: 33.3%;  
-     }
- }
- @media only screen and (min-width : 9999px) {
-     
-    .box {
-       width: 25%;
-       padding-bottom: 25%;
-    }
- }
- figure a {
-     border-bottom: none;
- }
- 
-  
- .gallery.hover-transition figure,
- .gallery.hover-effect-zoom .img, 
- .gallery:not(.caption-effect-appear) figcaption,
- .fancy-figure:not(.caption-effect-appear) figcaption {
-     -webkit-transition: all 0.3s ease-in-out;
-     -moz-transition: all 0.3s ease-in-out;
-     -o-transition: all 0.3s ease-in-out;
-     transition: all 0.3s ease-in-out;
- }
-  
- figure {
-     position:relative;  
-     overflow: hidden;
- }
- .gallery figure {
-     position: absolute;
-     left: 5px;
-     right: 5px;
-     top: 5px;
-     bottom: 5px;
- }
- .gallery.hover-effect-grow figure:hover {
-     transform: scale(1.05);
- }
- .gallery.hover-effect-shrink figure:hover {
-     transform: scale(0.95);
- }
- .gallery.hover-effect-slidedown figure:hover {
-     transform: translateY(5px);
- }
- .gallery.hover-effect-slideup figure:hover {
-     transform: translateY(-5px);
- }
- 
-  
- 
- .gallery .img {
-     position: absolute;
-     left: 0;
-     right: 0;
-     top: 0;
-     bottom: 0;
-     background-size: cover;
-     background-position: 50% 50%;
-     background-repeat: no-repeat;
- }
- .gallery.hover-effect-zoom figure:hover .img {
-     transform: scale(1.05);
- }
- .gallery img {
-     display: none;  
- }
- figure a {
-     position: absolute;
-     left: 0;
-     right: 0;
-     top: 0;
-     bottom: 0;
- }
- 
-  
- .gallery figcaption,
- .fancy-figure figcaption {
-     position: absolute;
-     bottom: 0;
-     left: 0;
-     right: 0;
-     background: #000;
-     color: #FFF;
-     text-align: center;
-     font-size: 75%;  
-     background: rgba(0, 0, 0, 0.5);
-     opacity: 1;
-     cursor: pointer;
- }
- .gallery.caption-position-none figcaption,
- .fancy-figure.caption-position-none figcaption  {
-     display: none;
- }
- .gallery.caption-position-center figcaption,
- .fancy-figure.caption-position-center figcaption {
-     top: 0;
-     padding: 40% 5px;
- }
- .gallery.caption-position-bottom figcaption,
- .fancy-figure.caption-position-bottom figcaption {
-     padding: 5px;
- }
- .gallery.caption-effect-fade figure:not(:hover) figcaption,
- .gallery.caption-effect-appear figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
-     background: rgba(0, 0, 0, 0);
-     opacity: 0;
- }
- .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
-     margin-bottom: -100%;
- }
- .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
-     top: 100%;
- }
- figcaption p {
-     margin: auto;  
- }
-
-</style>
-
-<p>那么什么是时候使用一个具有完整操作系统功能的镜像，比如ubuntu，centos等镜像呢？需要满足几点，建议使用。</p>
-
-<ul>
-<li>安全性</li>
-<li>开发</li>
-<li>部署大型应用程序，分布式应用程序</li>
-</ul>
-
-<p>下面是使用ubuntu镜像构建的程序：</p>
-
-<pre><code class="language-docker">FROM ubuntu:latest
-RUN apt-get update -y &amp;&amp; apt-get install -y python-pip python-dev build-essential
-COPY . /app
-WORKDIR /app
-RUN pip install –r requirements.txt
-EXPOSE 5000
-ENTRYPOINT [&quot;python&quot;]
-CMD [&quot;application.py&quot;]
-</code></pre>
-
-<p>下面是使用 python 镜像构建的：</p>
-
-<pre><code class="language-docker">FROM python:2.7-alpine
-COPY . /app
-WORKDIR /app
-RUN pip install –r requirements.txt
-EXPOSE 5000
-ENTRYPOINT [&quot;python&quot;]
-CMD [&quot;application.py&quot;]
-</code></pre>
-
-<p>可以发现使用 python 镜像的Dockerfile 更加简单，并且避免了安装了 python 环境，因为 python 镜像已经整合了 python 的开发环境。</p>
-
-<p>等等！我们还可以改进它！我们可以发现 <code>COPY . /app</code> 会占用我们很多的缓存资源，因为我们只用了<code>requirements.txt</code> 文件，记住：更少的缓存利用，说明你构建的镜像会更小。改进后的 Dockerfile如下：</p>
-
-<pre><code class="language-docker">FROM python:2.7-alpine
-COPY requirements.txt /app
-RUN pip install –r /app/requirements.txt
-COPY . /app
-WORKDIR /app
-EXPOSE 5000
-ENTRYPOINT [&quot;python&quot;]
-CMD [&quot;application.py&quot;]
-</code></pre>
-
-<p>接下来我们将使用 ONBUILD 指令来更好的重用我们的环境，使后期开发更加高效。</p>
-
-<blockquote>
-<p>The <code>ONBUILD</code> instruction adds to the image a trigger instruction to be executed at a later time, when the image is used as the base for another build. The trigger will be executed in the context of the downstream build, as if it had been inserted immediately after the <code>FROM</code> instruction in the downstream <code>Dockerfile</code>.</p>
-
-<p>Any build instruction can be registered as a trigger.</p>
-
-<p>This is useful if you are building an image which will be used as a base to build other images, for example an application build environment or a daemon which may be customized with user-specific configuration.</p>
-
-<p>For example, if your image is a reusable Python application builder, it will require application source code to be added in a particular directory, and it might require a build script to be called after that. You can’t just call <code>ADD</code> and <code>RUN</code> now, because you don’t yet have access to the application source code, and it will be different for each application build. You could simply provide application developers with a boilerplate <code>Dockerfile</code> to copy-paste into their application, but that is inefficient, error-prone and difficult to update because it mixes with application-specific code.</p>
-</blockquote>
-
-<pre><code class="language-docker">FROM python:2.7-alpine
-ONBUILD ADD requirements.txt /app
-ONBUILD RUN pip install –r /app/requirements.txt
-ONBUILD COPY . /app
-WORKDIR /app
-EXPOSE 5000
-ENTRYPOINT [&quot;python&quot;]
-CMD [&quot;application.py&quot;]
-</code></pre>
-
-<h1 id="good-bad-bloated-dockerfile">Good/Bad/Bloated Dockerfile</h1>
-
-<h2 id="玩个例子">玩个例子</h2>
-
-<p>现在让我们看个大一点的 Dockerfile，记住镜像的层越多越大！我们可以数一数它的行数！必须优化它！</p>
-
-<pre><code class="language-docker">FROM ubuntu:latest
-RUN apt-get update -y
-RUN apt-get install -y python-pip python-dev build-essential
-COPY . /app
-WORKDIR /app
-RUN pip install -r requirements.txt
-EXPOSE 5000
-ENTRYPOINT [&quot;python&quot;]
-CMD [&quot;application.py&quot;]
-</code></pre>
-
-<p>可以看到两个连续的 <code>RUN</code> 指令。</p>
-
-<pre><code class="language-docker">RUN apt-get update -y
-RUN apt-get install -y python-pip python-dev build-essential
-</code></pre>
-
-<p>我们可以链式 <code>RUN</code> 指令！</p>
-
-<pre><code class="language-docker">FROM ubuntu:latest
-RUN apt-get update -y &amp;&amp; apt-get install -y python-pip python-dev build-essential –no-install-recommends
-COPY . /app
-WORKDIR /app
-RUN pip install -r requirements.txt
-EXPOSE 5000
-ENTRYPOINT [&quot;python&quot;]
-CMD [&quot;application.py&quot;]
-</code></pre>
-
-<p>现在尝试一下其他的基础镜像，比如 python 镜像：</p>
-
-<pre><code class="language-docker">FROM python:2.7-alpine
-COPY . /app
-WORKDIR /app
-RUN pip install -r requirements.txt
-EXPOSE 5000
-ENTRYPOINT [&quot;python&quot;]
-CMD [&quot;application.py&quot;]
-</code></pre>
-
-<h2 id="更高效的使用-run-指令">更高效的使用 RUN 指令</h2>
-
-<pre><code class="language-docker">RUN apt-get update &amp;&amp; apt-get install -y \ aufs-tools \
-  automake \ 
-  build-essential \ 
-  ruby1.9.1 \
-  ruby1.9.1-dev \
-  s3cmd=1.1.* \
-&amp;&amp; rm -rf /var/lib/apt/lists/*
-</code></pre>
-
-<p>在使用 RUN 指令时，需要注意语句的顺序很重要！</p>
-
-<h2 id="避免使用-add-指令添加大文件">避免使用 ADD 指令添加大文件</h2>
-
-<p>下面是一种不推荐的方法，因为如果添加大文件，不避免地会使用很大的缓存，劲儿会使得我们得到的镜像会很大。</p>
-
-<pre><code class="language-docker">ADD http://cruft.com/bigthing.tar.xz /app/cruft/
-RUN tar -xvf /app/cruft/bigthing.tar.xz -C /app/cruft/
-RUN make -C /app/cruft/ all
-</code></pre>
-
-<p>更好推荐方案是将你要添加的文件放在互联网上，使用 curl 或者 wget 下载，最好避免使用 ADD。</p>
-
-<pre><code class="language-docker">RUN mkdir -p /app/cruft/ \
-    &amp;&amp; curl -SL http://cruft.com/bigthing.tar.xz \ | tar -xJC /
-app/cruft/ &amp;&amp; make -C /app/cruft/ all
-</code></pre>
-
-<h1 id="构建面向-golang-的-dockerfile">构建面向 Golang 的 Dockerfile</h1>
-
-<p>有两种构建特定语言的 Docker 镜像方式：</p>
-
-<ul>
-<li>从头开始构建</li>
-<li>从一个基础镜像开始构建
-
-<ul>
-<li>选择基础镜像有一点说明：编程语言官方镜像可能会比较大，但是稳定。自己构建的镜像可能小但是不一定稳定，需要平衡选择。</li>
+<li>当主分片所在的ES节点宕机了，ES将会自动地在主分片的所有副本中选出一个作为新的主分片。</li>
+</ul></li>
 </ul></li>
 </ul>
 
-<p>下面会讲解 Golang 应用程序的构建方法。</p>
+<h1 id="e构">E构</h1>
 
-<p>稍微熟悉 Golang 的同学都应噶了解，Go 的执行方式很简单，只需要一个二进制文件即可，这也意味着构建的 Docker 镜像会非常的简单。</p>
+<ul>
+<li>ES是 P2P（对等）架构，不同以往的Master/slave结构，对等架构往往在很多地方和 Leader/Fellower架构类似。</li>
+<li>易于扩充新的节点到集群</li>
+<li>数据结构灵活，没有对ES中的数据结构强加限制</li>
+<li>准实时搜索和版本同步，主要解决分布式系统中的查询延时和节点之间的数据不同步问题</li>
+<li><strong>管理节点不比其他的节点重要！</strong></li>
+</ul>
 
-<p><strong>步骤：</strong>编译，然后拷贝编译好的二进制文件</p>
+<h1 id="工作流程">工作流程</h1>
 
-<pre><code class="language-bash">go build -o dockercon .
-docker build -t dockercon .
-</code></pre>
+<h2 id="启动流程">启动流程</h2>
 
-<p>Dockerfile 文件内容为：</p>
+<p>在启动时，ES主要使用发现机制来发现同一集群的其他节点，并与它通讯的，主要🈶以下过程：</p>
 
-<pre><code class="language-docker">FROM scratch
-COPY ./dockercon /dockercon
-ENTRYPOINT [&quot;/dockercon&quot;]
-</code></pre>
+<ul>
+<li>ES节点向网络中发送多播请求</li>
+<li>处于同一个网络的其他节点处理该请求，并且在集群内部有个管理节点负责控制和协调ES节点的数据传输以及分片等。</li>
+</ul>
 
-<blockquote>
-<p><code>scratch</code> 镜像非常特殊，构建它的 Dockerfile 是空的。一般开发人员喜欢使用 <code>scratch</code> 镜像构建收于自己的基础镜像。</p>
-</blockquote>
+<p>下面是具体的工作流程图：</p>
 
-<p>比如下面的例子，只需要执行打印一个 helloworld 的二进制文件的镜像构建过程，这时使用 <code>scratch</code> 最合适不过了。</p>
 
-<pre><code class="language-docker">FROM scratch
-COPY hello /
-CMD [ “/hello” ]
-</code></pre>
-<div class="footnotes">
 
-<hr />
 
-<ol>
-<li id="fn:https-docs-docke"><a href="https://docs.docker.com">https://docs.docker.com</a> <a class="footnote-return" href="#fnref:https-docs-docke"><sup>↩</sup></a></li>
-</ol>
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/qidong.png" />
+    </div>
+    <a href="/img/qidong.png" itemprop="contentUrl"></a>
+  </figure>
 </div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h2 id="故障检测">故障检测</h2>
+
+<p>主要是超时机制</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/es-guzhang.png" />
+    </div>
+    <a href="/img/es-guzhang.png" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h2 id="与es通信">与ES通信</h2>
+
+<p>ES提供了REST API 的访问方式，主要包括索引，推送和查询数据。</p>
+
+<h3 id="索引数据">索引数据</h3>
+
+<ul>
+<li><p>发送数据到指定的索引</p>
+
+<pre><code class="language-bash">curl -XPUT http://localhost:9200/blog/article/1 \
+  -d '{&quot;title&quot;:&quot;xxx&quot;,&quot;tags&quot;:[&quot;xx&quot;],[&quot;xxx&quot;]}'
+</code></pre></li>
+
+<li><p>bulk API</p></li>
+</ul>
+
+<p>建立索引只能在主分片上操作而不是副本分片，当一个索引请求发送到一个节点上，而该节点并没有对应的住分片，这时这个请求将会转发到正确的主分片所在的节点上，然后主分片的节点将会把请求群发给对应副本分片的所有节点。具体流程见下图：</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/es-query.png" />
+    </div>
+    <a href="/img/es-query.png" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h3 id="查询数据">查询数据</h3>
+
+<p>查询是ES的主要任务，查询底层主要是利用Lucence，语法也比较类似。</p>
+
+<p>查询主要分为两个阶段：（类似于MR或Divide &amp; Conque过程）</p>
+
+<ul>
+<li>分散阶段： 查询分散到包含相关文档的多个分片的查询，跨节点查询</li>
+<li>合并阶段： 收集结果，做一些合并、排序和自定义的后续处理，返回给客户端</li>
+</ul>
+
+<p>具体流程如下图所示：</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/es-query.png" />
+    </div>
+    <a href="/img/es-query.png" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
 
                         </div>
 
@@ -920,15 +1079,15 @@ CMD [ “/hello” ]
     <h2>See Also</h2>
     <ul class="listing">
         
-        <li><a href="/posts/2018-11-28-jenkins-2/">基于 Jenkins 的持续集成与持续开发环境配置</a></li>
+        <li><a href="/posts/2018-12-11-elk-5/">ELK学习笔记5|Kibana可视化-数据表、仪表盘</a></li>
         
-        <li><a href="/posts/2018-11-28-context-package-1/">Go语言中的并发机制系列-4/1 | 深入理解 context 包</a></li>
+        <li><a href="/posts/2018-12-11-elk-4/">ELK学习笔记4|Kibana可视化-饼图、测度图和标签云</a></li>
         
-        <li><a href="/posts/2018-11-27-object-detection/">目标检测算法|R-CNN, Fast R-CNN, Faster R-CNN, YOLO</a></li>
+        <li><a href="/posts/2018-12-11-elk-3/">ELK学习笔记3|Kibana可视化-条形图、线图和区域图</a></li>
         
-        <li><a href="/posts/2018-11-26-dive-2/">开源项目初探-dive</a></li>
+        <li><a href="/posts/2018-12-11-elk-2/">ELK学习笔记2|数据的导入与查询</a></li>
         
-        <li><a href="/posts/2018-11-26-deep-rf-note-1/">深度强化学习算法笔记-1|MDPs &#43; 值迭代 &#43; 策略迭代算法</a></li>
+        <li><a href="/posts/2018-12-11-elk-1/">ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana</a></li>
         
     </ul>
 </div>
@@ -938,9 +1097,13 @@ CMD [ “/hello” ]
                             
                             <ul class="clearfix">
                                 
-                                <li><a href="http://shenheng.xyz/tags/docker">Docker</a></li>
+                                <li><a href="http://shenheng.xyz/tags/elk">elk</a></li>
                                 
-                                <li><a href="http://shenheng.xyz/tags/effective">Effective</a></li>
+                                <li><a href="http://shenheng.xyz/tags/elastic-search">elastic search</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/logstash">logstash</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/kibana">kibana</a></li>
                                 
                             </ul>
                             

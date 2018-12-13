@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>kubernetes on 申恒恒的博客</title>
+    <link>http://shenheng.xyz/categories/kubernetes/</link>
+    <description>Recent content in kubernetes on 申恒恒的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Thu, 13 Dec 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/categories/kubernetes/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Kubernetes学习笔记|kubernetes简介</title>
+      <link>http://shenheng.xyz/posts/2018-12-13-kubernetes/</link>
+      <pubDate>Thu, 13 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-13-kubernetes/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

@@ -124,7 +124,7 @@
                                 <nav id="TableOfContents">
 <ul>
 <li><a href="#基本概念">基本概念</a></li>
-<li><a href="#e构">E构</a></li>
+<li><a href="#架构">架构</a></li>
 <li><a href="#工作流程">工作流程</a>
 <ul>
 <li><a href="#启动流程">启动流程</a></li>
@@ -183,10 +183,13 @@
 
 <ul>
 <li>一个节点表示一个ES实例</li>
-<li>节点从功能和指责上可以划分为</li>
+<li>节点从功能和指责上可以划分为
+
+<ul>
 <li>数据节点：持有数据，提供这些数据的搜索功能</li>
 <li>主节点（管理节点）：主要负责监督和控制其他节点的工作</li>
 <li>部落节点：主要负责跨集群间协作</li>
+</ul></li>
 </ul></li>
 <li>集群
 
@@ -202,10 +205,11 @@
 <li>散布这些分片的工作叫做分片（sharding）</li>
 <li>ES会自动的做分片，除此之外，用户也可以根据业务和应用需要，自定义和优化ES配置。</li>
 </ul></li>
-<li>副本
+
+<li><p>副本</p>
 
 <ul>
-<li>主要用于解决集群访问压力过大导致的单机无法处理请求的问题，解决该问题的办法就是为每一个分片制作副本，其中要制作的分片被称作主分片，主要的工作流程如下：
+<li><p>主要用于解决集群访问压力过大导致的单机无法处理请求的问题，解决该问题的办法就是为每一个分片制作副本，其中要制作的分片被称作主分片，主要的工作流程如下：
 
 
 
@@ -364,15 +368,13 @@
      margin: auto;  
  }
 
-</style>
+</style></p></li>
 
-<ul>
-<li>当主分片所在的ES节点宕机了，ES将会自动地在主分片的所有副本中选出一个作为新的主分片。</li>
-</ul></li>
+<li><p>当主分片所在的ES节点宕机了，ES将会自动地在主分片的所有副本中选出一个作为新的主分片。</p></li>
 </ul></li>
 </ul>
 
-<h1 id="e构">E构</h1>
+<h1 id="架构">架构</h1>
 
 <ul>
 <li>ES是 P2P（对等）架构，不同以往的Master/slave结构，对等架构往往在很多地方和 Leader/Fellower架构类似。</li>
@@ -1174,6 +1176,10 @@
     </li>
     
     <li>
+        <a href="http://shenheng.xyz/posts/2018-12-13-kubernetes/" title="Kubernetes学习笔记|kubernetes简介">Kubernetes学习笔记|kubernetes简介</a>
+    </li>
+    
+    <li>
         <a href="http://shenheng.xyz/posts/2018-12-11-starlight/" title="starlight 介绍">starlight 介绍</a>
     </li>
     
@@ -1203,10 +1209,6 @@
     
     <li>
         <a href="http://shenheng.xyz/posts/2018-11-29-effective-docker-1/" title="构建高效率的 Docker 镜像">构建高效率的 Docker 镜像</a>
-    </li>
-    
-    <li>
-        <a href="http://shenheng.xyz/posts/2018-11-28-context-package-1/" title="Go语言中的并发机制系列-4/1 | 深入理解 context 包">Go语言中的并发机制系列-4/1 | 深入理解 context 包</a>
     </li>
     
 </ul>
@@ -1280,6 +1282,10 @@
     
     <li>
         <a href="http://shenheng.xyz/categories/hugo/">hugo(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kubernetes/">kubernetes(1)</a>
     </li>
     
     <li>
@@ -1389,7 +1395,11 @@
     
     <a href="http://shenheng.xyz/tags/hadoop/">hadoop</a>
     
+    <a href="http://shenheng.xyz/tags/k8s/">k8s</a>
+    
     <a href="http://shenheng.xyz/tags/kibana/">kibana</a>
+    
+    <a href="http://shenheng.xyz/tags/kubernetes/">kubernetes</a>
     
     <a href="http://shenheng.xyz/tags/linux/">linux</a>
     
@@ -1406,6 +1416,10 @@
     <a href="http://shenheng.xyz/tags/scala/">scala</a>
     
     <a href="http://shenheng.xyz/tags/shortcode/">shortcode</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8/">容器</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92/">容器编排</a>
     
     <a href="http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目</a>
     

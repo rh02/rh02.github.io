@@ -156,11 +156,29 @@
     </item>
     
     <item>
+      <title>k8s</title>
+      <link>http://shenheng.xyz/tags/k8s/</link>
+      <pubDate>Thu, 13 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/k8s/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>kibana</title>
       <link>http://shenheng.xyz/tags/kibana/</link>
       <pubDate>Thu, 13 Dec 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/kibana/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>kubernetes</title>
+      <link>http://shenheng.xyz/tags/kubernetes/</link>
+      <pubDate>Thu, 13 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/kubernetes/</guid>
       <description></description>
     </item>
     
@@ -233,6 +251,24 @@
       <pubDate>Fri, 23 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/shortcode/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>容器</title>
+      <link>http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8/</link>
+      <pubDate>Thu, 13 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>容器编排</title>
+      <link>http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92/</link>
+      <pubDate>Thu, 13 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92/</guid>
       <description></description>
     </item>
     

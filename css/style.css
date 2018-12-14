@@ -70,7 +70,7 @@
 body {
     background-color:#FFF;
     color:#444;
-    font-size: 15px;
+    font-size: 16px;
     /* line-height: 1.75; */
     /**
     font-family:"TIBch", "Classic Grotesque W01", "Helvetica Neue", Arial, "Hiragino Sans GB", "STHeiti", "Microsoft YaHei", "WenQuanYi Micro Hei", SimSun, sans-serif;
@@ -453,8 +453,8 @@ table td {
     border-color: transparent #555 transparent transparent;
 }
 .post-content {
-    font-size: 16px;
-    line-height: 1.75;
+    font-size: 17px;
+    line-height: 1.8;
     /* line-height: 1.7; */
     color:#444;
     padding-top:27px;

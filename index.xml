@@ -30,6 +30,15 @@
     </item>
     
     <item>
+      <title>ELK学习笔记7| Lucence 的搜索语法</title>
+      <link>http://shenheng.xyz/posts/2018-12-13-elk-7/</link>
+      <pubDate>Fri, 14 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-13-elk-7/</guid>
+      <description>在kibana进行搜索时，可以使用Lucence 通用的语法，或者使用 JSON 格式 QueryDSL （DSL：Digital Subscriber Line）来进行各项搜索请求。Apac</description>
+    </item>
+    
+    <item>
       <title>ELK学习笔记6|ElasticSearch基本概念与架构</title>
       <link>http://shenheng.xyz/posts/2018-12-13-elk-6/</link>
       <pubDate>Thu, 13 Dec 2018 00:00:00 +0000</pubDate>

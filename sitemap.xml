@@ -13,6 +13,11 @@
   </url>
   
   <url>
+    <loc>http://shenheng.xyz/posts/2019-12-17-update-kubernetes/</loc>
+    <lastmod>2018-12-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>http://shenheng.xyz/posts/2018-12-13-kubernetes/</loc>
     <lastmod>2018-12-17T00:00:00+00:00</lastmod>
   </url>
@@ -222,13 +227,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/docker/</loc>
+    <loc>http://shenheng.xyz/tags/docker/</loc>
     <lastmod>2018-11-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/docker/</loc>
+    <loc>http://shenheng.xyz/categories/docker/</loc>
     <lastmod>2018-11-29T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -240,13 +245,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/git/</loc>
+    <loc>http://shenheng.xyz/tags/git/</loc>
     <lastmod>2017-08-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/git/</loc>
+    <loc>http://shenheng.xyz/categories/git/</loc>
     <lastmod>2017-08-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -276,13 +281,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/jenkins/</loc>
+    <loc>http://shenheng.xyz/tags/jenkins/</loc>
     <lastmod>2018-11-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/jenkins/</loc>
+    <loc>http://shenheng.xyz/categories/jenkins/</loc>
     <lastmod>2018-11-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -317,14 +322,14 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/blog/</loc>
-    <lastmod>2018-03-04T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/tags/blog/</loc>
+    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/blog/</loc>
-    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/categories/blog/</loc>
+    <lastmod>2018-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -335,13 +340,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/d3/</loc>
+    <loc>http://shenheng.xyz/tags/d3/</loc>
     <lastmod>2018-11-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/d3/</loc>
+    <loc>http://shenheng.xyz/categories/d3/</loc>
     <lastmod>2018-11-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -359,13 +364,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/elk/</loc>
+    <loc>http://shenheng.xyz/tags/elk/</loc>
     <lastmod>2018-12-14T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/elk/</loc>
+    <loc>http://shenheng.xyz/categories/elk/</loc>
     <lastmod>2018-12-14T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -377,25 +382,25 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/golang/</loc>
-    <lastmod>2018-11-28T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/tags/golang/</loc>
     <lastmod>2018-12-11T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/hadoop/</loc>
-    <lastmod>2018-04-14T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/categories/golang/</loc>
+    <lastmod>2018-11-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://shenheng.xyz/tags/hadoop/</loc>
+    <lastmod>2018-04-14T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://shenheng.xyz/categories/hadoop/</loc>
     <lastmod>2018-04-14T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -419,13 +424,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/kubernetes/</loc>
+    <loc>http://shenheng.xyz/tags/kubernetes/</loc>
     <lastmod>2018-12-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/kubernetes/</loc>
+    <loc>http://shenheng.xyz/categories/kubernetes/</loc>
     <lastmod>2018-12-17T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -449,13 +454,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/matrix/</loc>
+    <loc>http://shenheng.xyz/tags/matrix/</loc>
     <lastmod>2017-12-15T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/matrix/</loc>
+    <loc>http://shenheng.xyz/categories/matrix/</loc>
     <lastmod>2017-12-15T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -467,20 +472,14 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/ml/</loc>
-    <lastmod>2017-12-30T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/tags/ml/</loc>
     <lastmod>2017-12-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/pi/</loc>
-    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/categories/ml/</loc>
+    <lastmod>2017-12-30T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -491,8 +490,8 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/sbt/</loc>
-    <lastmod>2018-01-05T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/categories/pi/</loc>
+    <lastmod>2017-12-21T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -503,7 +502,7 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/scala/</loc>
+    <loc>http://shenheng.xyz/categories/sbt/</loc>
     <lastmod>2018-01-05T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -515,13 +514,19 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/shortcode/</loc>
-    <lastmod>2018-11-23T00:00:00+00:00</lastmod>
+    <loc>http://shenheng.xyz/categories/scala/</loc>
+    <lastmod>2018-01-05T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://shenheng.xyz/tags/shortcode/</loc>
+    <lastmod>2018-11-23T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://shenheng.xyz/categories/shortcode/</loc>
     <lastmod>2018-11-23T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -563,25 +568,25 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/</loc>
-    <lastmod>2018-11-26T00:00:00+00:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
     <loc>http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/</loc>
     <lastmod>2018-11-28T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/</loc>
+    <loc>http://shenheng.xyz/categories/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/</loc>
     <lastmod>2018-11-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>http://shenheng.xyz/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/</loc>
+    <lastmod>2018-11-26T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://shenheng.xyz/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/</loc>
     <lastmod>2018-11-26T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
@@ -611,13 +616,13 @@
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/</loc>
+    <loc>http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/</loc>
     <lastmod>2018-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/</loc>
+    <loc>http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/</loc>
     <lastmod>2018-03-04T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>

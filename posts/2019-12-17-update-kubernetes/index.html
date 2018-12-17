@@ -10,20 +10,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>ELK学习笔记7| Lucence 的搜索语法 | 申恒恒的博客</title>
-    <meta property="og:title" content="ELK学习笔记7| Lucence 的搜索语法 - 申恒恒的博客">
+    <title>Hadoop优化笔记|Hadoop2.x 配置文件 | 申恒恒的博客</title>
+    <meta property="og:title" content="Hadoop优化笔记|Hadoop2.x 配置文件 - 申恒恒的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2018-12-14T00:00:00&#43;08:00">
+    <meta property="article:published_time" content="2018-12-17T00:00:00&#43;08:00">
         
         
-    <meta property="article:modified_time" content="2018-12-14T00:00:00&#43;08:00">
+    <meta property="article:modified_time" content="2018-12-17T00:00:00&#43;08:00">
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
-    <meta name="description" content="ELK学习笔记7| Lucence 的搜索语法">
+    <meta name="description" content="Hadoop优化笔记|Hadoop2.x 配置文件">
         <meta name="author" content="申恒恒">
         
-    <meta property="og:url" content="http://shenheng.xyz/posts/2018-12-13-elk-7/">
+    <meta property="og:url" content="http://shenheng.xyz/posts/2019-12-17-update-kubernetes/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -101,16 +101,16 @@
                 <div class="res-cons">
                     <article class="post">
                         <header>
-                            <h1 class="post-title">ELK学习笔记7| Lucence 的搜索语法</h1>
+                            <h1 class="post-title">Hadoop优化笔记|Hadoop2.x 配置文件</h1>
                         </header>
                         <date class="post-meta meta-date">
-                            2018年12月14日
+                            2018年12月17日
                         </date>
                         
                         <div class="post-meta meta-category">
                             |
                             
-                                <a href="http://shenheng.xyz/categories/elk">elk</a>
+                                <a href="http://shenheng.xyz/categories/kubernetes">kubernetes</a>
                             
                         </div>
                         
@@ -124,274 +124,246 @@
                         <div class="post-content">
                             
 
-<p>在kibana进行搜索时，可以使用Lucence 通用的语法，或者使用 JSON 格式 QueryDSL （DSL：Digital Subscriber Line）来进行各项搜索请求。Apache Lucene 提供了方便的查询方式，本文就介绍以下 Lucence 查询解析器支持的语法，为后面的 ElasticSearch 的搜索语法提供基础。</p>
+<h1 id="hadooop-env-sh">hadooop-env.sh</h1>
 
-<h2 id="查询字段">查询字段</h2>
+<pre><code class="language-bash"># Set Hadoop-specific environment variables here.
 
-<ul>
-<li>使用冒号 <code>:</code> 表示包含这个单词
+# The only required environment variable is JAVA_HOME.  All others are
+# optional.  When running a distributed configuration it is best to
+# set JAVA_HOME in this file, so that it is correctly defined on
+# remote nodes.
 
-<ul>
-<li>例如：<em>status:active</em> ，表示 status 包含 active 单词</li>
-</ul></li>
-<li>使用括号，可以包含多个词
+# The java implementation to use.
+# 两种配置方法：一是在 hadoop-env.sh 中配置；二是在shell中设置环境变量；
+# 我是将环境变量统一写在了 /etc/profile.d/ 目录下
+export JAVA_HOME=${JAVA_HOME}
 
-<ul>
-<li>例如：<em>title:(quick OR brown)</em> ，<em>title:(quick brown)</em></li>
-</ul></li>
-<li>查询短语使用双引号引起來
+# The jsvc implementation to use. Jsvc is required to run secure datanodes
+# that bind to privileged ports to provide authentication of data transfer
+# protocol.  Jsvc is not required if SASL is configured for authentication of
+# data transfer protocol using non-privileged ports.
+#export JSVC_HOME=${JSVC_HOME}
 
-<ul>
-<li>例如：<em>author:&ldquo;John Smith&rdquo;</em></li>
-</ul></li>
-</ul>
+# Hadoop 的配置文件位置
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-&quot;/etc/hadoop&quot;}
 
-<h2 id="查询特定短语">查询特定短语</h2>
+# Extra Java CLASSPATH elements.  Automatically insert capacity-scheduler.
+for f in $HADOOP_HOME/contrib/capacity-scheduler/*.jar; do
+  if [ &quot;$HADOOP_CLASSPATH&quot; ]; then
+    export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$f
+  else
+    export HADOOP_CLASSPATH=$f
+  fi
+done
 
-<ul>
-<li>是用双引号将要查询的一个或多个单词引起来
+# The maximum amount of heap to use, in MB. Default is 1000.
+# 为每个守护进程分配内存，包括资源管理器，节点管理器等
+# 也可以单独为某个守护进程修改堆大小
+#export HADOOP_HEAPSIZE=
+#export HADOOP_NAMENODE_INIT_HEAPSIZE=&quot;&quot;
 
-<ul>
-<li>比如：&rdquo;Mozilla/5.0&rdquo;，&rdquo;like Gecko&rdquo;</li>
-</ul></li>
-</ul>
+# Extra Java runtime options.  Empty by default.
+export HADOOP_OPTS=&quot;$HADOOP_OPTS -Djava.net.preferIPv4Stack=true&quot;
 
-<h2 id="正则搜索">正则搜索</h2>
+# Command specific options appended to HADOOP_OPTS when specified
+# 设置内存大小，比如设置 hadoop 给 namenode 分配的内存空间
+export HADOOP_NAMENODE_OPTS=&quot;-Dhadoop.security.logger=${HADOOP_SECURITY_LOGGER:-INFO,RFAS} -Dhdfs.audit.logger=${HDFS_AUDIT_LOGGER:-INFO,NullAppender} $HADOOP_NAMENODE_OPTS&quot;
+export HADOOP_DATANODE_OPTS=&quot;-Dhadoop.security.logger=ERROR,RFAS $HADOOP_DATANODE_OPTS&quot;
 
-<p>使用 <code>?</code> 表示单个字符，<code>*</code> 表示 0 或者多个单词，<code>.</code> 可以用来表示一个任何的单词
-<code>?  *</code>不能用作第一个字符，如：<code>?text *text</code></p>
+# 由于namenode 和辅助 namenode 节点内存需求近似，因此若对namenode进行了修改，相应地辅助 namenode 也要做出修改
+export HADOOP_SECONDARYNAMENODE_OPTS=&quot;-Dhadoop.security.logger=${HADOOP_SECURITY_LOGGER:-INFO,RFAS} -Dhdfs.audit.logger=${HDFS_AUDIT_LOGGER:-INFO,NullAppender} $HADOOP_SECONDARYNAMENODE_OPTS&quot;
 
-<ul>
-<li>例如：qu?ck bro* , kiba?a, el*search</li>
-<li>例如：对于字符串&rdquo;abcde&rdquo;，ab&hellip; 匹配.c.e 匹配</li>
-<li>例如：book.*:(quick brown)，表示book.title, book.content或book.date 包含 quick 或 brown (需要用反斜线转义*):</li>
-</ul>
+export HADOOP_NFS3_OPTS=&quot;$HADOOP_NFS3_OPTS&quot;
+export HADOOP_PORTMAP_OPTS=&quot;-Xmx512m $HADOOP_PORTMAP_OPTS&quot;
 
-<p>一个或者多个加号&rdquo;+&ldquo;可以用来重复一次或多次前面的最短模式，对于字符串&rdquo;aaabbb&rdquo;：</p>
+# The following applies to multiple commands (fs, dfs, fsck, distcp etc)
+export HADOOP_CLIENT_OPTS=&quot;-Xmx512m $HADOOP_CLIENT_OPTS&quot;
+#HADOOP_JAVA_PLATFORM_OPTS=&quot;-XX:-UsePerfData $HADOOP_JAVA_PLATFORM_OPTS&quot;
 
-<pre><code class="language-json">a + b +  匹配
-aa + bb + 匹配
-a +.+ 匹配
-aa + bbb +  匹配
+# On secure datanodes, user to run the datanode as after dropping privileges.
+# This **MUST** be uncommented to enable secure HDFS if using privileged ports
+# to provide authentication of data transfer protocol.  This **MUST NOT** be
+# defined if SASL is configured for authentication of data transfer protocol
+# using non-privileged ports.
+export HADOOP_SECURE_DN_USER=${HADOOP_SECURE_DN_USER}
+
+# Where log files are stored.  $HADOOP_HOME/logs by default.
+# 系统日志文件，在这里我写在了 /etc/profile.d/ 目录下，若在这个配置文件进行配置，
+# 取消注释，作相应修改即可。
+# 日志格式分为两种，第一类日志后缀名为 .log，故障发生时，首要检查该类文件；第二类文件
+# 是 .out 文件，主要用来记录标准的输入输出错误日志，由于 hadoop 主要使用 log4j 将大部分
+# 日志记录在 .log 文件中，因此第二类文件只存在很少的记录；
+# 日志格式为：USER-DAEMON-ip-YOUR-IP.log.DATE
+# 比如：hadoop-hdfsdatanode-ip-192.168.59.151.log.2018-12-17
+#export HADOOP_LOG_DIR=${HADOOP_LOG_DIR}/$USER
+
+# Where log files are stored in the secure data environment.
+export HADOOP_SECURE_DN_LOG_DIR=${HADOOP_LOG_DIR}/${HADOOP_HDFS_USER}
+
+###
+# HDFS Mover specific parameters
+###
+# Specify the JVM options to be used when starting the HDFS Mover.
+# These options will be appended to the options specified as HADOOP_OPTS
+# and therefore may override any similar flags set in HADOOP_OPTS
+#
+# export HADOOP_MOVER_OPTS=&quot;&quot;
+
+###
+# Advanced Users Only!
+###
+
+# The directory where pid files are stored. /tmp by default.
+# NOTE: this should be set to a directory that can only be written to by 
+#       the user that will run the hadoop daemons.  Otherwise there is the
+#       potential for a symlink attack.
+# hadoop 运行时的PID存放的位置
+export HADOOP_PID_DIR=${HADOOP_PID_DIR}
+export HADOOP_SECURE_DN_PID_DIR=${HADOOP_PID_DIR}
+
+# A string representing this instance of hadoop. $USER by default.
+export HADOOP_IDENT_STRING=$USER
 </code></pre>
 
-<h2 id="区间查询">区间查询</h2>
+<h1 id="core-site-xml">core-site.xml</h1>
 
-<p>数值/时间/IP/字符串等类型的字段可以对某一个额范围进行查询，使用 <code>TO</code> 命令表示查询的起始值到终止值，中括号表示包含。</p>
-
-<pre><code class="language-json">date:[2012-01-01 TO 2012-12-31]
-count:[1 TO 5]
-length:[100 TO 200]
-sip:[&quot;172.24.20.110&quot; TO &quot;172.24.20.140&quot;]
-host:[&quot;10.28.0.0&quot; TO &quot;10.28.0.255&quot;]
+<pre><code class="language-xml">&lt;!-- 
+	fs.defaultFS 表示HDFS文件系统的默认地址，主机是主机名或者IP地址，
+	默认端口号为8020，该端口用于RPC通信（类似网络socket），
+--&gt;
+&lt;configuration&gt;
+    &lt;property&gt;
+	&lt;name&gt;fs.defaultFS&lt;/name&gt;
+ 	&lt;value&gt;hdfs://192.168.59.151:8020&lt;/value&gt;
+	&lt;final&gt;true&lt;/final&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
 </code></pre>
 
-<h2 id="排除在范围内的数值">排除在范围内的数值</h2>
+<h1 id="hdfs-site-xml">hdfs-site.xml</h1>
 
-<p>使用大括号，表示排除，[ ]表示断电数值包含在范围內，{ }表示端点数值不包含在范围內，可以混合使用</p>
+<pre><code class="language-xml">&lt;!--
+	dfs.replication: 主要设定 DFS 的副本数量
+	
+	dfs.namenode.name.dir：主要设定 namenode 存储持久化的文件元数据信息，
+		一般情况下，可以配置该字段实现将namenode信息存储在本地和NFS上，
+		这样可以保证高可用。比如配置该字段的value值为
+		file://local,file://remote
+	
+	dfs.datanode.name.dir：主要设定 datanode 存储数据块的目录列表
+		可优化：为了使得跨磁盘分布，提高读取性能，可以配置多个位置；
 
-<pre><code class="language-json">tag:{alpha TO omega}，排除 alpha 和 omega:
-count:[10 TO *]，表示10以上
-date:{* TO 2012-01-01}，表示日期在 2012年前
-date:{&quot;now-6h&quot; TO &quot;now&quot;}
-tag:{b TO e}，搜索 b 到 e 中间的字符
-count:[10 TO *]，`*` 表示一端不限制范围
-count:[1 TO 5}，表示 1 到 5，包含 1 不包含 5 
+	fs.namenode.checkpoint.dir：主要设定辅助namenode存放检查点的位置
+
+--&gt;
+&lt;configuration&gt;
+    &lt;property&gt;
+	&lt;name&gt;dfs.replication&lt;/name&gt;
+	&lt;value&gt;2&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+	&lt;value&gt;file:///data/hadoop/hdfs/nn&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;
+	&lt;value&gt;file:///data/hadoop/hdfs/dn&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;fs.checkpoint.dir&lt;/name&gt;
+	&lt;value&gt;file:///data/hadoop/hdfs/snn&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;fs.checkpoint.edits.dir&lt;/name&gt;
+	&lt;value&gt;file:///data/hadoop/hdfs/snn&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.permissions&lt;/name&gt;
+        &lt;value&gt;false&lt;/value&gt;
+   &lt;/property&gt;  
+&lt;/configuration&gt;
 </code></pre>
 
-<p>范围可以使用下面的公式表示</p>
+<h1 id="mapred-site-xml">mapred-site.xml</h1>
 
-<pre><code class="language-json">age:&gt;10
-age:&gt;=10
-age:&lt;10
-age:&lt;=10
+<pre><code class="language-xml">&lt;!--
+	mapreduce.map.memory.mb：map容器所用的内存容量，默认1024MB；
+	mapreduce.reduce.memory.mb：reduce容器所用的内存容量，默认1024MB；
+	mapreduce.child.java.opts：JVM选项，用于启动运行map和reduce任务的容器进程，除了用于设置内存，该属性还包括JVM属性设置，默认200MB
+	mapreduce.map.java.opts：JVM选项，针对map任务的子进程，默认200MB
+	mapreduce.reduce.java.opts：JVM选项，针对reduce任务的子进程，默认你200MB
+	mapreduce.map.cpu.vcores：每个map任务从调度程序请求的容器核数。默认一个核。
+	mapreduce.reduce.cpu.vcores	：每个reduce任务从调度程序请求的容器核数。默认一个核。
+--&gt;
+&lt;configuration&gt;
+    &lt;property&gt;
+	&lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+	&lt;value&gt;yarn&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
 </code></pre>
 
-<h2 id="关键字-保留字">关键字/保留字</h2>
+<h1 id="yarn-site-xml">yarn-site.xml</h1>
 
-<p>如果用到保留字作为查询的字符之一，就要使用反斜线对这些字符进行转义。
-保留字符包括：<code>+ - = &amp;&amp; || &gt; &lt; ! ( ) { } [ ] ^ &quot; ~ * ? : \ /</code></p>
+<pre><code class="language-xml">&lt;!--
+	yarn.resourcemanager.hostname: 用于运行资源管理器的主机名或者IP地址
+	yarn.resourcemanager.address：资源管理器的地址：IP地址或者主机名，客户端借此与 resourcemanager通信
+	yarn.resourcemanager.scheduler.address： 资源管理器调度器RPC地址，application master借此与 resourcemanager通信
+	yarn.resourcemanager.resource-tracker.address：资源管理器的资源追踪器地址
+	yarn.resourcemanager.admin.address：资源管理器的admin RPC地址，admin客户端借此与resourcemanager通信
+	yarn.resourcemanager.webapp.address：webUI地址，资源管理器的HTTP服务器地址和端口	
+	yarn.nodemanager.webapp.address：webUI地址，节点管理器的HTTP服务器地址和端口
+	yarn.nodemanager.aux-services：节点管理器用于运行的附加服务列表
+	yarn.nodemanager.auxservices.mapreduce_shuffle.class：shuffle方式
+	yarn.resourcemanager.scheduler.class：默认的调度类
+	yarn.nodemanager.resource.cpuvcores：节点管理器运行的容器可以分配的CPU核数
+	yarn.web-proxy.address：web应用代理服务器地址，默认不设置
+
+--&gt;
+&lt;configuration&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.address&lt;/name&gt;
+	&lt;value&gt;master:8032&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.scheduler.address&lt;/name&gt;
+	&lt;value&gt;master:8030&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.resource-tracker.address&lt;/name&gt;
+	&lt;value&gt;master:8031&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.admin.address&lt;/name&gt;
+	&lt;value&gt;master:8033&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.webapp.address&lt;/name&gt;
+	&lt;value&gt;master:8088&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+	&lt;value&gt;mapreduce_shuffle&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.nodemanager.auxservices.mapreduce_shuffle.class&lt;/name&gt;
+	&lt;value&gt;org.apache.hadoop.mapred.ShuffleHandler&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.scheduler.class&lt;/name&gt;
+	&lt;value&gt;org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre>
+
+<h1 id="参考">参考</h1>
 
 <ul>
-<li>例如：查询 <code>(1+1)=2</code>,，就要写成 <code>\(1\+1\)\=2</code></li>
+<li><a href="https://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-common/core-default.xml">https://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-common/core-default.xml</a></li>
+<li><a href="https://hadoop.apache.org/docs/r2.7.2/hadoop-mapreduce-client/hadoop-mapreduce-client-core/mapred-default.xml">https://hadoop.apache.org/docs/r2.7.2/hadoop-mapreduce-client/hadoop-mapreduce-client-core/mapred-default.xml</a></li>
+<li><a href="https://hadoop.apache.org/docs/r2.7.5/hadoop-yarn/hadoop-yarn-common/yarn-default.xml">https://hadoop.apache.org/docs/r2.7.5/hadoop-yarn/hadoop-yarn-common/yarn-default.xml</a></li>
+<li><a href="https://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml">https://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml</a></li>
 </ul>
-
-<h2 id="布尔操作符">布尔操作符</h2>
-
-<p>布尔操作符 （AND，OR，NOT）允许通过逻辑运算符组合多个子查询。
-操作符 <code>AND/OR/NOT</code> 必须是大写。</p>
-
-<p>直接在查询结果的字段处点击放大镜🔍，<code>＋</code> 表示查询该值或  <code>-</code> 排除该值。</p>
-
-
-
-
-<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
-  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-    <div class="img" data-size="200x">
-      <img itemprop="thumbnail" src="/img/es-2-1.png" />
-    </div>
-    <a href="/img/es-2-1.png" itemprop="contentUrl"></a>
-  </figure>
-</div>
-
-<style>
- .gallery {
-     overflow: hidden;
-     margin: 10px;
-     max-width: 768px;
- }
- .gallery .box {
-     float: left;
-     position: relative;
-     width: 100%;
-     padding-bottom: 100%; 
- }
-
-
- @media only screen and (min-width : 365px) {
-     .gallery .box {
-         width: 50%;
-         padding-bottom: 50%;
-     }
- }
- @media only screen and (min-width : 480px) {
-      
-     .gallery .box {
-         width: 33.3%;
-         padding-bottom: 33.3%;  
-     }
- }
- @media only screen and (min-width : 9999px) {
-     
-    .box {
-       width: 25%;
-       padding-bottom: 25%;
-    }
- }
- figure a {
-     border-bottom: none;
- }
- 
-  
- .gallery.hover-transition figure,
- .gallery.hover-effect-zoom .img, 
- .gallery:not(.caption-effect-appear) figcaption,
- .fancy-figure:not(.caption-effect-appear) figcaption {
-     -webkit-transition: all 0.3s ease-in-out;
-     -moz-transition: all 0.3s ease-in-out;
-     -o-transition: all 0.3s ease-in-out;
-     transition: all 0.3s ease-in-out;
- }
-  
- figure {
-     position:relative;  
-     overflow: hidden;
- }
- .gallery figure {
-     position: absolute;
-     left: 5px;
-     right: 5px;
-     top: 5px;
-     bottom: 5px;
- }
- .gallery.hover-effect-grow figure:hover {
-     transform: scale(1.05);
- }
- .gallery.hover-effect-shrink figure:hover {
-     transform: scale(0.95);
- }
- .gallery.hover-effect-slidedown figure:hover {
-     transform: translateY(5px);
- }
- .gallery.hover-effect-slideup figure:hover {
-     transform: translateY(-5px);
- }
- 
-  
- 
- .gallery .img {
-     position: absolute;
-     left: 0;
-     right: 0;
-     top: 0;
-     bottom: 0;
-     background-size: cover;
-     background-position: 50% 50%;
-     background-repeat: no-repeat;
- }
- .gallery.hover-effect-zoom figure:hover .img {
-     transform: scale(1.05);
- }
- .gallery img {
-     display: none;  
- }
- figure a {
-     position: absolute;
-     left: 0;
-     right: 0;
-     top: 0;
-     bottom: 0;
- }
- 
-  
- .gallery figcaption,
- .fancy-figure figcaption {
-     position: absolute;
-     bottom: 0;
-     left: 0;
-     right: 0;
-     background: #000;
-     color: #FFF;
-     text-align: center;
-     font-size: 75%;  
-     background: rgba(0, 0, 0, 0.5);
-     opacity: 1;
-     cursor: pointer;
- }
- .gallery.caption-position-none figcaption,
- .fancy-figure.caption-position-none figcaption  {
-     display: none;
- }
- .gallery.caption-position-center figcaption,
- .fancy-figure.caption-position-center figcaption {
-     top: 0;
-     padding: 40% 5px;
- }
- .gallery.caption-position-bottom figcaption,
- .fancy-figure.caption-position-bottom figcaption {
-     padding: 5px;
- }
- .gallery.caption-effect-fade figure:not(:hover) figcaption,
- .gallery.caption-effect-appear figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
-     background: rgba(0, 0, 0, 0);
-     opacity: 0;
- }
- .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
-     margin-bottom: -100%;
- }
- .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
- .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
-     top: 100%;
- }
- figcaption p {
-     margin: auto;  
- }
-
-</style>
-
-<ul>
-<li><code>＋</code>：搜索結果中必须包含此项</li>
-<li><code>－</code>：不能含有此项</li>
-</ul>
-
-<pre><code class="language-json">+apache -jakarta  结果中必须存在apache，不能有jakarta
-title:(+return +&quot;pink panther&quot;)
-(baidu OR qq OR google) AND host:(com OR cn) 
-</code></pre>
 
                         </div>
 
@@ -402,15 +374,15 @@ title:(+return +&quot;pink panther&quot;)
     <h2>See Also</h2>
     <ul class="listing">
         
-        <li><a href="/posts/2018-12-13-elk-6/">ELK学习笔记6|ElasticSearch基本概念与架构</a></li>
+        <li><a href="/posts/2018-12-17-kubeflow/">kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序</a></li>
         
-        <li><a href="/posts/2018-12-11-elk-5/">ELK学习笔记5|Kibana可视化-数据表、仪表盘</a></li>
+        <li><a href="/posts/2018-12-17-update-kubernetes/">kubernetes学习笔记|从旧版本升级到 1.12.1</a></li>
         
-        <li><a href="/posts/2018-12-11-elk-4/">ELK学习笔记4|Kibana可视化-饼图、测度图和标签云</a></li>
+        <li><a href="/posts/2018-12-13-kubernetes/">kubernetes学习笔记|1.10.0 版环境安装与配置（实验）</a></li>
         
-        <li><a href="/posts/2018-12-11-elk-3/">ELK学习笔记3|Kibana可视化-条形图、线图和区域图</a></li>
+        <li><a href="/posts/2018-12-17-kubernetes/">kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装</a></li>
         
-        <li><a href="/posts/2018-12-11-elk-1/">ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana</a></li>
+        <li><a href="/posts/2018-12-13-elk-7/">ELK学习笔记7| Lucence 的搜索语法</a></li>
         
     </ul>
 </div>
@@ -420,13 +392,13 @@ title:(+return +&quot;pink panther&quot;)
                             
                             <ul class="clearfix">
                                 
-                                <li><a href="http://shenheng.xyz/tags/elk">elk</a></li>
+                                <li><a href="http://shenheng.xyz/tags/kubernetes">kubernetes</a></li>
                                 
-                                <li><a href="http://shenheng.xyz/tags/elastic-search">elastic search</a></li>
+                                <li><a href="http://shenheng.xyz/tags/k8s">k8s</a></li>
                                 
-                                <li><a href="http://shenheng.xyz/tags/logstash">logstash</a></li>
+                                <li><a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92">容器编排</a></li>
                                 
-                                <li><a href="http://shenheng.xyz/tags/kibana">kibana</a></li>
+                                <li><a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8">容器</a></li>
                                 
                             </ul>
                             

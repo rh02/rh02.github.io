@@ -30,6 +30,15 @@
     </item>
     
     <item>
+      <title>Hadoop优化笔记|Hadoop2.x 配置文件</title>
+      <link>http://shenheng.xyz/posts/2019-12-17-update-kubernetes/</link>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2019-12-17-update-kubernetes/</guid>
+      <description>hadooop-env.sh # Set Hadoop-specific environment variables here. # The only required environment variable is JAVA_HOME. All others are # optional. When running a distributed configuration it is best to # set JAVA_HOME in this file, so that it is correctly defined on # remote nodes. # The java implementation to use. # 两种配置方法：一是在 hadoop-env.sh 中配置；二是在</description>
+    </item>
+    
+    <item>
       <title>kubernetes学习笔记|1.10.0 版环境安装与配置（实验）</title>
       <link>http://shenheng.xyz/posts/2018-12-13-kubernetes/</link>
       <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>

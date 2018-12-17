@@ -6,10 +6,19 @@
     <description>Recent content in Posts on 申恒恒的博客</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>shenheng.xyz &amp;copy; 2018</copyright>
-    <lastBuildDate>Fri, 14 Dec 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 17 Dec 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="http://shenheng.xyz/posts/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>kubernetes学习笔记|1.10.0 版环境安装与配置（实验）</title>
+      <link>http://shenheng.xyz/posts/2018-12-13-kubernetes/</link>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-13-kubernetes/</guid>
+      <description>K8s集群部署（坑贼多） 重点参考 http://blog.51cto.com/douya/1945382 http://www.cnblogs.com/burningTheStar/p/7865998.html 实验环境 采用 CentOS7.4 minimual，docker 1.13，kubeadm 1.10.0，etcd 3.0， k8s 1.10.0 我</description>
+    </item>
     
     <item>
       <title>ELK学习笔记7| Lucence 的搜索语法</title>
@@ -27,15 +36,6 @@
       
       <guid>http://shenheng.xyz/posts/2018-12-13-elk-6/</guid>
       <description>我们都知道ElasticSearch是基于Lucencee实现的一个成品式的分布式文档搜索引擎，下面我会重点介绍ElasticSearch中</description>
-    </item>
-    
-    <item>
-      <title>kubernetes学习笔记|基本概念</title>
-      <link>http://shenheng.xyz/posts/2018-12-13-kubernetes/</link>
-      <pubDate>Thu, 13 Dec 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/2018-12-13-kubernetes/</guid>
-      <description></description>
     </item>
     
     <item>

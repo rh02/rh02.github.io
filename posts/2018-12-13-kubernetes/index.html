@@ -10,17 +10,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>kubernetes学习笔记|基本概念 | 申恒恒的博客</title>
-    <meta property="og:title" content="kubernetes学习笔记|基本概念 - 申恒恒的博客">
+    <title>kubernetes学习笔记|1.10.0 版环境安装与配置（实验） | 申恒恒的博客</title>
+    <meta property="og:title" content="kubernetes学习笔记|1.10.0 版环境安装与配置（实验） - 申恒恒的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2018-12-13T00:00:00&#43;08:00">
+    <meta property="article:published_time" content="2018-12-17T00:00:00&#43;08:00">
         
         
-    <meta property="article:modified_time" content="2018-12-13T00:00:00&#43;08:00">
+    <meta property="article:modified_time" content="2018-12-17T00:00:00&#43;08:00">
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
-    <meta name="description" content="kubernetes学习笔记|基本概念">
+    <meta name="description" content="kubernetes学习笔记|1.10.0 版环境安装与配置（实验）">
         <meta name="author" content="申恒恒">
         
     <meta property="og:url" content="http://shenheng.xyz/posts/2018-12-13-kubernetes/">
@@ -56,6 +56,7 @@
             enable_page_level_ads: true
         });
     </script>
+    
     
 
 
@@ -100,10 +101,10 @@
                 <div class="res-cons">
                     <article class="post">
                         <header>
-                            <h1 class="post-title">kubernetes学习笔记|基本概念</h1>
+                            <h1 class="post-title">kubernetes学习笔记|1.10.0 版环境安装与配置（实验）</h1>
                         </header>
                         <date class="post-meta meta-date">
-                            2018年12月13日
+                            2018年12月17日
                         </date>
                         
                         <div class="post-meta meta-category">
@@ -121,12 +122,560 @@
                         
                             <aside id="toc" class="dismissed">
                                 <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
-                                
+                                <nav id="TableOfContents">
+<ul>
+<li><a href="#重点参考">重点参考</a></li>
+<li><a href="#实验环境">实验环境</a></li>
+<li><a href="#使用kubeadm安装">使用kubeadm安装</a></li>
+<li><a href="#常见错误">常见错误</a></li>
+</ul>
+</nav>
                             </aside>
                         
                         
                         <div class="post-content">
                             
+
+<p>K8s集群部署（坑贼多）</p>
+
+<h1 id="重点参考">重点参考</h1>
+
+<ul>
+<li><a href="http://blog.51cto.com/douya/1945382">http://blog.51cto.com/douya/1945382</a></li>
+<li><a href="http://www.cnblogs.com/burningTheStar/p/7865998.html">http://www.cnblogs.com/burningTheStar/p/7865998.html</a></li>
+</ul>
+
+<h1 id="实验环境">实验环境</h1>
+
+<p>采用 CentOS7.4 minimual，docker 1.13，kubeadm 1.10.0，etcd 3.0， k8s 1.10.0 我们这里选用两个个节点搭建一个实验环境。</p>
+
+<pre><code>192.168.59.133 k8smaster
+192.168.59.150 k8snode1
+</code></pre>
+
+<p>下面开始准备环境。</p>
+
+<ol>
+<li><p>配置好各节点hosts文件</p>
+
+<pre><code class="language-bash">cat&gt;&gt; /etc/hosts  &lt;&lt; EOF
+192.168.59.133 k8smaster
+192.168.59.150 k8snode1
+EOF
+</code></pre></li>
+
+<li><p>关闭系统防火墙</p>
+
+<pre><code class="language-bash">systemctl stop firewalld &amp;&amp; systemctl disable firewalld
+</code></pre></li>
+
+<li><p>关闭SElinux</p>
+
+<pre><code class="language-bash">setenforce 0
+sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+</code></pre>
+
+<p>重启生效！</p></li>
+
+<li><p>关闭swap</p>
+
+<pre><code class="language-bash">swapoff -a
+</code></pre></li>
+
+<li><p>配置系统内核参数</p>
+
+<p>使流过网桥的流量也进入iptables/netfilter框架中，在/etc/sysctl.conf中添加以下配置：</p>
+
+<pre><code class="language-bash">net.bridge.bridge-nf-call-iptables = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+sysctl -p
+</code></pre></li>
+</ol>
+
+<h1 id="使用kubeadm安装">使用kubeadm安装</h1>
+
+<ol>
+<li><p>首先配置阿里K8S YUM源</p>
+
+<pre><code class="language-bash">cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+EOF
+yum -y install epel-release
+yum clean all
+yum makecache
+</code></pre></li>
+
+<li><p>安装kubeadm和相关工具包</p>
+
+<pre><code class="language-bash">yum -y install docker kubelet kubeadm kubectl kubernetes-cni
+</code></pre></li>
+
+<li><p>启动Docker与kubelet服务</p>
+
+<pre><code class="language-bash">systemctl enable docker &amp;&amp; systemctl start docker
+systemctl enable kubelet &amp;&amp; systemctl start kubelet
+</code></pre>
+
+<blockquote>
+<p>提示：此时kubelet的服务运行状态是异常的，因为缺少主配置文件kubelet.conf。但可以暂不处理，因为在完成Master节点的初始化后才会生成这个配置文件。</p>
+</blockquote></li>
+
+<li><p>下载K8S相关镜像(可以直接看5)</p>
+
+<p>因为无法直接访问gcr.io下载镜像，所以需要配置一个国内的容器镜像加速器
+配置一个阿里云的加速器：（可省略)</p>
+
+<p>登录 <a href="https://cr.console.aliyun.com/">https://cr.console.aliyun.com/</a></p>
+
+<p>在页面中找到并点击镜像加速按钮，即可看到属于自己的专属加速链接，选择Centos版本后即可看到配置方法。</p>
+
+<p><strong>提示：</strong> 在阿里云上使用 Docker 并配置阿里云镜像加速器，可能会遇到 daemon.json 导致 docker daemon 无法启动的问题，可以通过以下方法解决。</p>
+
+<p>你需要的是编辑 </p>
+
+<pre><code class="language-bash">vim /etc/sysconfig/docker
+</code></pre>
+
+<p>然后</p>
+
+<pre><code>OPTIONS='--selinux-enabled --log-driver=journald --registry-mirror=http://xxxx.mirror.aliyuncs.com'
+</code></pre>
+
+<p><code>registry-mirror</code> 输入你的镜像地址 </p>
+
+<p>最后 </p>
+
+<pre><code class="language-bash">service docker restart 
+</code></pre>
+
+<p>重启 daemon.
+然后 </p>
+
+<pre><code class="language-bash">ps aux |grep docker
+</code></pre>
+
+<p>然后你就会发现带有镜像的启动参数了。</p></li>
+
+<li><p>下载K8S相关镜像</p>
+
+<p>OK，解决完加速器的问题之后，开始下载k8s相关镜像，下载后将镜像名改为k8s.gcr.io/开头的名字，以便kubeadm识别使用。</p>
+
+<pre><code class="language-bash">#!/bin/bash
+images=(kube-proxy-amd64:v1.10.0 kube-scheduler-amd64:v1.10.0 kube-controller-manager-amd64:v1.10.0 kube-apiserver-amd64:v1.10.0
+etcd-amd64:3.1.12 pause-amd64:3.1 kubernetes-dashboard-amd64:v1.8.3 k8s-dns-sidecar-amd64:1.14.8 k8s-dns-kube-dns-amd64:1.14.8
+k8s-dns-dnsmasq-nanny-amd64:1.14.8)
+for imageName in ${images[@]} ; do
+  docker pull keveon/$imageName
+  docker tag keveon/$imageName k8s.gcr.io/$imageName
+  docker rmi keveon/$imageName
+done
+</code></pre>
+
+<p>上面的shell脚本主要做了3件事，下载各种需要用到的容器镜像、重新打标记为符合k8s命令规范的版本名称、清除旧的容器镜像。</p>
+
+<blockquote>
+<p>提示：镜像版本一定要和kubeadm安装的版本一致，否则会出现time out问题。</p>
+</blockquote></li>
+
+<li><p>初始化安装K8S Master</p>
+
+<p>执行上述shell脚本，等待下载完成后，执行<code>kubeadm init</code>.</p>
+
+<pre><code class="language-bash">[root@k8smaster ~]# kubeadm init --token=102952.1a7dd4cc8d1f4cc5 --kubernetes-version 1.10.0 
+····································
+··········································
+kubeadm join 192.168.59.133:6443 --token 102952.1a7dd4cc8d1f4cc5 --discovery-token-ca-cert-hash sha256:6f1a864c6f530351f9ec7a42f74404497fcbe91ad7bf726bffd8cb3e3c333a38
+</code></pre>
+
+<p>最后会出现这个信息，在这个信息会非常有用</p>
+
+<pre><code class="language-bash">kubeadm join 192.168.59.133:6443 --token 102952.1a7dd4cc8d1f4cc5 --discovery-token-ca-cert-hash sha256:6f1a864c6f530351f9ec7a42f74404497fcbe91ad7bf726bffd8cb3e3c333a38
+</code></pre>
+
+<blockquote>
+<p>提示：选项–kubernetes-version=v1.10.0是必须的，否则会因为访问google网站被墙而无法执行命令。这里使用v1.10.0版本，刚才前面也说到了下载的容器镜像版本必须与K8S版本一致否则会出现time out。</p>
+</blockquote>
+
+<p>上面的命令大约需要1分钟的过程，期间可以观察下tail -f /var/log/message日志文件的输出，掌握该配置过程和进度。上面最后一段的输出信息保存一份，后续添加工作节点还要用到。</p></li>
+
+<li><p>配置kubectl认证信息
+# 对于非root用户</p>
+
+<pre><code class="language-bash">mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+</code></pre>
+
+<p># 对于root用户</p>
+
+<pre><code class="language-bash">export KUBECONFIG=/etc/kubernetes/admin.conf
+</code></pre>
+
+<p>也可以直接放到~/.bash_profile</p>
+
+<pre><code class="language-bash">echo &quot;export KUBECONFIG=/etc/kubernetes/admin.conf&quot; &gt;&gt; ~/.bash_profile
+</code></pre></li>
+
+<li><p>安装flannel网络</p>
+
+<pre><code class="language-bash">mkdir -p /etc/cni/net.d/
+cat &lt;&lt;EOF&gt; /etc/cni/net.d/10-flannel.conf
+{
+“name”: “cbr0”,
+“type”: “flannel”,
+“delegate”: {
+“isDefaultGateway”: true
+}
+}
+EOF
+mkdir /usr/share/oci-umount/oci-umount.d -p
+mkdir /run/flannel/
+cat &lt;&lt;EOF&gt; /run/flannel/subnet.env
+FLANNEL_NETWORK=10.244.0.0/16
+FLANNEL_SUBNET=10.244.1.0/24
+FLANNEL_MTU=1450
+FLANNEL_IPMASQ=true
+EOF
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml
+</code></pre></li>
+
+<li><p>让node1加入集群</p>
+
+<p>在node1节点上分别执行kubeadm join命令，加入集群：</p>
+
+<pre><code class="language-bash">[root@k8snode1 ~]# kubeadm join 192.168.59.133:6443 --token 102952.1a7dd4cc8d1f4cc5 --discovery-token-ca-cert-hash sha256:6f1a864c6f530351f9ec7a42f74404497fcbe91ad7bf726bffd8cb3e3c333a38
+[preflight] Running pre-flight checks.
+    [WARNING Service-Kubelet]: kubelet service is not enabled, please run 'systemctl enable kubelet.service'
+    [WARNING FileExisting-crictl]: crictl not found in system path
+Suggestion: go get github.com/kubernetes-incubator/cri-tools/cmd/crictl
+[discovery] Trying to connect to API Server &quot;10.0.100.202:6443&quot;
+[discovery] Created cluster-info discovery client, requesting info from &quot;https://10.0.100.202:6443&quot;
+[discovery] Requesting info from &quot;https://10.0.100.202:6443&quot; again to validate TLS against the pinned public key
+[discovery] Cluster info signature and contents are valid and TLS certificate validates against pinned roots, will use API Server &quot;10.0.100.202:6443&quot;
+[discovery] Successfully established connection with API Server &quot;10.0.100.202:6443&quot;
+This node has joined the cluster:
+* Certificate signing request was sent to master and a response
+  was received.
+* The Kubelet was informed of the new secure connection details.
+Run 'kubectl get nodes' on the master to see this node join the cluster.
+</code></pre>
+
+<blockquote>
+<p>提示：细心的童鞋应该会发现，这段命令其实就是前面K8S Matser安装成功后我让你们保存的那段命令。</p>
+</blockquote>
+
+<p>默认情况下，Master节点不参与工作负载，但如果希望安装出一个All-In-One的k8s环境，则可以执行以下命令，让Master节点也成为一个Node节点：</p>
+
+<pre><code class="language-bash">kubectl taint nodes --all node-role.kubernetes.io/master-
+</code></pre></li>
+
+<li><p>验证K8S Master是否搭建成功</p>
+
+<pre><code class="language-bash"># 查看节点状态
+kubectl get nodes
+# 查看pods状态
+kubectl get pods --all-namespaces
+# 查看K8S集群状态
+kubectl get cs
+</code></pre></li>
+
+<li><p>安装 dashboard</p>
+
+<pre><code class="language-bash">kubectl create -f https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+</code></pre></li>
+</ol>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/k8-1.png" />
+    </div>
+    <a href="/img/k8-1.png" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<h1 id="常见错误">常见错误</h1>
+
+<ol>
+<li><p>如果出现NotReady，说明网络问题，需要创建一个网络服务，在这里需要先下载一个文件：</p>
+
+<ul>
+<li><p>到 <a href="https://github.com/weaveworks/weave/releases">https://github.com/weaveworks/weave/releases</a> 下载</p>
+
+<pre><code class="language-bash">wget https://github.com/weaveworks/weave/releases/download/v2.3.0/weave-daemonset-k8s-1.7.yaml
+</code></pre>
+
+<p>然后执行</p>
+
+<pre><code class="language-bash">kubectl create -f weave-daemonset-k8s-1.7.yaml
+</code></pre>
+
+<p>现在可以了！😄</p></li>
+
+<li><p>或者使用flannel网络！</p></li>
+</ul></li>
+
+<li><p>安装时候最常见的就是time out，因为K8S镜像在国外，所以我们在前面就说到了提前把他下载下来，可以用一个国外机器采用habor搭建一个私有仓库把镜像都download下来。</p>
+
+<pre><code class="language-bash">[root@k8smaster ~]# kubeadm init
+[init] Using Kubernetes version: v1.10.0
+[init] Using Authorization modes: [Node RBAC]
+[preflight] Running pre-flight checks.
+    [WARNING Service-Kubelet]: kubelet service is not enabled, please run 'systemctl enable kubelet.service'
+    [WARNING FileExisting-crictl]: crictl not found in system path
+Suggestion: go get github.com/kubernetes-incubator/cri-tools/cmd/crictl
+[preflight] Starting the kubelet service
+[certificates] Generated ca certificate and key.
+[certificates] Generated apiserver certificate and key.
+[certificates] apiserver serving cert is signed for DNS names [k8smaster kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 10.0.100.202]
+[certificates] Generated apiserver-kubelet-client certificate and key.
+[certificates] Generated etcd/ca certificate and key.
+[certificates] Generated etcd/server certificate and key.
+[certificates] etcd/server serving cert is signed for DNS names [localhost] and IPs [127.0.0.1]
+[certificates] Generated etcd/peer certificate and key.
+[certificates] etcd/peer serving cert is signed for DNS names [k8smaster] and IPs [10.0.100.202]
+[certificates] Generated etcd/healthcheck-client certificate and key.
+[certificates] Generated apiserver-etcd-client certificate and key.
+[certificates] Generated sa key and public key.
+[certificates] Generated front-proxy-ca certificate and key.
+[certificates] Generated front-proxy-client certificate and key.
+[certificates] Valid certificates and keys now exist in &quot;/etc/kubernetes/pki&quot;
+[kubeconfig] Wrote KubeConfig file to disk: &quot;/etc/kubernetes/admin.conf&quot;
+[kubeconfig] Wrote KubeConfig file to disk: &quot;/etc/kubernetes/kubelet.conf&quot;
+[kubeconfig] Wrote KubeConfig file to disk: &quot;/etc/kubernetes/controller-manager.conf&quot;
+[kubeconfig] Wrote KubeConfig file to disk: &quot;/etc/kubernetes/scheduler.conf&quot;
+[controlplane] Wrote Static Pod manifest for component kube-apiserver to &quot;/etc/kubernetes/manifests/kube-apiserver.yaml&quot;
+[controlplane] Wrote Static Pod manifest for component kube-controller-manager to &quot;/etc/kubernetes/manifests/kube-controller-manager.yaml&quot;
+[controlplane] Wrote Static Pod manifest for component kube-scheduler to &quot;/etc/kubernetes/manifests/kube-scheduler.yaml&quot;
+[etcd] Wrote Static Pod manifest for a local etcd instance to &quot;/etc/kubernetes/manifests/etcd.yaml&quot;
+[init] Waiting for the kubelet to boot up the control plane as Static Pods from directory &quot;/etc/kubernetes/manifests&quot;.
+[init] This might take a minute or longer if the control plane images have to be pulled.
+Unfortunately, an error has occurred:
+    timed out waiting for the condition
+This error is likely caused by:
+    - The kubelet is not running
+    - The kubelet is unhealthy due to a misconfiguration of the node in some way (required cgroups disabled)
+    - Either there is no internet connection, or imagePullPolicy is set to &quot;Never&quot;,
+      so the kubelet cannot pull or find the following control plane images:
+        - k8s.gcr.io/kube-apiserver-amd64:v1.10.0
+        - k8s.gcr.io/kube-controller-manager-amd64:v1.10.0
+        - k8s.gcr.io/kube-scheduler-amd64:v1.10.0
+        - k8s.gcr.io/etcd-amd64:3.1.12 (only if no external etcd endpoints are configured)
+If you are on a systemd-powered system, you can try to troubleshoot the error with the following commands:
+    - 'systemctl status kubelet'
+    - 'journalctl -xeu kubelet'
+couldn't initialize a Kubernetes cluster
+</code></pre>
+
+<p>那出现这个问题大部分原因是因为安装的K8S版本和依赖的K8S相关镜像版本不符导致的，关于这部分排错可以查看/var/log/message我们在文章开始安装的时候也提到了要多看日志。
+还有些童鞋可能会说，那我安装失败了，怎么清理环境重新安装啊？下面教大家一条命令：</p>
+
+<pre><code class="language-bash">kubeadm reset
+</code></pre></li>
+
+<li><p>我们可能在使用kubeadm 安装完会出现下面的问题：</p>
+
+<pre><code>The connection to the server localhost:8080 was refused - did you specify the right host or port?
+</code></pre>
+
+<p>解决方案如下：</p>
+
+<pre><code class="language-bash">sudo cp /etc/kubernetes/admin.conf $HOME/
+sudo chown $(id -u):$(id -g) $HOME/admin.conf
+export KUBECONFIG=$HOME/admin.conf
+</code></pre></li>
+
+<li><p>访问 apiserver 或者 dashboard 出现  <code>&quot;&lt;h3&gt;Unauthorized&lt;/h3&gt;</code></p>
+
+<p>可以查看当前的是否存在 <code>kubectl proxy</code> 进程</p>
+
+<pre><code class="language-bash">ps -aux | grep 'kubectl proxy'
+</code></pre>
+
+<p>如果有，杀死该进程，执行下面的命令：</p>
+
+<pre><code class="language-bash">kubectl proxy --address 0.0.0.0 --accept-hosts '.*'
+</code></pre></li>
+
+<li><p>可能在初始化集群出现下面的错误</p>
+
+<pre><code>[ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]: /proc/sys/net/bridge/bridge-nf-call-iptables contents are not set to 1
+    [ERROR Swap]: running with swap on is not supported. Please disable swap
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+</code></pre>
+
+<p>处理方法：</p>
+
+<pre><code class="language-bash">echo &quot;1&quot; &gt;/proc/sys/net/bridge/bridge-nf-call-iptables
+</code></pre></li>
+
+<li><p>可能出现 swap 不支持错误</p>
+
+<pre><code>[ERROR Swap]: running with swap on is not supported. Please disable swap
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`
+</code></pre>
+
+<p>关闭它：</p>
+
+<pre><code class="language-bash">swapoff -a
+</code></pre></li>
+</ol>
+
                         </div>
 
 
@@ -136,6 +685,8 @@
     <h2>See Also</h2>
     <ul class="listing">
         
+        <li><a href="/posts/2018-12-13-elk-7/">ELK学习笔记7| Lucence 的搜索语法</a></li>
+        
         <li><a href="/posts/2018-12-13-elk-6/">ELK学习笔记6|ElasticSearch基本概念与架构</a></li>
         
         <li><a href="/posts/2018-12-11-starlight/">starlight 介绍</a></li>
@@ -143,8 +694,6 @@
         <li><a href="/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/">管道化 SQL</a></li>
         
         <li><a href="/posts/2018-12-11-elk-5/">ELK学习笔记5|Kibana可视化-数据表、仪表盘</a></li>
-        
-        <li><a href="/posts/2018-12-11-elk-4/">ELK学习笔记4|Kibana可视化-饼图、测度图和标签云</a></li>
         
     </ul>
 </div>
@@ -227,15 +776,15 @@
 <ul class="widget-list">
     
     <li>
+        <a href="http://shenheng.xyz/posts/2018-12-13-kubernetes/" title="kubernetes学习笔记|1.10.0 版环境安装与配置（实验）">kubernetes学习笔记|1.10.0 版环境安装与配置（实验）</a>
+    </li>
+    
+    <li>
         <a href="http://shenheng.xyz/posts/2018-12-13-elk-7/" title="ELK学习笔记7| Lucence 的搜索语法">ELK学习笔记7| Lucence 的搜索语法</a>
     </li>
     
     <li>
         <a href="http://shenheng.xyz/posts/2018-12-13-elk-6/" title="ELK学习笔记6|ElasticSearch基本概念与架构">ELK学习笔记6|ElasticSearch基本概念与架构</a>
-    </li>
-    
-    <li>
-        <a href="http://shenheng.xyz/posts/2018-12-13-kubernetes/" title="kubernetes学习笔记|基本概念">kubernetes学习笔记|基本概念</a>
     </li>
     
     <li>

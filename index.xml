@@ -40,11 +40,20 @@
     
     <item>
       <title>kubernetes学习笔记|从旧版本升级到 1.12.1</title>
-      <link>http://shenheng.xyz/posts/2019-12-17-kubernetes/</link>
+      <link>http://shenheng.xyz/posts/2018-12-17-update-kubernetes/</link>
       <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/2019-12-17-kubernetes/</guid>
+      <guid>http://shenheng.xyz/posts/2018-12-17-update-kubernetes/</guid>
       <description>升级 kubeadm/kubectl/kubelet 版本 查看该版本的容器镜像版本： kubeadm config images list 输出如下： kubeadm config images list k8s.gcr.io/kube-apiserver:v1.12.1 k8s.gcr.io/kube-controller-manager:v1.12.1 k8s.gcr.io/kube-scheduler:v1.12.1 k8s.gcr.io/kube-proxy:v1.12.1 k8s.gcr.io/pause:3.1 k8s.gcr.io/etcd:3.2.24 k8s.gcr.io/coredns:1.2.2 拉镜像 脚本在此！ 我发现了一个技巧，很多人自己可能有 GCE 的服务，他们</description>
+    </item>
+    
+    <item>
+      <title>kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序</title>
+      <link>http://shenheng.xyz/posts/2018-12-17-kubeflow/</link>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-17-kubeflow/</guid>
+      <description>重点参考教程 https://kairen.github.io/2018/03/15/tensorflow/kubeflow/ 介绍 每个人是不是都想拥有一个属于自己的 “人工智能实验室”，他有哪些特点呢？主要包括以下几个特点： 支持 tensorflow/to</description>
     </item>
     
     <item>

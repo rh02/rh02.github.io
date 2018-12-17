@@ -10,20 +10,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP | 申恒恒的博客</title>
-    <meta property="og:title" content="Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP - 申恒恒的博客">
+    <title>kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序 | 申恒恒的博客</title>
+    <meta property="og:title" content="kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序 - 申恒恒的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2018-11-25T00:00:00&#43;08:00">
+    <meta property="article:published_time" content="2018-12-17T00:00:00&#43;08:00">
         
         
-    <meta property="article:modified_time" content="2018-11-25T00:00:00&#43;08:00">
+    <meta property="article:modified_time" content="2018-12-17T00:00:00&#43;08:00">
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
-    <meta name="description" content="Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP">
+    <meta name="description" content="kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序">
         <meta name="author" content="申恒恒">
         
-    <meta property="og:url" content="http://shenheng.xyz/posts/2018-11-25-go-routine-2/">
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-12-17-kubeflow/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -101,18 +101,16 @@
                 <div class="res-cons">
                     <article class="post">
                         <header>
-                            <h1 class="post-title">Go语言中的并发机制系列-2|Go的并发哲学 &amp; CSP</h1>
+                            <h1 class="post-title">kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序</h1>
                         </header>
                         <date class="post-meta meta-date">
-                            2018年11月25日
+                            2018年12月17日
                         </date>
                         
                         <div class="post-meta meta-category">
                             |
                             
-                                <a href="http://shenheng.xyz/categories/golang">Golang</a>
-                            
-                                <a href="http://shenheng.xyz/categories/%E5%B9%B6%E5%8F%91">并发</a>
+                                <a href="http://shenheng.xyz/categories/kubernetes">kubernetes</a>
                             
                         </div>
                         
@@ -126,10 +124,11 @@
                                 <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
                                 <nav id="TableOfContents">
 <ul>
-<li><a href="#并发与并行的区别">并发与并行的区别</a></li>
-<li><a href="#csp">CSP</a></li>
-<li><a href="#go的并发设计哲学">Go的并发设计哲学</a></li>
-<li><a href="#总结">总结</a></li>
+<li><a href="#重点参考教程">重点参考教程</a></li>
+<li><a href="#介绍">介绍</a></li>
+<li><a href="#安装">安装</a></li>
+<li><a href="#部署-kubeflow">部署 Kubeflow</a></li>
+<li><a href="#测试">测试</a></li>
 </ul>
 </nav>
                             </aside>
@@ -138,166 +137,118 @@
                         <div class="post-content">
                             
 
-<p>本系列阅读笔记是基于 Golang 经典图书 <em>Concurrency in GO</em> ，主要有6个章节：</p>
+<h1 id="重点参考教程">重点参考教程</h1>
 
 <ul>
-<li>An Introduction to Concurrency</li>
-<li><strong>Modeling Your Code: Communicating Sequential Processes</strong></li>
-<li>Go’s Concurrency Building Blocks</li>
-<li>Concurrency Patterns in Go</li>
-<li>Concurrency at Scale</li>
-<li>Goroutines and the Go Runtime</li>
+<li><a href="https://kairen.github.io/2018/03/15/tensorflow/kubeflow/">https://kairen.github.io/2018/03/15/tensorflow/kubeflow/</a></li>
 </ul>
 
-<p>本部分主要介绍第二章：<em>Modeling Your Code: Communicating Sequential Processes</em> ，Go并发设计哲学。</p>
+<h1 id="介绍">介绍</h1>
 
-<h1 id="并发与并行的区别">并发与并行的区别</h1>
-
-<blockquote>
-<p>Concurrency is a property of the code; parallelism is a property of the running
-program.</p>
-</blockquote>
-
-<p>这揭示了一些有趣而重要的事情。</p>
+<p>每个人是不是都想拥有一个属于自己的 “人工智能实验室”，他有哪些特点呢？主要包括以下几个特点：</p>
 
 <ul>
-<li>第一个有趣的事情是，我们不写并行代码，只写我们希望并行运行的并发代码。并行性是我们程序运行时的属性，而不是代码。</li>
-<li>第二个有趣的事情是，我们发现有可能 - 甚至可能 - 不知道我们的并发代码是否实际并行运行。这只能通过我们程序模型下面的抽象层 <strong>“并发原语”</strong> 来实现，程序运行时，操作系统、操作系统运行的平台（包括在虚拟机管理程序，容器和虚拟机的情况下），最终是CPU。这些抽象使我们能够区分并发性和并行性。</li>
-<li>第三个也是最后一个有趣的事情是，并行性是时间或上下文的函数。还记得在 <a href="http://shenheng.xyz/posts/2018-11-24-go-routine-1/#%E5%8E%9F%E5%AD%90%E6%80%A7">“原子性”</a> 中我们讨论过语境的概念吗？在那里，上下文被定义为操作被视为原子的边界。这里，它被定义为可以将两个或多个操作视为并行的边界。</li>
+<li>支持 tensorflow/torch/keras等等主流深度学习库</li>
+<li>用户界面友好</li>
+<li>支持分布式训练</li>
+<li>支持 GPU 训练</li>
+<li>支持快速产生人工智能产品原型</li>
 </ul>
 
-<p>例如，如果我们的上下文被分成5个单位时间片，并且我们运行了两个操作，每个操作花费一秒钟来运行，我们会认为操作是并行运行的。如果我们的上下文是一秒钟，我们会认为操作是按顺序运行的。</p>
+<p>Kubeflow 是 Google 开源的机器学习工具，目的是简化 Kubernetes 上运行机器学习的工程，使之更简单、可携带与可扩展。Kubeflow 目标不是在于重建其他服务，而是提供一个最佳的开发系统用于部署到各种基础设施架构中，另外由于使用kubernetes 来作为基础，因此只要有 Kubernetes 的地方，都能夠执行 Kubeflow。</p>
 
-<h1 id="csp">CSP</h1>
+<p>该工具可以用来建立如下功能：</p>
 
-<p>当人们讨论 Go 的时候，往往会谈到 Go 语言的成功离不开 CSP。那么CSP是什么？</p>
+<ul>
+<li>用于建立与管理工具（IDE） Jupyter notebook 的 JupyterHub。</li>
+<li>可以使用 CPU 或 GPU，并可以通过单一设定来调整单个数据集的 Tensorflow Training Controller。</li>
+<li>用 TensorFlow Serving 容器來提供模型服务。</li>
+</ul>
 
-<p>CSP代表“通信顺序进程”，它既是一种技术，也是引入它的论文的名称。1978年，Charles Antony Richard Hoare 在 ACM 上发表了这篇<a href="http://bit.ly/HoareCSP">论文</a>。</p>
+<p>Kubeflow 目标是通过 Kubernetes 的特性使机器学习更加简单和快捷：</p>
 
-<p>在这篇论文中，Hoare认为输入和输出是两个被忽略的编程原语，特别是在并发代码中。在Hoare撰写该论文时，关于如何构建程序的研究仍在进行中，但大部分工作都是针对顺序代码的技术： <strong>goto</strong> 语句的使用正在争论中，面向对象的范式正在开始扎根。同时 <strong>进程</strong> 的操作没有经过深思熟虑。Hoare 开始纠正这个问题，因此他的论文和CSP诞生了。</p>
+<ul>
+<li>在不同 IaaS 上实现简单可重复的携带性部署(Laptop &lt;-&gt; ML rig &lt;-&gt; Training cluster &lt;-&gt; Production cluster)。</li>
+<li>管理与部署松耦合的微服务。</li>
+<li>可根据需要来自动扩缩容</li>
+</ul>
 
-<p>在1978年的论文中，CSP只是一种简单的编程语言，仅用于展示 CSP 的能力;事实上，他在论文中提到：</p>
+<h1 id="安装">安装</h1>
 
-<blockquote>
-<p>Thus the concepts and notations introduced in this paper should … not be
-regarded as suitable for use as a programming language, either for abstract or
-for concrete programming.</p>
-</blockquote>
+<p>本次安装基于 1.12.1 版本的 kube*，我的安装比较简单粗暴！适合有运维经验的同学，如果有疑问可以联系我或者访问上面给出的链接🔗。</p>
 
-<p>Hoare 非常担心他所提出的技术对于进一步研究程序的正确性没有任何帮助，并且这些技术可能无法在基于他自己的真实语言中表现出来。在接下来的六年中，CSP的概念被细化为一种称为 <strong><em>process calculus</em></strong> 的正式表示，以便采用 CSP 的思想并实际开始推理程序的正确性。</p>
-
-<p>过程演算是一种对并发系统进行数学建模的方法，并且还提供代数法则来对这些系统执行变换以分析它们的各种属性，例如效率和正确性。</p>
-
-<p>为了支持输入和输出需要被视为原语的断言，Hoare 的 CSP 编程语言包含了正确地模拟进程之间的输入和输出或通信的原语。Hoare将术语进程应用于逻辑的任何封装部分，这些逻辑需要输入运行并产生其他进程将消耗的输出。Hoare可能会使用“函数”这个词，如果不是在撰写论文时如何构建社区中发生的程序的辩论。</p>
-
-<p>对于进程之间的通信，Hoare创建了输入和输出命令：<code>!</code> 用于将输入发送到进程中，<code>？</code>用于读取进程的输出。每个命令都必须指定输出变量（在从进程读取变量的情况下）或目标（在向进程发送输入的情况下）。有时这两个会引用相同的东西，在这种情况下，两个过程将被认为是对应的。换句话说，来自一个进程的输出将直接流入另一个进程的输入。表1显示了该论文的一些例子。</p>
-
-<table>
-<thead>
-<tr>
-<th>Operation</th>
-<th>Explanation</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td>cardreader?</td>
-<td>cardimage From cardreader, read a card and assign its value (an array of characters) to the variable cardimage.</td>
-</tr>
-
-<tr>
-<td>lineprinter!</td>
-<td>lineimage To lineprinter, send the value of lineimage for printing.</td>
-</tr>
-
-<tr>
-<td>X?(x, y)</td>
-<td>From process named X, input a pair of values and assign them to x and</td>
-</tr>
-
-<tr>
-<td>y.</td>
-<td></td>
-</tr>
-
-<tr>
-<td>DIV!(3*a+b, 13)</td>
-<td>To process DIV, output the two specified values.</td>
-</tr>
-
-<tr>
-<td>→ east!c] east.</td>
-<td>The repetition terminates when the process west terminates.</td>
-</tr>
-</tbody>
-</table>
-
-<p><br />
-很明显，与 Go 的 channel 具有相似之处。请注意，在最后一个示例中，来自 <code>east</code> 的输出是如何发送到变量<code>c</code>，而来自 <code>east</code> 的输入是从同一变量接收的。这两个进程相对应。在Hoare关于CSP的第一篇论文中，流程只能通过命名的源和目的地进行通信。他承认，这会导致将代码嵌入库中的问题，因为代码的使用者必须知道输入和输出的名称。他随便提到了注册他所谓的“端口名称”的可能性，其中名称可以在并行命令的头部声明，我们可能会将其识别为命名参数和命名返回值。</p>
-
-<p>该语言还使用了所谓的守卫命令（ <em>guarded</em> ），Edgar Dijkstra 在 1974 年写的一篇文章 “<a href="https://dl.acm.org/citation.cfm?doid=360933.360975">Guarded commands, nondeterminacy and formal derivation of programs</a>”中提到了:一个守卫的命令只是一个左右手边的声明，用 <code>→</code> 分开。箭头左边作为右边的条件或守卫，如果左边是假的，或者在命令的情况下，返回假或退出，右边将永远不会被执行。将这些与 Hoare 的 I/O 命令相结合，为 Hoare 的通信过程奠定了基础，从而为 Go 的Channel 奠定了基础。</p>
-
-<p>内存同步访问本质上并不坏。我们将在“Go的并发哲学”中看到，有时共享内存在某些情况下是合适的，即使在Go中也是如此。但是，共享内存模型可能难以正确使用 - 尤其是在大型复杂程序中。正是由于这个原因，并发被认为是Go的优势之一：它从一开始就是基于CSP的原则而构建的，因此它易于阅读，编写和推理。</p>
-
-<h1 id="go的并发设计哲学">Go的并发设计哲学</h1>
-
-<p>CSP曾经并且是Go设计的重要组成部分;但 Go 还支持更传统的通过内存同步访问编写并发代码的方法以及遵循该技术的原语。<a href="https://golang.org/pkg/sync/">sync</a> 和其他包中的结构和方法允许您执行加锁，创建资源池以及抢占 goroutine 等。</p>
-
-<p>这种在CSP原语和内存同步访问之间进行选择的能力对程序员来说非常有用，因为它可以让程序员更好地控制选择写入什么样的并发代码来解决问题，但它也可能有点令人困惑。Go 语言的新手常常会得到这样的印象： CSP 的并发风格被认为是在 Go 中编写并发代码的唯一方法。例如，在同步包的文档中：</p>
+<p>本次安装假定你的集群已经运行，且稳定！</p>
 
 <blockquote>
-<p>Package <em>sync</em> provides basic synchronization primitives such as mutual
-exclusion locks. Other than the Once and WaitGroup types, most are intended
-for use by low-level library routines. Higher-level synchronization is better
-done via channels and communication.</p>
+<p>注意：这里只给出 CPU 版本</p>
 </blockquote>
 
-<p>在 <a href="https://golang.org/doc/faq">language FAQ</a></p>
+<p>安装 ksonnet 0.9.2，请参考以下：</p>
+
+<pre><code class="language-bash">$ wget https://github.com/ksonnet/ksonnet/releases/download/v0.9.2/ks_0.9.2_linux_amd64.tar.gz
+$ tar xvf ks_0.9.2_linux_amd64.tar.gz
+$ sudo cp ks_0.9.2_linux_amd64/ks /usr/local/bin/
+$ ks version
+ksonnet version: 0.9.2
+jsonnet version: v0.9.5
+client-go version: 1.8
+</code></pre>
+
+<h1 id="部署-kubeflow">部署 Kubeflow</h1>
+
+<p>本节將说明如歌利用 ksonnet 来部署 Kubeflow 到 Kubernetes 集群中。首先在 master 节点初始化 ksonnet 应用程序目录：</p>
+
+<pre><code class="language-bash">$ ks init my-kubeflow
+</code></pre>
 
 <blockquote>
-<p>Regarding mutexes, the sync package implements them, but we hope Go
-programming style will encourage people to try higher-level techniques. In
-particular, consider structuring your program so that only one goroutine at a
-time is ever responsible for a particular piece of data.
-Do not communicate by sharing memory. Instead, share memory by
-communicating.</p>
+<p>如果遇到以下问题的話，可以自己建立 GitHub Token 来存取 GitHub API，请参考 <a href="https://ksonnet.io/docs/tutorial#troubleshooting-github-rate-limiting-errors">Github rate limiting errors</a>。</p>
+
+<pre><code class="language-bash">ERROR GET https://api.github.com/repos/ksonnet/parts/commits/master: 403 API rate limit exceeded for 122.146.93.152.
+</code></pre>
 </blockquote>
 
-<p>还有许多文章，讲座和访谈，其中Go核心团队的各个成员支持 CSP 样式而不是像 <code>sync.Mutex</code> 这样的原语。</p>
+<p>接着安装 Kubeflow 套件到上面创建的应用程序目录下：</p>
 
-<p>因此，完全可以理解为什么Go团队选择公开内存访问同步原语。但令人困惑的是，你会看到频繁出现的同步原语，看到人们抱怨过度使用频道，还听到一些Go团队成员说可以使用它们。以下是关于此事的 Go <a href="https://github.com/golang/go/wiki/MutexOrChannel">Wiki</a> 的引用：</p>
+<pre><code class="language-bash">$ cd my-kubeflow
+$ ks registry add kubeflow github.com/kubeflow/kubeflow/tree/master/kubeflow
+$ VERSION=v0.1.2
+$ ks pkg install kubeflow/core@${VERSION}
+$ ks pkg install kubeflow/tf-serving@${VERSION}
+$ ks pkg install kubeflow/tf-job@${VERSION}
+</code></pre>
 
-<blockquote>
-<p>One of Go’s mottos is “Share memory by communicating, don’t communicate
-by sharing memory.”
-That said, Go does provide traditional locking mechanisms in the sync
-package. Most locking issues can be solved using either channels or
-traditional locks.
-So which should you use?
-Use whichever is most expressive and/or most simple.</p>
+<p>然后建立 Kubeflow 核心组件，该组件包含 JupyterHub 和 TensorFlow job controller：</p>
 
-<p>Go的一个主题是“通过通信共享内存，不通过共享内存进行通信。”</p>
+<pre><code class="language-bash">$ kubectl create namespace kubeflow
+$ kubectl create clusterrolebinding tf-admin --clusterrole=cluster-admin --serviceaccount=default:tf-job-operator
+$ ks generate core kubeflow-core --name=kubeflow-core --namespace=kubeflow 
+</code></pre>
 
-<p>也就是说，Go确实在同步包中提供了传统的锁定机制。</p>
+<pre><code class="language-bash">kubectl create namespace kubeflow
+kubectl create clusterrolebinding tf-admin --clusterrole=cluster-admin --serviceaccount=default:tf-job-operator
+ks env add kubeflow
+ks env set kubeflow --namespace kubeflow
+ks apply kubeflow -c kubeflow-core
+PODNAME=`kubectl get pods --namespace=kubeflow --selector=&quot;app=tf-hub&quot; --output=template --template=&quot;{{with index .items 0}}{{.metadata.name}}{{end}}&quot;`
+</code></pre>
 
-<p>使用通道或传统锁可以解决大多数加锁问题。</p>
+<p>这样就可以访问了！如果想要在集群外部访问，修改 <code>tf-hub-lb service</code> 的类型为 <code>NodePort</code> 或者 <code>LoadBalancer</code> 即可！</p>
 
-<p>那应该用哪个？使用最具表现力和/或最简单的表达方式。</p>
-</blockquote>
+<pre><code class="language-bash">$ kubectl get service tf-hub-lb  -nkubeflow
+NAME        TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+tf-hub-lb   LoadBalancer   10.109.167.223   172.16.3.4    8000:30962/TCP   34m
+</code></pre>
 
 
 
 
 <div class="box fancy-figure caption-position-bottom caption-effect-slide" >
   <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-    <div class="img">
-      <img itemprop="thumbnail" src="/img/2018112501.png" alt="决策树"/>
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/kubeflow.png" />
     </div>
-    <a href="/img/2018112501.png" itemprop="contentUrl"></a>
-      <figcaption>
-          <p>决策树</p>
-      </figcaption>
+    <a href="/img/kubeflow.png" itemprop="contentUrl"></a>
   </figure>
 </div>
 
@@ -449,9 +400,167 @@ Use whichever is most expressive and/or most simple.</p>
 
 </style>
 
-<h1 id="总结">总结</h1>
+<h1 id="测试">测试</h1>
 
-<p>本节主要讲解了Go的并发哲学，并且为什么Go的并发那么优秀：基于CSP原则，然后讲了CSP是什么和它的设计原则，最后说明如何选择 “通道” 还是 “传统锁”！</p>
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img" data-size="200x">
+      <img itemprop="thumbnail" src="/img/kubeflow-test.png" />
+    </div>
+    <a href="/img/kubeflow-test.png" itemprop="contentUrl"></a>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
 
                         </div>
 
@@ -462,15 +571,15 @@ Use whichever is most expressive and/or most simple.</p>
     <h2>See Also</h2>
     <ul class="listing">
         
-        <li><a href="/posts/2018-11-24-go-routine-1/">Go语言中的并发机制系列-1|并发简介</a></li>
+        <li><a href="/posts/2018-12-13-kubernetes/">kubernetes学习笔记|1.10.0 版环境安装与配置（实验）</a></li>
         
-        <li><a href="/posts/2018-11-23-d3-demo/">D3 Demo</a></li>
+        <li><a href="/posts/2018-12-17-update-kubernetes/">kubernetes学习笔记|从旧版本升级到 1.12.1</a></li>
         
-        <li><a href="/posts/2018-11-23-hugo-shortcode-test/">Hugo ShortCode Demo</a></li>
+        <li><a href="/posts/2018-12-17-kubernetes/">kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装</a></li>
         
-        <li><a href="/about/">关于我</a></li>
+        <li><a href="/posts/2018-12-13-elk-7/">ELK学习笔记7| Lucence 的搜索语法</a></li>
         
-        <li><a href="/learning/">笔记 &amp; 演讲</a></li>
+        <li><a href="/posts/2018-12-13-elk-6/">ELK学习笔记6|ElasticSearch基本概念与架构</a></li>
         
     </ul>
 </div>
@@ -480,7 +589,13 @@ Use whichever is most expressive and/or most simple.</p>
                             
                             <ul class="clearfix">
                                 
-                                <li><a href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91">Golang并发</a></li>
+                                <li><a href="http://shenheng.xyz/tags/kubernetes">kubernetes</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/k8s">k8s</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92">容器编排</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8">容器</a></li>
                                 
                             </ul>
                             

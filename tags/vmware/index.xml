@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>vmware on 申恒恒的博客</title>
+    <link>http://shenheng.xyz/tags/vmware/</link>
+    <description>Recent content in vmware on 申恒恒的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Wed, 09 May 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>VMWare的网络连接方式详解</title>
+      <link>http://shenheng.xyz/posts/2018-05-09-vm-network/</link>
+      <pubDate>Wed, 09 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-05-09-vm-network/</guid>
+      <description>桥接模式 桥接模式是直连外部网络的模式，一般情况下，小型的机房或者数据中心服务器里面虚拟ip地址都是桥接模式生成的，直接就是外网地址-实际ip</description>
+    </item>
+    
+  </channel>
+</rss>

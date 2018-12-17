@@ -17,7 +17,7 @@
       <pubDate>Sun, 14 Oct 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/2018-04-14-zabbixi/</guid>
-      <description>标准监控系统所具有的基本功能： 监控系统 .gallery { overflow: hidden; margin: 10px; max-width: 768px; } .gallery .box { float: left; position: relative; width: 100%; padding-bottom: 100%; } @media only screen and (min-width : 365px) { .gallery .box { width: 50%; padding-bottom: 50%; } } @media only screen and (min-width : 480px) { .gallery .box { width: 33.3%;</description>
+      <description>监控主机中的各项指标： 主机： 系统指标：CPU，Memory，IO（Disk，Network） CPU：sys,usr,idle,&amp;hellip</description>
     </item>
     
     <item>

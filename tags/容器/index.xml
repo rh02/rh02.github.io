@@ -47,14 +47,5 @@
       <description>我上一个 kubernetes 集群已经维持了将近两个多月，最终它承受不住网络的不稳定，暴毙了！😢 下面这篇文章主要会介绍 1.12.1 版本的安装，该安装非常经得起考验，屡试不</description>
     </item>
     
-    <item>
-      <title>Vmware的网络连接方式详解</title>
-      <link>http://shenheng.xyz/posts/2017-05-09-vm-network/</link>
-      <pubDate>Tue, 09 May 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/2017-05-09-vm-network/</guid>
-      <description>桥接模式 桥接模式是直连外部网络的模式，一般情况下，小型的机房或者数据中心服务器里面虚拟ip地址都是桥接模式生成的，直接就是外网地址-实际ip</description>
-    </item>
-    
   </channel>
 </rss>

@@ -251,7 +251,16 @@
       <pubDate>Sun, 14 Oct 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/2018-04-14-zabbixi/</guid>
-      <description>标准监控系统所具有的基本功能： 监控系统 .gallery { overflow: hidden; margin: 10px; max-width: 768px; } .gallery .box { float: left; position: relative; width: 100%; padding-bottom: 100%; } @media only screen and (min-width : 365px) { .gallery .box { width: 50%; padding-bottom: 50%; } } @media only screen and (min-width : 480px) { .gallery .box { width: 33.3%;</description>
+      <description>监控主机中的各项指标： 主机： 系统指标：CPU，Memory，IO（Disk，Network） CPU：sys,usr,idle,&amp;hellip</description>
+    </item>
+    
+    <item>
+      <title>VMWare的网络连接方式详解</title>
+      <link>http://shenheng.xyz/posts/2018-05-09-vm-network/</link>
+      <pubDate>Wed, 09 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-05-09-vm-network/</guid>
+      <description>桥接模式 桥接模式是直连外部网络的模式，一般情况下，小型的机房或者数据中心服务器里面虚拟ip地址都是桥接模式生成的，直接就是外网地址-实际ip</description>
     </item>
     
     <item>
@@ -378,15 +387,6 @@
       
       <guid>http://shenheng.xyz/posts/2018-11-29-git-tutorial-1/</guid>
       <description>本教程主要从Git的简明使用到高级应用，比如协作和相关高级话题。本教程本着简明扼要的目标给出相当精彩的教程！ Git 配置 基本配置命令： git config –glo</description>
-    </item>
-    
-    <item>
-      <title>Vmware的网络连接方式详解</title>
-      <link>http://shenheng.xyz/posts/2017-05-09-vm-network/</link>
-      <pubDate>Tue, 09 May 2017 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/2017-05-09-vm-network/</guid>
-      <description>桥接模式 桥接模式是直连外部网络的模式，一般情况下，小型的机房或者数据中心服务器里面虚拟ip地址都是桥接模式生成的，直接就是外网地址-实际ip</description>
     </item>
     
     <item>

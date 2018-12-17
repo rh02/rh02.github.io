@@ -190,29 +190,60 @@
                             </div>
                             
                             <div class="post-content-index">
-                                <p>标准监控系统所具有的基本功能：</p>
+                                <ul>
+<li><p>监控主机中的各项指标：</p>
 
-<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
-  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
-    <div class="img">
-      <img itemprop="thumbnail" src="/img/jiankong.png" alt="监控系统"/>
-    </div>
-    <a href="/img/jiankong.png" itemprop="contentUrl"></a>
-      <figcaption>
-          <p>监控系统</p>
-      </figcaption>
-  </figure>
-</div>
+<ul>
+<li>主机：
 
-<style>
- .gallery {
-     overflow: hidden;
-     margin: 10px;
-     max-width: 768px;
- }
- .gallery .box { …</style></div></figure></div>
+<ul>
+<li>系统指标：CPU，Memory，IO（Disk，Network）
+
+<ul>
+<li>CPU：sys,usr,idle,&hellip;</li>
+<li>Memory: total,used,free,cached,buffer,shm,&hellip;</li>
+<li>IO :</li>
+</ul></li>
+<li>业务指标：
+
+<ul>
+<li>针对某一服务的状态进行监控，与服务相关的监控项，例如监控nginx …</li></ul></li></li></ul></li></ul></li></ul></li></ul>
                             </div>
                             <p class="readmore"><a href="http://shenheng.xyz/posts/2018-04-14-zabbixi/">阅读全文</a></p>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="http://shenheng.xyz/posts/2018-05-09-vm-network/" title="VMWare的网络连接方式详解" >VMWare的网络连接方式详解</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年5月9日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="http://shenheng.xyz/categories/vmware">vmware</a>
+                                
+                            </div>
+                            
+                            <div class="post-content-index">
+                                <h1 id="桥接模式">桥接模式</h1>
+
+<ul>
+<li>桥接模式是直连外部网络的模式，一般情况下，小型的机房或者数据中心服务器里面虚拟ip地址都是桥接模式生成的，直接就是外网地址-实际ip地址，公网可访问！</li>
+<li>用于建站服务，数据共享服务等。</li>
+</ul>
+
+<h1 id="nat模式">Nat模式</h1>
+
+<p>与主机模式类似，不过不同点在于它可以共享主机的网络并且可以指定端口转发，也就是说，可以上网！而主机模式不可以上网。</p>
+
+<p>与本地物理主机也构成了局域 …</p>
+                            </div>
+                            <p class="readmore"><a href="http://shenheng.xyz/posts/2018-05-09-vm-network/">阅读全文</a></p>
                         </article>
                     
                         <article class="post">
@@ -364,35 +395,6 @@ yum install cmake ncurses-devel -y
 <p>打开sbt的安装位置，比如在我的机器 Windows 上就是 <code>E:\Program Files(x86)\sbt</code> 文件夹，打开文件夹下面的 <code>conf\sbtconfig.txt</code> 文件， …</p>
                             </div>
                             <p class="readmore"><a href="http://shenheng.xyz/posts/solve-sbt-update-scala-slow/">阅读全文</a></p>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="http://shenheng.xyz/posts/r-kmeans/" title="R实战-Kmeans" >R实战-Kmeans</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2017年12月30日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="http://shenheng.xyz/categories/kmeans">KMeans</a>
-                                
-                            </div>
-                            
-                            <div class="post-content-index">
-                                <p>本次主要讲解Kmeans实做部分，假设读者有Kmeans算法的背景下，下面是R程序，本程序对iris数据进行建模。</p>
-
-<h1 id="安装并导入必要的程式套件">安装并导入必要的程式套件</h1>
-
-<p>主要用到了MASS，cluster，clusterSim等套件，其中clusterSim主要作为选取合适的k值得算法。</p>
-
-<pre><code class="language-r,">#install.packages(&quot;MASS&quot;) …</code></pre>
-                            </div>
-                            <p class="readmore"><a href="http://shenheng.xyz/posts/r-kmeans/">阅读全文</a></p>
                         </article>
                     
 
@@ -584,7 +586,7 @@ yum install cmake ncurses-devel -y
     </li>
     
     <li>
-        <a href="http://shenheng.xyz/categories/kubernetes/">kubernetes(5)</a>
+        <a href="http://shenheng.xyz/categories/kubernetes/">kubernetes(4)</a>
     </li>
     
     <li>
@@ -617,6 +619,10 @@ yum install cmake ncurses-devel -y
     
     <li>
         <a href="http://shenheng.xyz/categories/shortcode/">shortcode(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/vmware/">vmware(1)</a>
     </li>
     
     <li>
@@ -717,6 +723,8 @@ yum install cmake ncurses-devel -y
     <a href="http://shenheng.xyz/tags/scala/">scala</a>
     
     <a href="http://shenheng.xyz/tags/shortcode/">shortcode</a>
+    
+    <a href="http://shenheng.xyz/tags/vmware/">vmware</a>
     
     <a href="http://shenheng.xyz/tags/%E4%BC%98%E5%8C%96/">优化</a>
     

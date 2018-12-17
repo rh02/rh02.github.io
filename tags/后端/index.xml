@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>后端 on 申恒恒的博客</title>
+    <link>http://shenheng.xyz/tags/%E5%90%8E%E7%AB%AF/</link>
+    <description>Recent content in 后端 on 申恒恒的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Tue, 12 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/%E5%90%8E%E7%AB%AF/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>beego的路由解析</title>
+      <link>http://shenheng.xyz/posts/2017-12-12-beego-route/</link>
+      <pubDate>Tue, 12 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-12-beego-route/</guid>
+      <description>路由形式 http://localhost:8080/topic/view?tid=17 http://localhost:8080/topic/view/17 共有这两种形式，其中： 第一个是query string的形式 第二个是路由路径，正则提取 直接添加路由或者自动路由都可以。 .gallery { overflow: hidden; margin: 10px;</description>
+    </item>
+    
+  </channel>
+</rss>

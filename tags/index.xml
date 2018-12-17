@@ -84,6 +84,15 @@
     </item>
     
     <item>
+      <title>Zabbix</title>
+      <link>http://shenheng.xyz/tags/zabbix/</link>
+      <pubDate>Sun, 14 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/zabbix/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>blog</title>
       <link>http://shenheng.xyz/tags/blog/</link>
       <pubDate>Thu, 21 Dec 2017 00:00:00 +0000</pubDate>
@@ -149,7 +158,7 @@
     <item>
       <title>hadoop</title>
       <link>http://shenheng.xyz/tags/hadoop/</link>
-      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/hadoop/</guid>
       <description></description>
@@ -251,6 +260,24 @@
       <pubDate>Fri, 23 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/tags/shortcode/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>优化</title>
+      <link>http://shenheng.xyz/tags/%E4%BC%98%E5%8C%96/</link>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/%E4%BC%98%E5%8C%96/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>后端</title>
+      <link>http://shenheng.xyz/tags/%E5%90%8E%E7%AB%AF/</link>
+      <pubDate>Tue, 12 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/tags/%E5%90%8E%E7%AB%AF/</guid>
       <description></description>
     </item>
     

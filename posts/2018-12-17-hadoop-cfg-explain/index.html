@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+     
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Hadoop优化笔记|Hadoop2.x 配置文件 | 申恒恒的博客</title>
+    <meta property="og:title" content="Hadoop优化笔记|Hadoop2.x 配置文件 - 申恒恒的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-12-17T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-12-17T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="Hadoop优化笔记|Hadoop2.x 配置文件">
+        <meta name="author" content="申恒恒">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-12-17-hadoop-cfg-explain/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script async type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+
+    
+        
+        
+            <script async src="https://www.googletagmanager.com/gtag/js?id=UA-92073513-2"></script>
+            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-92073513-2');
+        </script>
+        
+
+    
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9076793735164845",
+            enable_page_level_ads: true
+        });
+    </script>
+    
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        申恒恒的博客
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">Hadoop优化笔记|Hadoop2.x 配置文件</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年12月17日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/hadoop">hadoop</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                        
+                        <div class="post-content">
+                            
+
+<h1 id="hadooop-env-sh">hadooop-env.sh</h1>
+
+<pre><code class="language-bash"># Set Hadoop-specific environment variables here.
+
+# The only required environment variable is JAVA_HOME.  All others are
+# optional.  When running a distributed configuration it is best to
+# set JAVA_HOME in this file, so that it is correctly defined on
+# remote nodes.
+
+# The java implementation to use.
+# 两种配置方法：一是在 hadoop-env.sh 中配置；二是在shell中设置环境变量；
+# 我是将环境变量统一写在了 /etc/profile.d/ 目录下
+export JAVA_HOME=${JAVA_HOME}
+
+# The jsvc implementation to use. Jsvc is required to run secure datanodes
+# that bind to privileged ports to provide authentication of data transfer
+# protocol.  Jsvc is not required if SASL is configured for authentication of
+# data transfer protocol using non-privileged ports.
+#export JSVC_HOME=${JSVC_HOME}
+
+# Hadoop 的配置文件位置
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-&quot;/etc/hadoop&quot;}
+
+# Extra Java CLASSPATH elements.  Automatically insert capacity-scheduler.
+for f in $HADOOP_HOME/contrib/capacity-scheduler/*.jar; do
+  if [ &quot;$HADOOP_CLASSPATH&quot; ]; then
+    export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$f
+  else
+    export HADOOP_CLASSPATH=$f
+  fi
+done
+
+# The maximum amount of heap to use, in MB. Default is 1000.
+# 为每个守护进程分配内存，包括资源管理器，节点管理器等
+# 也可以单独为某个守护进程修改堆大小
+#export HADOOP_HEAPSIZE=
+#export HADOOP_NAMENODE_INIT_HEAPSIZE=&quot;&quot;
+
+# Extra Java runtime options.  Empty by default.
+export HADOOP_OPTS=&quot;$HADOOP_OPTS -Djava.net.preferIPv4Stack=true&quot;
+
+# Command specific options appended to HADOOP_OPTS when specified
+# 设置内存大小，比如设置 hadoop 给 namenode 分配的内存空间
+export HADOOP_NAMENODE_OPTS=&quot;-Dhadoop.security.logger=${HADOOP_SECURITY_LOGGER:-INFO,RFAS} -Dhdfs.audit.logger=${HDFS_AUDIT_LOGGER:-INFO,NullAppender} $HADOOP_NAMENODE_OPTS&quot;
+export HADOOP_DATANODE_OPTS=&quot;-Dhadoop.security.logger=ERROR,RFAS $HADOOP_DATANODE_OPTS&quot;
+
+# 由于namenode 和辅助 namenode 节点内存需求近似，因此若对namenode进行了修改，相应地辅助 namenode 也要做出修改
+export HADOOP_SECONDARYNAMENODE_OPTS=&quot;-Dhadoop.security.logger=${HADOOP_SECURITY_LOGGER:-INFO,RFAS} -Dhdfs.audit.logger=${HDFS_AUDIT_LOGGER:-INFO,NullAppender} $HADOOP_SECONDARYNAMENODE_OPTS&quot;
+
+export HADOOP_NFS3_OPTS=&quot;$HADOOP_NFS3_OPTS&quot;
+export HADOOP_PORTMAP_OPTS=&quot;-Xmx512m $HADOOP_PORTMAP_OPTS&quot;
+
+# The following applies to multiple commands (fs, dfs, fsck, distcp etc)
+export HADOOP_CLIENT_OPTS=&quot;-Xmx512m $HADOOP_CLIENT_OPTS&quot;
+#HADOOP_JAVA_PLATFORM_OPTS=&quot;-XX:-UsePerfData $HADOOP_JAVA_PLATFORM_OPTS&quot;
+
+# On secure datanodes, user to run the datanode as after dropping privileges.
+# This **MUST** be uncommented to enable secure HDFS if using privileged ports
+# to provide authentication of data transfer protocol.  This **MUST NOT** be
+# defined if SASL is configured for authentication of data transfer protocol
+# using non-privileged ports.
+export HADOOP_SECURE_DN_USER=${HADOOP_SECURE_DN_USER}
+
+# Where log files are stored.  $HADOOP_HOME/logs by default.
+# 系统日志文件，在这里我写在了 /etc/profile.d/ 目录下，若在这个配置文件进行配置，
+# 取消注释，作相应修改即可。
+# 日志格式分为两种，第一类日志后缀名为 .log，故障发生时，首要检查该类文件；第二类文件
+# 是 .out 文件，主要用来记录标准的输入输出错误日志，由于 hadoop 主要使用 log4j 将大部分
+# 日志记录在 .log 文件中，因此第二类文件只存在很少的记录；
+# 日志格式为：USER-DAEMON-ip-YOUR-IP.log.DATE
+# 比如：hadoop-hdfsdatanode-ip-192.168.59.151.log.2018-12-17
+#export HADOOP_LOG_DIR=${HADOOP_LOG_DIR}/$USER
+
+# Where log files are stored in the secure data environment.
+export HADOOP_SECURE_DN_LOG_DIR=${HADOOP_LOG_DIR}/${HADOOP_HDFS_USER}
+
+###
+# HDFS Mover specific parameters
+###
+# Specify the JVM options to be used when starting the HDFS Mover.
+# These options will be appended to the options specified as HADOOP_OPTS
+# and therefore may override any similar flags set in HADOOP_OPTS
+#
+# export HADOOP_MOVER_OPTS=&quot;&quot;
+
+###
+# Advanced Users Only!
+###
+
+# The directory where pid files are stored. /tmp by default.
+# NOTE: this should be set to a directory that can only be written to by 
+#       the user that will run the hadoop daemons.  Otherwise there is the
+#       potential for a symlink attack.
+# hadoop 运行时的PID存放的位置
+export HADOOP_PID_DIR=${HADOOP_PID_DIR}
+export HADOOP_SECURE_DN_PID_DIR=${HADOOP_PID_DIR}
+
+# A string representing this instance of hadoop. $USER by default.
+export HADOOP_IDENT_STRING=$USER
+</code></pre>
+
+<h1 id="core-site-xml">core-site.xml</h1>
+
+<pre><code class="language-xml">&lt;!-- 
+	fs.defaultFS 表示HDFS文件系统的默认地址，主机是主机名或者IP地址，
+	默认端口号为8020，该端口用于RPC通信（类似网络socket），
+--&gt;
+&lt;configuration&gt;
+    &lt;property&gt;
+	&lt;name&gt;fs.defaultFS&lt;/name&gt;
+ 	&lt;value&gt;hdfs://192.168.59.151:8020&lt;/value&gt;
+	&lt;final&gt;true&lt;/final&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre>
+
+<h1 id="hdfs-site-xml">hdfs-site.xml</h1>
+
+<pre><code class="language-xml">&lt;!--
+	dfs.replication: 主要设定 DFS 的副本数量
+	
+	dfs.namenode.name.dir：主要设定 namenode 存储持久化的文件元数据信息，
+		一般情况下，可以配置该字段实现将namenode信息存储在本地和NFS上，
+		这样可以保证高可用。比如配置该字段的value值为
+		file://local,file://remote
+	
+	dfs.datanode.name.dir：主要设定 datanode 存储数据块的目录列表
+		可优化：为了使得跨磁盘分布，提高读取性能，可以配置多个位置；
+
+	fs.namenode.checkpoint.dir：主要设定辅助namenode存放检查点的位置
+
+--&gt;
+&lt;configuration&gt;
+    &lt;property&gt;
+	&lt;name&gt;dfs.replication&lt;/name&gt;
+	&lt;value&gt;2&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;dfs.namenode.name.dir&lt;/name&gt;
+	&lt;value&gt;file:///data/hadoop/hdfs/nn&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;dfs.datanode.data.dir&lt;/name&gt;
+	&lt;value&gt;file:///data/hadoop/hdfs/dn&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;fs.checkpoint.dir&lt;/name&gt;
+	&lt;value&gt;file:///data/hadoop/hdfs/snn&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;fs.checkpoint.edits.dir&lt;/name&gt;
+	&lt;value&gt;file:///data/hadoop/hdfs/snn&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;dfs.permissions&lt;/name&gt;
+        &lt;value&gt;false&lt;/value&gt;
+   &lt;/property&gt;  
+&lt;/configuration&gt;
+</code></pre>
+
+<h1 id="mapred-site-xml">mapred-site.xml</h1>
+
+<pre><code class="language-xml">&lt;!--
+	mapreduce.map.memory.mb：map容器所用的内存容量，默认1024MB；
+	mapreduce.reduce.memory.mb：reduce容器所用的内存容量，默认1024MB；
+	mapreduce.child.java.opts：JVM选项，用于启动运行map和reduce任务的容器进程，除了用于设置内存，该属性还包括JVM属性设置，默认200MB
+	mapreduce.map.java.opts：JVM选项，针对map任务的子进程，默认200MB
+	mapreduce.reduce.java.opts：JVM选项，针对reduce任务的子进程，默认你200MB
+	mapreduce.map.cpu.vcores：每个map任务从调度程序请求的容器核数。默认一个核。
+	mapreduce.reduce.cpu.vcores	：每个reduce任务从调度程序请求的容器核数。默认一个核。
+--&gt;
+&lt;configuration&gt;
+    &lt;property&gt;
+	&lt;name&gt;mapreduce.framework.name&lt;/name&gt;
+	&lt;value&gt;yarn&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre>
+
+<h1 id="yarn-site-xml">yarn-site.xml</h1>
+
+<pre><code class="language-xml">&lt;!--
+	yarn.resourcemanager.hostname: 用于运行资源管理器的主机名或者IP地址
+	yarn.resourcemanager.address：资源管理器的地址：IP地址或者主机名，客户端借此与 resourcemanager通信
+	yarn.resourcemanager.scheduler.address： 资源管理器调度器RPC地址，application master借此与 resourcemanager通信
+	yarn.resourcemanager.resource-tracker.address：资源管理器的资源追踪器地址
+	yarn.resourcemanager.admin.address：资源管理器的admin RPC地址，admin客户端借此与resourcemanager通信
+	yarn.resourcemanager.webapp.address：webUI地址，资源管理器的HTTP服务器地址和端口	
+	yarn.nodemanager.webapp.address：webUI地址，节点管理器的HTTP服务器地址和端口
+	yarn.nodemanager.aux-services：节点管理器用于运行的附加服务列表
+	yarn.nodemanager.auxservices.mapreduce_shuffle.class：shuffle方式
+	yarn.resourcemanager.scheduler.class：默认的调度类
+	yarn.nodemanager.resource.cpuvcores：节点管理器运行的容器可以分配的CPU核数
+	yarn.web-proxy.address：web应用代理服务器地址，默认不设置
+
+--&gt;
+&lt;configuration&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.address&lt;/name&gt;
+	&lt;value&gt;master:8032&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.scheduler.address&lt;/name&gt;
+	&lt;value&gt;master:8030&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.resource-tracker.address&lt;/name&gt;
+	&lt;value&gt;master:8031&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.admin.address&lt;/name&gt;
+	&lt;value&gt;master:8033&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.webapp.address&lt;/name&gt;
+	&lt;value&gt;master:8088&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;
+	&lt;value&gt;mapreduce_shuffle&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.nodemanager.auxservices.mapreduce_shuffle.class&lt;/name&gt;
+	&lt;value&gt;org.apache.hadoop.mapred.ShuffleHandler&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+	&lt;name&gt;yarn.resourcemanager.scheduler.class&lt;/name&gt;
+	&lt;value&gt;org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;
+</code></pre>
+
+<h1 id="参考">参考</h1>
+
+<ul>
+<li><a href="https://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-common/core-default.xml">https://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-common/core-default.xml</a></li>
+<li><a href="https://hadoop.apache.org/docs/r2.7.2/hadoop-mapreduce-client/hadoop-mapreduce-client-core/mapred-default.xml">https://hadoop.apache.org/docs/r2.7.2/hadoop-mapreduce-client/hadoop-mapreduce-client-core/mapred-default.xml</a></li>
+<li><a href="https://hadoop.apache.org/docs/r2.7.5/hadoop-yarn/hadoop-yarn-common/yarn-default.xml">https://hadoop.apache.org/docs/r2.7.5/hadoop-yarn/hadoop-yarn-common/yarn-default.xml</a></li>
+<li><a href="https://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml">https://hadoop.apache.org/docs/r2.8.0/hadoop-project-dist/hadoop-hdfs/hdfs-default.xml</a></li>
+</ul>
+
+                        </div>
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/2018-04-14-hadoop2-setup/">Hadoop2.x 伪分布式安装&amp;部署</a></li>
+        
+        <li><a href="/posts/2018-04-14-hadoop2-setup-2/">Hadoop2.x 完全分布式安装&amp;部署</a></li>
+        
+        <li><a href="/posts/2018-12-17-kubeflow/">kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序</a></li>
+        
+        <li><a href="/posts/2018-12-13-kubernetes/">kubernetes学习笔记|1.10.0 版环境安装与配置（实验）</a></li>
+        
+        <li><a href="/posts/2018-12-17-update-kubernetes/">kubernetes学习笔记|从旧版本升级到 1.12.1</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/hadoop">hadoop</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/%E4%BC%98%E5%8C%96">优化</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    
+    <div class="generic-box">
+            <div class="share-links" style="text-align:center;">
+                <a rel="license"  href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
+                    <img alt="知识共享许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png">
+                </a>
+                <br/>
+                
+                本文章采用<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可。
+                <br />
+                如要转载，请注明出处！
+            </div>
+    </div>
+
+
+<style>
+.generic-box {
+    text-align: center;
+    border: 1px solid #eee;
+    padding: 10px;
+     
+    margin: 30px;
+};
+.share-links a {
+    border-bottom: none;
+}
+</style>
+
+
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-17-hadoop-cfg-explain/" title="Hadoop优化笔记|Hadoop2.x 配置文件">Hadoop优化笔记|Hadoop2.x 配置文件</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-13-kubernetes/" title="kubernetes学习笔记|1.10.0 版环境安装与配置（实验）">kubernetes学习笔记|1.10.0 版环境安装与配置（实验）</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-17-update-kubernetes/" title="kubernetes学习笔记|从旧版本升级到 1.12.1">kubernetes学习笔记|从旧版本升级到 1.12.1</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-17-kubeflow/" title="kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序">kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-17-kubernetes/" title="kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装">kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-13-elk-7/" title="ELK学习笔记7| Lucence 的搜索语法">ELK学习笔记7| Lucence 的搜索语法</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-13-elk-6/" title="ELK学习笔记6|ElasticSearch基本概念与架构">ELK学习笔记6|ElasticSearch基本概念与架构</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-starlight/" title="starlight 介绍">starlight 介绍</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/" title="管道化 SQL">管道化 SQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-elk-5/" title="ELK学习笔记5|Kibana可视化-数据表、仪表盘">ELK学习笔记5|Kibana可视化-数据表、仪表盘</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/beego/">Beego(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/docker/">Docker(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/git/">Git(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/go-%E5%8C%85%E8%AE%B2%E8%A7%A3/">Go 包讲解(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/go-%E5%B9%B6%E5%8F%91/">Go 并发(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">Golang(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/jenkins/">Jenkins(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/storm/">Storm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/zabbix/">Zabbix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/d3/">d3(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/elk/">elk(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">golang(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hadoop/">hadoop(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hugo/">hugo(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kubernetes/">kubernetes(5)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/shortcode/">shortcode(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/">可视化(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">安装教程(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B7%A5%E4%BD%9C%E6%95%88%E7%8E%87/">工作效率(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B9%B6%E5%8F%91/">并发(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/">强化学习算法(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">目标检测(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95/">算法(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/devops/">DevOps</a>
+    
+    <a href="http://shenheng.xyz/tags/docker/">Docker</a>
+    
+    <a href="http://shenheng.xyz/tags/effective/">Effective</a>
+    
+    <a href="http://shenheng.xyz/tags/git/">Git</a>
+    
+    <a href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91/">Golang并发</a>
+    
+    <a href="http://shenheng.xyz/tags/jenkins/">Jenkins</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/zabbix/">Zabbix</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/d3/">d3</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/elastic-search/">elastic search</a>
+    
+    <a href="http://shenheng.xyz/tags/elk/">elk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/golang/">golang</a>
+    
+    <a href="http://shenheng.xyz/tags/hadoop/">hadoop</a>
+    
+    <a href="http://shenheng.xyz/tags/k8s/">k8s</a>
+    
+    <a href="http://shenheng.xyz/tags/kibana/">kibana</a>
+    
+    <a href="http://shenheng.xyz/tags/kubernetes/">kubernetes</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/logstash/">logstash</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/shortcode/">shortcode</a>
+    
+    <a href="http://shenheng.xyz/tags/%E4%BC%98%E5%8C%96/">优化</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%90%8E%E7%AB%AF/">后端</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8/">容器</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92/">容器编排</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/">强化学习算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%AE%97%E6%B3%95/">目标检测算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://lzzrpi.xin/" title="一个程序员">一个程序员</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://www.shenhengheng.xyz/" title="申恒恒的博客">申恒恒的博客</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://shenheng.readailib.com/" title="毕业设计project网站">Project</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://dir.readailib.com/" title="Directory Lister">Directory Lister</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    <section class="widget">
+        
+<section class="widget">
+    
+    <h3 class="widget-title">我的位置</h3>
+    <ul class="widget-list">
+            
+            <li>
+                <div id="allmap">
+                        
+                        <script  type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=AtWkt6iR9uyuODelXUqfXRth"></script>
+                        <script type="text/javascript">
+                            
+                            var map = new BMap.Map("allmap");
+                            var point = new BMap.Point("117.9439850000", "28.4572810000");
+                            var marker = new BMap.Marker(point);  
+                            map.addOverlay(marker);              
+                            map.centerAndZoom(point, 15);
+                            var opts = {
+                                width : 50,     
+                                height: 50,     
+                            }
+                            var infoWindow = new BMap.InfoWindow("地址：上饶市信州区广信大厦A座3楼", opts);  
+                            marker.addEventListener("click", function(){          
+                                map.openInfoWindow(infoWindow,point); 
+                            });
+                        </script>        
+                </div> 
+                            
+            </li>
+            
+        
+    
+
+    </ul>
+</section>
+
+    </section>
+</div>
+
+
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">申恒恒的博客 By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rh02/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript" src="/js/app.js" defer></script>
+
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script  type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+<script type="text/javascript" src="/js/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Zabbix on 申恒恒的博客</title>
+    <link>http://shenheng.xyz/tags/zabbix/</link>
+    <description>Recent content in Zabbix on 申恒恒的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Sun, 14 Oct 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/tags/zabbix/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Zabbix学习笔记|Zabbix基本概念</title>
+      <link>http://shenheng.xyz/posts/2018-04-14-zabbixi/</link>
+      <pubDate>Sun, 14 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-04-14-zabbixi/</guid>
+      <description>标准监控系统所具有的基本功能： 监控系统 .gallery { overflow: hidden; margin: 10px; max-width: 768px; } .gallery .box { float: left; position: relative; width: 100%; padding-bottom: 100%; } @media only screen and (min-width : 365px) { .gallery .box { width: 50%; padding-bottom: 50%; } } @media only screen and (min-width : 480px) { .gallery .box { width: 33.3%;</description>
+    </item>
+    
+  </channel>
+</rss>

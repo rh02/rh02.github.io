@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Storm on 申恒恒的博客</title>
+    <link>http://shenheng.xyz/categories/storm/</link>
+    <description>Recent content in Storm on 申恒恒的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>shenheng.xyz &amp;copy; 2018</copyright>
+    <lastBuildDate>Wed, 20 Dec 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="http://shenheng.xyz/categories/storm/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>远程提交任务到 Storm</title>
+      <link>http://shenheng.xyz/posts/2017-12-10-remote-submit-on-storm/</link>
+      <pubDate>Wed, 20 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-10-remote-submit-on-storm/</guid>
+      <description>java -jar SubmitToNimbus-0.0.1-SNAPSHOT.jar &amp;lt;storm-topology-jar-file&amp;gt; &amp;lt;friendly-name-for-topology&amp;gt; &amp;lt;nimbus-host&amp;gt; 远程提交方案：https://github.com/Blackmist/SubmitToNimbus 部署解决方案：https:/</description>
+    </item>
+    
+  </channel>
+</rss>

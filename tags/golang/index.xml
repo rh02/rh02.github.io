@@ -29,5 +29,14 @@
       <description>本文对原文章有所取舍，如有问题可以详见原文. 在这篇博文中，我想分享两个工具： sql 和 chart ，我们最近一直在使用它们.它们共同组成了一个有趣的模式，用</description>
     </item>
     
+    <item>
+      <title>beego的路由解析</title>
+      <link>http://shenheng.xyz/posts/2017-12-12-beego-route/</link>
+      <pubDate>Tue, 12 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-12-beego-route/</guid>
+      <description>路由形式 http://localhost:8080/topic/view?tid=17 http://localhost:8080/topic/view/17 共有这两种形式，其中： 第一个是query string的形式 第二个是路由路径，正则提取 直接添加路由或者自动路由都可以。 .gallery { overflow: hidden; margin: 10px;</description>
+    </item>
+    
   </channel>
 </rss>

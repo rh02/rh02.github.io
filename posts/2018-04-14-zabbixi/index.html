@@ -1,0 +1,1287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+
+     
+      
+
+    <meta charset="utf-8">
+    <meta name="generator" content="Hugo 0.51" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Zabbix学习笔记|Zabbix基本概念 | 申恒恒的博客</title>
+    <meta property="og:title" content="Zabbix学习笔记|Zabbix基本概念 - 申恒恒的博客">
+    <meta property="og:type" content="article">
+        
+    <meta property="article:published_time" content="2018-10-14T00:00:00&#43;08:00">
+        
+        
+    <meta property="article:modified_time" content="2018-10-14T00:00:00&#43;08:00">
+        
+    <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
+    <meta name="description" content="Zabbix学习笔记|Zabbix基本概念">
+        <meta name="author" content="申恒恒">
+        
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-04-14-zabbixi/">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="/css/normalize.css">
+    
+        <link rel="stylesheet" href="/css/prism.css">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <script async type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+
+    
+        
+        
+            <script async src="https://www.googletagmanager.com/gtag/js?id=UA-92073513-2"></script>
+            <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-92073513-2');
+        </script>
+        
+
+    
+
+    
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-9076793735164845",
+            enable_page_level_ads: true
+        });
+    </script>
+    
+    
+
+
+    
+    
+</head>
+
+<body>
+<header id="header" class="clearfix">
+    <div class="container">
+        <div class="col-group">
+            <div class="site-name ">
+                
+                    <a id="logo" href="http://shenheng.xyz">
+                        申恒恒的博客
+                    </a>
+                
+                <p class="description">专注于Python、Java、Go语言(golang)、机器学习、深度学习、大数据、云计算、容器技术、软件架构</p>
+            </div>
+            <div>
+                <nav id="nav-menu" class="clearfix">
+                    <a class="" href="http://shenheng.xyz">首页</a>
+                    
+                    <a  href="http://shenheng.xyz/learning/" title="笔记">笔记</a>
+                    
+                    <a  href="http://shenheng.xyz/archives/" title="归档">归档</a>
+                    
+                    <a  href="http://shenheng.xyz/about/" title="关于">关于</a>
+                    
+                </nav>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+<div id="body">
+    <div class="container">
+        <div class="col-group">
+
+            <div class="col-8" id="main">
+                <div class="res-cons">
+                    <article class="post">
+                        <header>
+                            <h1 class="post-title">Zabbix学习笔记|Zabbix基本概念</h1>
+                        </header>
+                        <date class="post-meta meta-date">
+                            2018年10月14日
+                        </date>
+                        
+                        <div class="post-meta meta-category">
+                            |
+                            
+                                <a href="http://shenheng.xyz/categories/zabbix">Zabbix</a>
+                            
+                                <a href="http://shenheng.xyz/categories/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B">安装教程</a>
+                            
+                        </div>
+                        
+                        
+                        <div class="post-meta">
+                            <span id="busuanzi_container_page_pv">|<span id="busuanzi_value_page_pv"></span><span> 阅读</span></span>
+                        </div>
+                        
+                        
+                            <aside id="toc" class="dismissed">
+                                <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                                
+                            </aside>
+                        
+                        
+                        <div class="post-content">
+                            <p>标准监控系统所具有的基本功能：</p>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/jiankong.png" alt="监控系统"/>
+    </div>
+    <a href="/img/jiankong.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>监控系统</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li><p>监控主机中的各项指标：</p>
+
+<ul>
+<li>主机：
+
+<ul>
+<li>系统指标：CPU，Memory，IO（Disk，Network）
+
+<ul>
+<li>CPU：sys,usr,idle,&hellip;</li>
+<li>Memory: total,used,free,cached,buffer,shm,&hellip;</li>
+<li>IO :</li>
+</ul></li>
+<li>业务指标：
+
+<ul>
+<li>针对某一服务的状态进行监控，与服务相关的监控项，例如监控nginx的健康状态。</li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li><p>监控系统的模型为：</p>
+
+<ul>
+<li>server/agent</li>
+</ul></li>
+
+<li><p>监控系统监控的三种方式：</p>
+
+<ul>
+<li>服务器&lt;&mdash;&mdash;&gt; (agent代理)操作系统主机</li>
+<li>服务器&lt;&mdash;&mdash;&gt; （IPMI&ndash;inter智能接口）只有硬件没有操作系统的主机</li>
+<li>服务器&lt;&mdash;&mdash;-&gt; (SNMP:简单网络管理协议)交换机、路由器
+（IPMI是集成在硬件级的）</li>
+<li>还有其他的一些方式</li>
+</ul></li>
+
+<li><p>第一阶段：数据采集</p>
+
+<ul>
+<li>对于关键指标数据采集，采集数据的时间间隔要小一些</li>
+<li>对于非关键指标但又不得不采集的，采集数据的时间间隔可以长一些</li>
+</ul></li>
+
+<li><p>第二阶段：存储数据</p>
+
+<ul>
+<li>采集的数据没必要全部保存，将采集来的数据按时间间隔进行整合，做成趋势数据，展现出来。</li>
+<li>聚合数据：将一段时间内的数据的最大值和最小值，根据间隔时长，取平均数据，这就是聚合数据。</li>
+<li>采集的数据的存储方式：
+
+<ul>
+<li>rrd(cacti）：round-robin database（轮转存储数据）
+
+<ul>
+<li>固定一个大小的存储数据空间，当存满后，新数据将最旧的数据覆盖掉，一直循环，这样就可以只保存固定时间长度的采集数据</li>
+</ul></li>
+<li>时序存储数据库：<br />
+
+<ul>
+<li>influxdb：</li>
+</ul></li>
+</ul></li>
+</ul></li>
+
+<li><p>第三阶段：报警</p>
+
+<ul>
+<li>事先编辑好短信服务，或者邮件服务</li>
+<li>当监控系统监控的数据达到一定的级别的时候，监控系统触发第三方的短信服务或邮件服务，按照固定的模板发送报警信息。</li>
+</ul></li>
+
+<li><p>第四阶段：展示数据</p>
+
+<ul>
+<li><p>将采集的数据进行整合，以靓丽的图形的方式展现出来。</p></li>
+
+<li><p>Nagios：很好的报警系统，但是没有数据存储功能</p></li>
+
+<li><p>Cacti: cron+ SNMP + mysql 周期性计划任务，使用SNMP这个协议采集数据，将数据放入mysql中。展示功能不错，但是报警功能不好。</p></li>
+
+<li><p>zabbix:</p>
+
+<ul>
+<li>数据采集：agent，SNMP，IPMI，JMX（支持的数据采集方式）</li>
+<li>存储数据：MySQL，PGSQL</li>
+<li>报警：email，script(微信、短信)‘报警前可以执行远程命令进行故障自动恢复，恢复不了再进行报警’</li>
+<li>展示：简单图（一个界面展示一张图），图形，screen（一屏上展示多张图），slide show，map（将数据绘制成连接线）。</li>
+</ul></li>
+
+<li><p>可以采用的几种监控方式：</p>
+
+<ul>
+<li>statsd+ influxdb + grafana
+
+<ul>
+<li>#statsd：数据采集器，采集数据</li>
+<li>#influxdb：数据存储，将statsd采集的数据放入</li>
+<li>#grafana：提取数据进行展示</li>
+</ul></li>
+<li>promethues + grafana
+
+<ul>
+<li>#适合大规模监控系统</li>
+<li>#promethues：采集数据并存储数据</li>
+<li>#grafana：展示数据</li>
+</ul></li>
+<li>graphite + grafana</li>
+</ul></li>
+</ul></li>
+
+<li><p>zabbix的组成及作用：</p>
+
+<ol>
+<li>zabbix server: 采集收集监控数据，存储到数据库中</li>
+<li>database: 提供数据存储业务</li>
+<li>zabbix agent：放置在被监控端，向zabbix Server提供采集到的数据，有主动模式和被动模式.
+
+<ul>
+<li>被动模式:zabbix server主动到agent上获取数据;</li>
+<li>主动模式：zabbix Server接收来自agent发送来的采集数据。</li>
+</ul></li>
+<li>zabbix web-gui: zabbix管控接口，通过php程序到数据库中将数据取出来，进行展示。</li>
+<li>zabbix sender：放置在被监控主机，用于向zabbix Server发送采集数据，通过命令行命令执行，主要用于测试</li>
+<li>zabbix get：放置在zabbix Server，通过命令行执行，去获取监控端的采集数据，主要用于测试。</li>
+</ol></li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/zabbix-jiagou.png" alt="Zabbix的架构图"/>
+    </div>
+    <a href="/img/zabbix-jiagou.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>Zabbix的架构图</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+<ul>
+<li><p>Zabbix组件概述：（可能与上面的介绍有重复介绍）</p>
+
+<ol>
+<li>zabbix Server：负责接收agent发送的报告信息的核心组件，所有配置、统计数据及操作数据均由其组织进行。</li>
+<li>Database Storage：专用于存储所有配置，以及由zabbix收集的数据。</li>
+<li>Web interface：zabbix的GUI接口，通常与Server运行在同一台主机上，也就是zabbix Web-GUI。</li>
+<li>Proxy：可选组件，常用于分布监控环境中，代理Server收集部分被监控端的监控数据，并同一发往Server端。</li>
+<li>Agent：部署在被监控主机上，负责收集本地数据并发往Server端或proxy端。</li>
+</ol></li>
+
+<li><p>zabbix常用术语：</p>
+
+<ul>
+<li>主机（host）：被监控的网络设备，可由IP或DNS名称指定</li>
+<li>主机组(host group)：主机的逻辑容器，可以包含主机和模板，但同一个组内的主机和模板不能相互链接；主机组通常在给用户或者用户组指派监控权限时使用</li>
+<li>监控项（item）：一个特定监控指标的相关的数据，这些数据来自于被监控对象，item是zabbix进行数据收集的核心，没有item，将没有数据，相对某监控对象来说，每个item都有‘key’进行标识。</li>
+<li>触发器（trigger)：一个表达式，用于评估某监控对象的某特定item内所接收的数据是否在合理范围内，即阈（yu）值；接收到的数据量大于阈值，触发器状态将从OK转变为problem，当数据量再次回归到合理范围内时，其状态将从problem转变为OK。</li>
+<li>事件（event）：发生的一个值得关注的事情，例如触发器的状态转变，新的agent或重新上线的agent的自动注册等</li>
+<li>动作（action）：指定对于特定事件事先定义的处理方法，通常包含操作和条件。</li>
+<li>报警升级（escalation）：发送报警或执行远程命令的自定义方案，如每隔5分钟发送一次警报，共发送5次等。</li>
+<li>媒介（media）：发送通知的手段或通道，如Email，Jabber或SMS等</li>
+<li>通知（notification）：通过选定的媒介向用户发送的有关某事件的信息。</li>
+<li>远程命令（remote command）：预定义的命令，可在被监控主机处于某特定条件下时自动执行。</li>
+<li>模板(template)：用于快速定义被监控主机的预设条目集合，通常包含了item、trigger、graph、screen、application以及low-level discovery rule;模板可以直接至单个主机</li>
+<li>应用（application）：一组item的集合</li>
+<li>web场景(web scennario): 用于检测web站点可用性的一个或多个http请求</li>
+<li>前端（frontend）：Zabbix的web接口</li>
+</ul></li>
+
+<li><p>zabbix监控系统的整体流程：</p>
+
+<ul>
+<li>监控的对象是主机，多个主机可以归并到一个主机组中，每个主机中有多个监控项（item）</li>
+<li>工作在主机上的zabbix agent代理，收集item的数据，将数据主动发送或被动发送给zabbix Server。</li>
+<li>Server端在接收到数据后，将采集的数据与指定的阈值进行比较，如果超出阈值的范围：
+
+<ul>
+<li>触动触发器，触发器产生事件events</li>
+<li>出现事件，采取行动action：
+    - 先执行事先定义的远程命令，进行故障处理
+    - 如果没有恢复，则发送报警信息，发短信或邮件</li>
+</ul></li>
+<li>没有超出阈值的范围：
+
+<ul>
+<li>将每次采集来的数据存储到数据库中，每次收到采集的数据都进行存储。</li>
+</ul></li>
+<li>一定时间后，将这段时间采集来的数据进行数据整合，也就是生成这段时间内的聚合数据。</li>
+<li>zabbix web-GUI将通过PHP程序，从数据库中取出采集到的数据，进行展示，可以实时展示存储到数据库的实时数据，也可以展示聚合数据。</li>
+</ul></li>
+</ul>
+
+
+
+
+<div class="box fancy-figure caption-position-bottom caption-effect-slide" >
+  <figure  itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject">
+    <div class="img">
+      <img itemprop="thumbnail" src="/img/zabbix-liucheng.png" alt="zabbix监控流程"/>
+    </div>
+    <a href="/img/zabbix-liucheng.png" itemprop="contentUrl"></a>
+      <figcaption>
+          <p>zabbix监控流程</p>
+      </figcaption>
+  </figure>
+</div>
+
+<style>
+ .gallery {
+     overflow: hidden;
+     margin: 10px;
+     max-width: 768px;
+ }
+ .gallery .box {
+     float: left;
+     position: relative;
+     width: 100%;
+     padding-bottom: 100%; 
+ }
+
+
+ @media only screen and (min-width : 365px) {
+     .gallery .box {
+         width: 50%;
+         padding-bottom: 50%;
+     }
+ }
+ @media only screen and (min-width : 480px) {
+      
+     .gallery .box {
+         width: 33.3%;
+         padding-bottom: 33.3%;  
+     }
+ }
+ @media only screen and (min-width : 9999px) {
+     
+    .box {
+       width: 25%;
+       padding-bottom: 25%;
+    }
+ }
+ figure a {
+     border-bottom: none;
+ }
+ 
+  
+ .gallery.hover-transition figure,
+ .gallery.hover-effect-zoom .img, 
+ .gallery:not(.caption-effect-appear) figcaption,
+ .fancy-figure:not(.caption-effect-appear) figcaption {
+     -webkit-transition: all 0.3s ease-in-out;
+     -moz-transition: all 0.3s ease-in-out;
+     -o-transition: all 0.3s ease-in-out;
+     transition: all 0.3s ease-in-out;
+ }
+  
+ figure {
+     position:relative;  
+     overflow: hidden;
+ }
+ .gallery figure {
+     position: absolute;
+     left: 5px;
+     right: 5px;
+     top: 5px;
+     bottom: 5px;
+ }
+ .gallery.hover-effect-grow figure:hover {
+     transform: scale(1.05);
+ }
+ .gallery.hover-effect-shrink figure:hover {
+     transform: scale(0.95);
+ }
+ .gallery.hover-effect-slidedown figure:hover {
+     transform: translateY(5px);
+ }
+ .gallery.hover-effect-slideup figure:hover {
+     transform: translateY(-5px);
+ }
+ 
+  
+ 
+ .gallery .img {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+     background-size: cover;
+     background-position: 50% 50%;
+     background-repeat: no-repeat;
+ }
+ .gallery.hover-effect-zoom figure:hover .img {
+     transform: scale(1.05);
+ }
+ .gallery img {
+     display: none;  
+ }
+ figure a {
+     position: absolute;
+     left: 0;
+     right: 0;
+     top: 0;
+     bottom: 0;
+ }
+ 
+  
+ .gallery figcaption,
+ .fancy-figure figcaption {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     background: #000;
+     color: #FFF;
+     text-align: center;
+     font-size: 75%;  
+     background: rgba(0, 0, 0, 0.5);
+     opacity: 1;
+     cursor: pointer;
+ }
+ .gallery.caption-position-none figcaption,
+ .fancy-figure.caption-position-none figcaption  {
+     display: none;
+ }
+ .gallery.caption-position-center figcaption,
+ .fancy-figure.caption-position-center figcaption {
+     top: 0;
+     padding: 40% 5px;
+ }
+ .gallery.caption-position-bottom figcaption,
+ .fancy-figure.caption-position-bottom figcaption {
+     padding: 5px;
+ }
+ .gallery.caption-effect-fade figure:not(:hover) figcaption,
+ .gallery.caption-effect-appear figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-fade figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-appear figure:not(:hover) figcaption {
+     background: rgba(0, 0, 0, 0);
+     opacity: 0;
+ }
+ .gallery.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-bottom figure:not(:hover) figcaption {
+     margin-bottom: -100%;
+ }
+ .gallery.caption-effect-slide.caption-position-center figure:not(:hover) figcaption,
+ .fancy-figure.caption-effect-slide.caption-position-center figure:not(:hover) figcaption  {
+     top: 100%;
+ }
+ figcaption p {
+     margin: auto;  
+ }
+
+</style>
+
+                        </div>
+
+
+                        
+
+<div class="post-archive">
+    <h2>See Also</h2>
+    <ul class="listing">
+        
+        <li><a href="/posts/2018-04-14-hadoop2-setup-2/">Hadoop2.x 完全分布式安装&amp;部署</a></li>
+        
+        <li><a href="/posts/2018-04-14-hadoop2-setup/">Hadoop2.x 伪分布式安装&amp;部署</a></li>
+        
+        <li><a href="/posts/how-to-install-mysql-from-source-on-centos-6/">CentOS6源码安装MySQL</a></li>
+        
+        <li><a href="/posts/solve-sbt-update-scala-slow/">解决sbt更新scala速度慢</a></li>
+        
+        <li><a href="/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/">R实战-决策树</a></li>
+        
+    </ul>
+</div>
+
+
+                        <div class="post-meta meta-tags">
+                            
+                            <ul class="clearfix">
+                                
+                                <li><a href="http://shenheng.xyz/tags/zabbix">Zabbix</a></li>
+                                
+                            </ul>
+                            
+                        </div>
+                    
+    <div class="generic-box">
+            <div class="share-links" style="text-align:center;">
+                <a rel="license"  href="http://creativecommons.org/licenses/by-nc-nd/4.0/">
+                    <img alt="知识共享许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png">
+                </a>
+                <br/>
+                
+                本文章采用<a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/">知识共享署名-非商业性使用-禁止演绎 4.0 国际许可协议</a>进行许可。
+                <br />
+                如要转载，请注明出处！
+            </div>
+    </div>
+
+
+<style>
+.generic-box {
+    text-align: center;
+    border: 1px solid #eee;
+    padding: 10px;
+     
+    margin: 30px;
+};
+.share-links a {
+    border-bottom: none;
+}
+</style>
+
+
+                    </article>
+                    
+    
+
+    
+    
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "rh02/replies-registry"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+    
+                </div>
+            </div>
+            <div id="secondary">
+    <section class="widget">
+        <form id="search" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" _lpchecked="1">
+      
+      <input type="text" name="q" maxlength="20" placeholder="Search">
+      <input type="hidden" name="sitesearch" value="http://shenheng.xyz">
+      <button type="submit" class="submit icon-search"></button>
+</form>
+    </section>
+    
+    <section class="widget">
+        <h3 class="widget-title">最近文章</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-17-hadoop-cfg-explain/" title="Hadoop优化笔记|Hadoop2.x 配置文件">Hadoop优化笔记|Hadoop2.x 配置文件</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-13-kubernetes/" title="kubernetes学习笔记|1.10.0 版环境安装与配置（实验）">kubernetes学习笔记|1.10.0 版环境安装与配置（实验）</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-17-update-kubernetes/" title="kubernetes学习笔记|从旧版本升级到 1.12.1">kubernetes学习笔记|从旧版本升级到 1.12.1</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-17-kubeflow/" title="kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序">kubernetes学习笔记|利用 Kubeflow 管理 Tensorflow 程序</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-17-kubernetes/" title="kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装">kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-13-elk-7/" title="ELK学习笔记7| Lucence 的搜索语法">ELK学习笔记7| Lucence 的搜索语法</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-13-elk-6/" title="ELK学习笔记6|ElasticSearch基本概念与架构">ELK学习笔记6|ElasticSearch基本概念与架构</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-starlight/" title="starlight 介绍">starlight 介绍</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/" title="管道化 SQL">管道化 SQL</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-11-elk-5/" title="ELK学习笔记5|Kibana可视化-数据表、仪表盘">ELK学习笔记5|Kibana可视化-数据表、仪表盘</a>
+    </li>
+    
+</ul>
+    </section>
+
+    
+
+    <section class="widget">
+        <h3 class="widget-title">分类</h3>
+<ul class="widget-list">
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/2018/">2018(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/beego/">Beego(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/dicision-tree/">Dicision Tree(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/docker/">Docker(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/git/">Git(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/go-%E5%8C%85%E8%AE%B2%E8%A7%A3/">Go 包讲解(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/go-%E5%B9%B6%E5%8F%91/">Go 并发(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">Golang(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/jenkins/">Jenkins(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kmeans/">KMeans(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/storm/">Storm(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/zabbix/">Zabbix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/blog/">blog(4)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/comment/">comment(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/d3/">d3(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/elk/">elk(7)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/golang/">golang(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hadoop/">hadoop(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/hugo/">hugo(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/kubernetes/">kubernetes(5)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/math/">math(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/matrix/">matrix(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/maven/">maven(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/ml/">ml(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/pi/">pi(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/sbt/">sbt(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/scala/">scala(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/shortcode/">shortcode(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%8F%AF%E8%A7%86%E5%8C%96/">可视化(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/">安装教程(3)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B7%A5%E4%BD%9C%E6%95%88%E7%8E%87/">工作效率(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%B9%B6%E5%8F%91/">并发(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/">强化学习算法(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/">目标检测(1)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E7%AE%97%E6%B3%95/">算法(2)</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4/">运维(1)</a>
+    </li>
+    
+</ul>
+    </section>
+
+    <section class="widget">
+        <h3 class="widget-title">标签</h3>
+<div class="tagcloud">
+    
+    <a href="http://shenheng.xyz/tags/decision-tree/">Decision Tree</a>
+    
+    <a href="http://shenheng.xyz/tags/devops/">DevOps</a>
+    
+    <a href="http://shenheng.xyz/tags/docker/">Docker</a>
+    
+    <a href="http://shenheng.xyz/tags/effective/">Effective</a>
+    
+    <a href="http://shenheng.xyz/tags/git/">Git</a>
+    
+    <a href="http://shenheng.xyz/tags/golang%E5%B9%B6%E5%8F%91/">Golang并发</a>
+    
+    <a href="http://shenheng.xyz/tags/jenkins/">Jenkins</a>
+    
+    <a href="http://shenheng.xyz/tags/kmeans/">Kmeans</a>
+    
+    <a href="http://shenheng.xyz/tags/zabbix/">Zabbix</a>
+    
+    <a href="http://shenheng.xyz/tags/blog/">blog</a>
+    
+    <a href="http://shenheng.xyz/tags/d3/">d3</a>
+    
+    <a href="http://shenheng.xyz/tags/disqus/">disqus</a>
+    
+    <a href="http://shenheng.xyz/tags/elastic-search/">elastic search</a>
+    
+    <a href="http://shenheng.xyz/tags/elk/">elk</a>
+    
+    <a href="http://shenheng.xyz/tags/gittalk/">gittalk</a>
+    
+    <a href="http://shenheng.xyz/tags/golang/">golang</a>
+    
+    <a href="http://shenheng.xyz/tags/hadoop/">hadoop</a>
+    
+    <a href="http://shenheng.xyz/tags/k8s/">k8s</a>
+    
+    <a href="http://shenheng.xyz/tags/kibana/">kibana</a>
+    
+    <a href="http://shenheng.xyz/tags/kubernetes/">kubernetes</a>
+    
+    <a href="http://shenheng.xyz/tags/linux/">linux</a>
+    
+    <a href="http://shenheng.xyz/tags/logstash/">logstash</a>
+    
+    <a href="http://shenheng.xyz/tags/matrix/">matrix</a>
+    
+    <a href="http://shenheng.xyz/tags/ml/">ml</a>
+    
+    <a href="http://shenheng.xyz/tags/pi/">pi</a>
+    
+    <a href="http://shenheng.xyz/tags/sbt/">sbt</a>
+    
+    <a href="http://shenheng.xyz/tags/scala/">scala</a>
+    
+    <a href="http://shenheng.xyz/tags/shortcode/">shortcode</a>
+    
+    <a href="http://shenheng.xyz/tags/%E4%BC%98%E5%8C%96/">优化</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%90%8E%E7%AB%AF/">后端</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8/">容器</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92/">容器编排</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE/">开源项目</a>
+    
+    <a href="http://shenheng.xyz/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0%E7%AE%97%E6%B3%95/">强化学习算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%AE%97%E6%B3%95/">目标检测算法</a>
+    
+    <a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+    
+</div>
+    </section>
+
+    
+<section class="widget">
+    <h3 class="widget-title">友情链接</h3>
+    <ul class="widget-list">
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://lzzrpi.xin/" title="一个程序员">一个程序员</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://www.shenhengheng.xyz/" title="申恒恒的博客">申恒恒的博客</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://shenheng.readailib.com/" title="毕业设计project网站">Project</a>
+        </li>
+        
+        <li>
+            <a rel="noreferrer noopener nofollow" href="https://dir.readailib.com/" title="Directory Lister">Directory Lister</a>
+        </li>
+        
+    </ul>
+</section>
+
+
+    <section class="widget">
+        <h3 class="widget-title">其它</h3>
+        <ul class="widget-list">
+            <li><a href="http://shenheng.xyz/index.xml">文章 RSS</a></li>
+        </ul>
+    </section>
+
+    <section class="widget">
+        
+<section class="widget">
+    
+    <h3 class="widget-title">我的位置</h3>
+    <ul class="widget-list">
+            
+            <li>
+                <div id="allmap">
+                        
+                        <script  type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=AtWkt6iR9uyuODelXUqfXRth"></script>
+                        <script type="text/javascript">
+                            
+                            var map = new BMap.Map("allmap");
+                            var point = new BMap.Point("117.9439850000", "28.4572810000");
+                            var marker = new BMap.Marker(point);  
+                            map.addOverlay(marker);              
+                            map.centerAndZoom(point, 15);
+                            var opts = {
+                                width : 50,     
+                                height: 50,     
+                            }
+                            var infoWindow = new BMap.InfoWindow("地址：上饶市信州区广信大厦A座3楼", opts);  
+                            marker.addEventListener("click", function(){          
+                                map.openInfoWindow(infoWindow,point); 
+                            });
+                        </script>        
+                </div> 
+                            
+            </li>
+            
+        
+    
+
+    </ul>
+</section>
+
+    </section>
+</div>
+
+
+        </div>
+    </div>
+</div>
+<footer id="footer">
+    <div class="container">
+        &copy; 2018 <a href="http://shenheng.xyz">申恒恒的博客 By 申恒恒</a>.
+        Powered by <a rel="nofollow noreferer noopener" href="https://gohugo.io" target="_blank">Hugo</a>.
+        <a href="http://www.flysnow.org/" target="_blank">Theme</a> based on <a href="https://github.com/rh02/maupassant-hugo" target="_blank">maupassant</a>.
+        
+    </div>
+</footer>
+
+
+    <script type="text/javascript" src="/js/prism.js" async="true"></script>
+    <script type="text/javascript" src="/js/app.js" defer></script>
+
+    <script type="text/javascript">
+    window.MathJax = {
+        tex2jax: {
+            inlineMath: [ ['$','$'] ],
+            processEscapes: true
+        }
+    };
+    </script>
+    <script  type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+<a id="rocket" href="#top"></a>
+<script type="text/javascript" src="/js/totop.js?v=0.0.0" async=""></script>
+
+
+
+<script type="text/javascript" src="/js/busuanzi.pure.mini.js" async></script>
+
+
+
+
+</body>
+</html>

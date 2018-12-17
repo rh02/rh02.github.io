@@ -13,10 +13,10 @@
     
     <item>
       <title>Hadoop优化笔记|Hadoop2.x 配置文件</title>
-      <link>http://shenheng.xyz/posts/2019-12-17-update-kubernetes/</link>
+      <link>http://shenheng.xyz/posts/2018-12-17-hadoop-cfg-explain/</link>
       <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
       
-      <guid>http://shenheng.xyz/posts/2019-12-17-update-kubernetes/</guid>
+      <guid>http://shenheng.xyz/posts/2018-12-17-hadoop-cfg-explain/</guid>
       <description>hadooop-env.sh # Set Hadoop-specific environment variables here. # The only required environment variable is JAVA_HOME. All others are # optional. When running a distributed configuration it is best to # set JAVA_HOME in this file, so that it is correctly defined on # remote nodes. # The java implementation to use. # 两种配置方法：一是在 hadoop-env.sh 中配置；二是在</description>
     </item>
     
@@ -228,6 +228,15 @@
     </item>
     
     <item>
+      <title>Zabbix学习笔记|Zabbix基本概念</title>
+      <link>http://shenheng.xyz/posts/2018-04-14-zabbixi/</link>
+      <pubDate>Sun, 14 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-04-14-zabbixi/</guid>
+      <description>标准监控系统所具有的基本功能： 监控系统 .gallery { overflow: hidden; margin: 10px; max-width: 768px; } .gallery .box { float: left; position: relative; width: 100%; padding-bottom: 100%; } @media only screen and (min-width : 365px) { .gallery .box { width: 50%; padding-bottom: 50%; } } @media only screen and (min-width : 480px) { .gallery .box { width: 33.3%;</description>
+    </item>
+    
+    <item>
       <title>Hadoop2.x 伪分布式安装&amp;部署</title>
       <link>http://shenheng.xyz/posts/2018-04-14-hadoop2-setup/</link>
       <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
@@ -309,6 +318,15 @@
     </item>
     
     <item>
+      <title>远程提交任务到 Storm</title>
+      <link>http://shenheng.xyz/posts/2017-12-10-remote-submit-on-storm/</link>
+      <pubDate>Wed, 20 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-10-remote-submit-on-storm/</guid>
+      <description>java -jar SubmitToNimbus-0.0.1-SNAPSHOT.jar &amp;lt;storm-topology-jar-file&amp;gt; &amp;lt;friendly-name-for-topology&amp;gt; &amp;lt;nimbus-host&amp;gt; 远程提交方案：https://github.com/Blackmist/SubmitToNimbus 部署解决方案：https:/</description>
+    </item>
+    
+    <item>
       <title>利用python从头实现矩阵分解算法</title>
       <link>http://shenheng.xyz/posts/%E5%88%A9%E7%94%A8python%E4%BB%8E%E5%A4%B4%E5%AE%9E%E7%8E%B0%E7%9F%A9%E9%98%B5%E5%88%86%E8%A7%A3%E7%AE%97%E6%B3%95/</link>
       <pubDate>Fri, 15 Dec 2017 00:00:00 +0000</pubDate>
@@ -327,12 +345,30 @@
     </item>
     
     <item>
+      <title>beego的路由解析</title>
+      <link>http://shenheng.xyz/posts/2017-12-12-beego-route/</link>
+      <pubDate>Tue, 12 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-12-12-beego-route/</guid>
+      <description>路由形式 http://localhost:8080/topic/view?tid=17 http://localhost:8080/topic/view/17 共有这两种形式，其中： 第一个是query string的形式 第二个是路由路径，正则提取 直接添加路由或者自动路由都可以。 .gallery { overflow: hidden; margin: 10px;</description>
+    </item>
+    
+    <item>
       <title>Git 使用教程</title>
       <link>http://shenheng.xyz/posts/2018-11-29-git-tutorial-1/</link>
       <pubDate>Wed, 23 Aug 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/2018-11-29-git-tutorial-1/</guid>
       <description>本教程主要从Git的简明使用到高级应用，比如协作和相关高级话题。本教程本着简明扼要的目标给出相当精彩的教程！ Git 配置 基本配置命令： git config –glo</description>
+    </item>
+    
+    <item>
+      <title>Vmware的网络连接方式详解</title>
+      <link>http://shenheng.xyz/posts/2017-05-09-vm-network/</link>
+      <pubDate>Tue, 09 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-05-09-vm-network/</guid>
+      <description>桥接模式 图１ 桥接模式 .gallery { overflow: hidden; margin: 10px; max-width: 768px; } .gallery .box { float: left; position: relative; width: 100%; padding-bottom: 100%; } @media only screen and (min-width : 365px) { .gallery .box { width: 50%; padding-bottom: 50%; } } @media only screen and (min-width : 480px) { .gallery .box { width: 33.3%; padding-bottom: 33.3%; } } @media only screen and (min-width</description>
     </item>
     
   </channel>

@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>Beego</title>
+      <link>http://shenheng.xyz/categories/beego/</link>
+      <pubDate>Tue, 12 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/categories/beego/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>Dicision Tree</title>
       <link>http://shenheng.xyz/categories/dicision-tree/</link>
       <pubDate>Sat, 30 Dec 2017 00:00:00 +0000</pubDate>
@@ -93,6 +102,24 @@
     </item>
     
     <item>
+      <title>Storm</title>
+      <link>http://shenheng.xyz/categories/storm/</link>
+      <pubDate>Wed, 20 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/categories/storm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Zabbix</title>
+      <link>http://shenheng.xyz/categories/zabbix/</link>
+      <pubDate>Sun, 14 Oct 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/categories/zabbix/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>blog</title>
       <link>http://shenheng.xyz/categories/blog/</link>
       <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
@@ -140,7 +167,7 @@
     <item>
       <title>hadoop</title>
       <link>http://shenheng.xyz/categories/hadoop/</link>
-      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/categories/hadoop/</guid>
       <description></description>
@@ -248,7 +275,7 @@
     <item>
       <title>安装教程</title>
       <link>http://shenheng.xyz/categories/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/</link>
-      <pubDate>Sat, 14 Apr 2018 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 14 Oct 2018 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/categories/%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B/</guid>
       <description></description>

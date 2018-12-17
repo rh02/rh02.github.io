@@ -12,15 +12,6 @@
     
     
     <item>
-      <title>Hadoop优化笔记|Hadoop2.x 配置文件</title>
-      <link>http://shenheng.xyz/posts/2019-12-17-update-kubernetes/</link>
-      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
-      
-      <guid>http://shenheng.xyz/posts/2019-12-17-update-kubernetes/</guid>
-      <description>hadooop-env.sh # Set Hadoop-specific environment variables here. # The only required environment variable is JAVA_HOME. All others are # optional. When running a distributed configuration it is best to # set JAVA_HOME in this file, so that it is correctly defined on # remote nodes. # The java implementation to use. # 两种配置方法：一是在 hadoop-env.sh 中配置；二是在</description>
-    </item>
-    
-    <item>
       <title>kubernetes学习笔记|1.10.0 版环境安装与配置（实验）</title>
       <link>http://shenheng.xyz/posts/2018-12-13-kubernetes/</link>
       <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
@@ -54,6 +45,15 @@
       
       <guid>http://shenheng.xyz/posts/2018-12-17-kubernetes/</guid>
       <description>我上一个 kubernetes 集群已经维持了将近两个多月，最终它承受不住网络的不稳定，暴毙了！😢 下面这篇文章主要会介绍 1.12.1 版本的安装，该安装非常经得起考验，屡试不</description>
+    </item>
+    
+    <item>
+      <title>Vmware的网络连接方式详解</title>
+      <link>http://shenheng.xyz/posts/2017-05-09-vm-network/</link>
+      <pubDate>Tue, 09 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2017-05-09-vm-network/</guid>
+      <description>桥接模式 图１ 桥接模式 .gallery { overflow: hidden; margin: 10px; max-width: 768px; } .gallery .box { float: left; position: relative; width: 100%; padding-bottom: 100%; } @media only screen and (min-width : 365px) { .gallery .box { width: 50%; padding-bottom: 50%; } } @media only screen and (min-width : 480px) { .gallery .box { width: 33.3%; padding-bottom: 33.3%; } } @media only screen and (min-width</description>
     </item>
     
   </channel>

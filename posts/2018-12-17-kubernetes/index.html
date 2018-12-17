@@ -10,20 +10,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>CentOS6源码安装MySQL | 申恒恒的博客</title>
-    <meta property="og:title" content="CentOS6源码安装MySQL - 申恒恒的博客">
+    <title>kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装 | 申恒恒的博客</title>
+    <meta property="og:title" content="kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装 - 申恒恒的博客">
     <meta property="og:type" content="article">
         
-    <meta property="article:published_time" content="2018-03-04T00:00:00&#43;08:00">
+    <meta property="article:published_time" content="2018-12-16T00:00:00&#43;08:00">
         
         
-    <meta property="article:modified_time" content="2018-03-04T00:00:00&#43;08:00">
+    <meta property="article:modified_time" content="2018-12-16T00:00:00&#43;08:00">
         
     <meta name="Keywords" content="golang,go语言,go语言笔记,申恒恒,java,android,大数据,Hadoop,Spark,Storm,Streaming,强化学习,计算机视觉,机器学习,深度学习,容器技术,kubernetes,Docker,博客,项目管理,python,软件架构,公众号,小程序">
-    <meta name="description" content="CentOS6源码安装MySQL">
-        <meta name="author" content="Heng-heng Shen">
+    <meta name="description" content="kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装">
+        <meta name="author" content="申恒恒">
         
-    <meta property="og:url" content="http://shenheng.xyz/posts/how-to-install-mysql-from-source-on-centos-6/">
+    <meta property="og:url" content="http://shenheng.xyz/posts/2018-12-17-kubernetes/">
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
 
     <link rel="stylesheet" href="/css/normalize.css">
@@ -101,20 +101,16 @@
                 <div class="res-cons">
                     <article class="post">
                         <header>
-                            <h1 class="post-title">CentOS6源码安装MySQL</h1>
+                            <h1 class="post-title">kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装</h1>
                         </header>
                         <date class="post-meta meta-date">
-                            2018年3月4日
+                            2018年12月16日
                         </date>
                         
                         <div class="post-meta meta-category">
                             |
                             
-                                <a href="http://shenheng.xyz/categories/2018">2018</a>
-                            
-                                <a href="http://shenheng.xyz/categories/blog">blog</a>
-                            
-                                <a href="http://shenheng.xyz/categories/%E8%BF%90%E7%BB%B4">运维</a>
+                                <a href="http://shenheng.xyz/categories/kubernetes">kubernetes</a>
                             
                         </div>
                         
@@ -124,159 +120,258 @@
                         </div>
                         
                         
+                            <aside id="toc" class="dismissed">
+                                <span class="toc-title">目录 <a href="#" class="toc-dismiss"></a></span>
+                                <nav id="TableOfContents">
+<ul>
+<li><a href="#拉镜像">拉镜像</a></li>
+<li><a href="#启集群">启集群</a></li>
+</ul>
+</nav>
+                            </aside>
+                        
                         
                         <div class="post-content">
-                            <p>首先确定本机是安装了开发工具包套件（里面含有gcc等编译器）以及相关的make套件。使用下面命令进行安装。</p>
+                            
 
-<pre><code class="language-bash">yum groupinstall &quot;Development Tools&quot; –y
-yum install cmake ncurses-devel -y
+<p>我上一个 kubernetes 集群已经维持了将近两个多月，最终它承受不住网络的不稳定，暴毙了！😢</p>
+
+<p>下面这篇文章主要会介绍 <code>1.12.1</code> 版本的安装，该安装非常经得起考验，屡试不爽！下面好戏上场。</p>
+
+<h1 id="拉镜像">拉镜像</h1>
+
+<p>脚本在此！</p>
+
+<blockquote>
+<p>我发现了一个技巧，很多人自己可能有 GCE 的服务，他们利用该服务自动拉取了一些 <code>gcr</code> ，即我们 <code>kubernetes</code> 所需要的镜像并且推送到 <code>dockerhub</code>. 因此现在就有一种方法，因为被墙而拉取不下来的镜像，你可以去 dockerhub 找找，说不准有惊喜！但pull 下来的镜像需要重新 tag 一下。</p>
+</blockquote>
+
+<p><br></p>
+
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        echo&nbsp;""
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        echo&nbsp;"=========================================================="
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        echo&nbsp;"Pull&nbsp;Kubernetes&nbsp;v1.12.1&nbsp;Images&nbsp;from&nbsp;aliyuncs.com&nbsp;......"
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        echo&nbsp;"=========================================================="
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        echo&nbsp;""
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        MY_REGISTRY=registry.cn-hangzhou.aliyuncs.com/openthings
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        ##&nbsp;拉取镜像
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;pull&nbsp;${MY_REGISTRY}/k8s-gcr-io-kube-apiserver:v1.12.1
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;pull&nbsp;${MY_REGISTRY}/k8s-gcr-io-kube-controller-manager:v1.12.1
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;pull&nbsp;${MY_REGISTRY}/k8s-gcr-io-kube-scheduler:v1.12.1
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;pull&nbsp;${MY_REGISTRY}/k8s-gcr-io-kube-proxy:v1.12.1
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;pull&nbsp;${MY_REGISTRY}/k8s-gcr-io-etcd:3.2.24
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;pull&nbsp;${MY_REGISTRY}/k8s-gcr-io-pause:3.1
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;pull&nbsp;${MY_REGISTRY}/k8s-gcr-io-coredns:1.2.2
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        ##&nbsp;添加Tag
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;tag&nbsp;${MY_REGISTRY}/k8s-gcr-io-kube-apiserver:v1.12.1&nbsp;k8s.gcr.io/kube-apiserver:v1.12.1
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;tag&nbsp;${MY_REGISTRY}/k8s-gcr-io-kube-scheduler:v1.12.1&nbsp;k8s.gcr.io/kube-scheduler:v1.12.1
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;tag&nbsp;${MY_REGISTRY}/k8s-gcr-io-kube-controller-manager:v1.12.1&nbsp;k8s.gcr.io/kube-controller-manager:v1.12.1
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;tag&nbsp;${MY_REGISTRY}/k8s-gcr-io-kube-proxy:v1.12.1&nbsp;k8s.gcr.io/kube-proxy:v1.12.1
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;tag&nbsp;${MY_REGISTRY}/k8s-gcr-io-etcd:3.2.24&nbsp;k8s.gcr.io/etcd:3.2.24
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;tag&nbsp;${MY_REGISTRY}/k8s-gcr-io-pause:3.1&nbsp;k8s.gcr.io/pause:3.1
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        docker&nbsp;tag&nbsp;${MY_REGISTRY}/k8s-gcr-io-coredns:1.2.2&nbsp;k8s.gcr.io/coredns:1.2.2
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        echo&nbsp;""
+    </span>
+</div>
+  
+
+<div dir="ltr" style="line-height: 1.38; margin-bottom: 0pt; margin-top: 0pt;">
+    <span style="background-color: white; color: black; font-family: 'Courier New'; font-size: 12pt; font-style: normal; font-variant: normal; font-weight: 700; text-decoration: none; vertical-align: baseline;">
+        
+    </span>
+</div>
+
+
+<p><br></p>
+
+<p>上面的命令保存成脚本，然后执行。就可以了！</p>
+
+<p>！！！但是这里也有一个坑！就是名字要求，我遇到的问题：需要手动修改镜像名称！</p>
+
+<pre><code>k8s.gcr.io/kube-controller-manager:v1.12.1
+k8s.gcr.io/kube-controller-manager-amd64:v1.12.1
 </code></pre>
 
-<p>然后依照下面的命令从官方网站上下载源码包。</p>
+<p>相应地作修改即可！</p>
 
-<pre><code class="language-bash">wget https://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-boost-5.7.20.tar.gz
+<h1 id="启集群">启集群</h1>
+
+<pre><code class="language-bash">kubeadm init --kubernetes-version=v1.12.1 --pod-network-cidr=10.244.0.0/16 \
+service-cidr=10.96.0.0/12 --ignore-preflight-errors=Swap
 </code></pre>
 
-<p>使用下面的命令进行解压缩并切换到该目录下，并使用cmake命令进行编译。</p>
-
-<pre><code class="language-bash">tar -xvzf mysql-boost-5.7.20.tar.gz
-cd mysql-5.7.20/
-cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr/local/mysql \
--DWITH_BOOST=/root/mysql-5.7.20/boost/
-</code></pre>
-
-<p>然后执行make和make install命令，这会持续很长时间（在我的虚拟机上有一个小时左右），耐心等待即可。</p>
-
-<pre><code class="language-bash">make &amp; make install
-</code></pre>
-
-<p>出现下面的信息，基本就是安装成功了。</p>
-
-<pre><code class="language-bash">-- Installing: /usr/local/mysql/mysql-test/./collections/mysql-5.7-stage.push
--- Installing: /usr/local/mysql/mysql-test/./collections/default.weekly
--- Installing: /usr/local/mysql/mysql-test/./collections/disabled-weekly.list
--- Installing: /usr/local/mysql/mysql-test/./collections/default.push-valgrind
--- Installing: /usr/local/mysql/mysql-test/./collections/disabled-gtid-on.list
--- Installing: /usr/local/mysql/mysql-test/./collections/default.release.done
--- Installing: /usr/local/mysql/mysql-test/./collections/default.push
--- Installing: /usr/local/mysql/mysql-test/./collections/disabled-daily.list
--- Installing: /usr/local/mysql/mysql-test/./collections/README.experimental
--- Installing: /usr/local/mysql/mysql-test/./collections/default.daily-valgrind
--- Installing: /usr/local/mysql/mysql-test/./collections/default.weekly-valgrind
--- Installing: /usr/local/mysql/mysql-test/./collections/coverage.ignore
--- Installing: /usr/local/mysql/mysql-test/./collections/default.push-ndbcluster
--- Installing: /usr/local/mysql/mysql-test/./collections/default.daily
--- Installing: /usr/local/mysql/mysql-test/./collections/default.experimental
--- Installing: /usr/local/mysql/mysql-test/./README.gcov
--- Installing: /usr/local/mysql/./COPYING-test
--- Installing: /usr/local/mysql/./README-test
--- Up-to-date: /usr/local/mysql/mysql-test/mtr
--- Up-to-date: /usr/local/mysql/mysql-test/mysql-test-run
--- Installing: /usr/local/mysql/mysql-test/lib/My/SafeProcess/my_safe_process
--- Up-to-date: /usr/local/mysql/mysql-test/lib/My/SafeProcess/my_safe_process
--- Installing: /usr/local/mysql/mysql-test/lib/My/SafeProcess/Base.pm
--- Installing: /usr/local/mysql/support-files/mysqld_multi.server
--- Installing: /usr/local/mysql/support-files/mysql-log-rotate
--- Installing: /usr/local/mysql/support-files/magic
--- Installing: /usr/local/mysql/share/aclocal/mysql.m4
--- Installing: /usr/local/mysql/support-files/mysql.server
-</code></pre>
-
-<p>但是安装完成之后，如果此时立即启动MySQL服务，将会出错。</p>
-
-<pre><code class="language-bash">[root@node1 ~]# /usr/local/mysql/bin/mysqld
-mysqld: Can't change dir to '/var/lib/mysql/' (Errcode: 2 - No such file or directory)
-2018-03-04T20:45:59.080932Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
-2018-03-04T20:45:59.082318Z 0 [Note] --secure-file-priv is set to NULL. Operations related to importing and exporting data are disabled
-2018-03-04T20:45:59.082361Z 0 [Note] /usr/local/mysql/bin/mysqld (mysqld 5.7.20) starting as process 10737 ...
-2018-03-04T20:45:59.091700Z 0 [Warning] Can't create test file /var/lib/mysql/node1.lower-test
-2018-03-04T20:45:59.091727Z 0 [Warning] Can't create test file /var/lib/mysql/node1.lower-test
-2018-03-04T20:45:59.092092Z 0 [ERROR] failed to set datadir to /var/lib/mysql/
-2018-03-04T20:45:59.092112Z 0 [ERROR] Aborting
-
-2018-03-04T20:45:59.092123Z 0 [Note] Binlog end
-2018-03-04T20:45:59.092824Z 0 [Note] /usr/local/mysql/bin/mysqld: Shutdown complete
-</code></pre>
-
-<p>大致意思就是没有配置相关的服务器配置文件，balabala……
-下面编辑MySQL的服务器配置文件my.cnf，编辑内容为</p>
-
-<pre><code class="language-bash">[client]
-port=3306
-socket=/usr/local/mysql/mysql.sock
-
-[mysqld]
-port=3306
-socket=/usr/local/mysql/mysql.sock
-
-[mysqld_safe]
-log-error=/var/log/mysqld.log
-pid-file=/usr/local/mysql/mysqld.pid
-</code></pre>
-
-<p>接下来，创建一个用户mysql，并将MySQL安装目录授权给mysql用户。</p>
-
-<pre><code class="language-bash">useradd mysql -s /sbin/nologin
-chown -R mysql.mysql /usr/local/mysql/
-</code></pre>
-
-<p>使用下面的命令将会生成一个临时的root用户登陆密码。</p>
-
-<pre><code class="language-bash">[root@node1 mysql]# bin/mysqld --initialize --user=mysql
-2018-03-04T20:47:08.630847Z 0 [Warning] TIMESTAMP with implicit DEFAULT value is deprecated. Please use --explicit_defaults_for_timestamp server option (see documentation for more details).
-2018-03-04T20:47:10.123348Z 0 [Warning] InnoDB: New log files created, LSN=45790
-2018-03-04T20:47:10.573382Z 0 [Warning] InnoDB: Creating foreign key constraint system tables.
-2018-03-04T20:47:11.072424Z 0 [Warning] No existing UUID has been found, so we assume that this is the first time that this server has been started. Generating a new UUID: 36223d2c-1fed-11e8-8868-000c29d37a7d.
-2018-03-04T20:47:11.312940Z 0 [Warning] Gtid table is not ready to be used. Table 'mysql.gtid_executed' cannot be opened.
-2018-03-04T20:47:11.314267Z 1 [Note] A temporary password is generated for root@localhost: Ha:Rj-K9&amp;kc(
-</code></pre>
-
-<p>使用临时密码进行登陆，并在MySQL控制台里修改root密码。</p>
-
-<pre><code class="language-bash">[root@node1 mysql]# bin/mysql -u root -p -S /usr/local/mysql/mysql.sock
-Enter password: 
-Welcome to the MySQL monitor.  Commands end with ; or \g.
-Your MySQL connection id is 8
-Server version: 5.7.20
-
-Copyright (c) 2000, 2017, Oracle and/or its affiliates. All rights reserved.
-
-Oracle is a registered trademark of Oracle Corporation and/or its
-affiliates. Other names may be trademarks of their respective
-owners.
-
-Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-</code></pre>
-
-<p>使用下面的命令进行修改密码</p>
-
-<pre><code class="language-bash">mysql&gt; ALTER USER 'root'@'localhost' IDENTIFIED BY 'YOURPASSWORD';
-Query OK, 0 rows affected (0.00 sec)
-
-mysql&gt; exit
-Bye
-</code></pre>
-
-<p>接下来，查找MySQL的进程，并杀死。</p>
-
-<pre><code class="language-bash">[root@node1 mysql]# ps -aux | grep mysqld | grep -v grep
-root     10778  0.0  0.1   6684  1296 pts/1    S    04:47   0:00 /bin/sh bin/mysqld_safe --user=mysql
-mysql    10978  0.0 15.2 615176 156408 pts/1   Sl   04:47   0:00 /usr/local/mysql/bin/mysqld --basedir=/usr/local/mysql --datadir=/var/lib/mysql --plugin-dir=/usr/local/mysql/lib/plugin --user=mysql --log-error=/var/log/mysqld.log --pid-file=/usr/local/mysql/mysqld.pid --socket=/usr/local/mysql/mysql.sock --port=3306
-[root@node1 mysql]# kill -9 10778
-[root@node1 mysql]# kill -9 10978
-[1]+  已杀死               bin/mysqld_safe --user=mysql
-</code></pre>
-
-<p>为了更好的管理服务，因此使用下面的两条命令就可以使用service mysqld start|stop|status进行方便的管理了。</p>
-
-<pre><code class="language-bash">[root@node1 mysql]# cp /root/mysql-5.7.20/support-files/mysql.server /etc/init.d/mysqld
-[root@node1 mysql]# chmod +x /etc/init.d/mysqld
-</code></pre>
-
-<p>下面就可以使用service mysqld xxx进行很方便的管理了。</p>
-
-<pre><code class="language-bash">[root@node1 mysql]# service mysqld start
-</code></pre>
+<p>就这一个命令，其实就是 拉取镜像的过程，上面我已经把镜像手动的拉下来了，所以很快就启动起来了。</p>
 
                         </div>
 
@@ -287,15 +382,15 @@ mysql    10978  0.0 15.2 615176 156408 pts/1   Sl   04:47   0:00 /usr/local/mysq
     <h2>See Also</h2>
     <ul class="listing">
         
-        <li><a href="/posts/solve-sbt-update-scala-slow/">解决sbt更新scala速度慢</a></li>
+        <li><a href="/posts/2018-12-13-elk-7/">ELK学习笔记7| Lucence 的搜索语法</a></li>
         
-        <li><a href="/posts/r-kmeans/">R实战-Kmeans</a></li>
+        <li><a href="/posts/2018-12-13-elk-6/">ELK学习笔记6|ElasticSearch基本概念与架构</a></li>
         
-        <li><a href="/posts/r%E5%AE%9E%E6%88%98-%E5%86%B3%E7%AD%96%E6%A0%91/">R实战-决策树</a></li>
+        <li><a href="/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/">管道化 SQL</a></li>
         
-        <li><a href="/posts/aphot-rpi/">在树莓派上配置AP</a></li>
+        <li><a href="/posts/2018-12-11-starlight/">starlight 介绍</a></li>
         
-        <li><a href="/posts/introduction-machine-learning/">机器学习简介</a></li>
+        <li><a href="/posts/2018-12-11-elk-5/">ELK学习笔记5|Kibana可视化-数据表、仪表盘</a></li>
         
     </ul>
 </div>
@@ -305,9 +400,13 @@ mysql    10978  0.0 15.2 615176 156408 pts/1   Sl   04:47   0:00 /usr/local/mysq
                             
                             <ul class="clearfix">
                                 
-                                <li><a href="http://shenheng.xyz/tags/%E8%BF%90%E7%BB%B4">运维</a></li>
+                                <li><a href="http://shenheng.xyz/tags/kubernetes">kubernetes</a></li>
                                 
-                                <li><a href="http://shenheng.xyz/tags/linux">linux</a></li>
+                                <li><a href="http://shenheng.xyz/tags/k8s">k8s</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8%E7%BC%96%E6%8E%92">容器编排</a></li>
+                                
+                                <li><a href="http://shenheng.xyz/tags/%E5%AE%B9%E5%99%A8">容器</a></li>
                                 
                             </ul>
                             

@@ -39,6 +39,24 @@
     </item>
     
     <item>
+      <title>kubernetes学习笔记|从旧版本升级到 1.12.1</title>
+      <link>http://shenheng.xyz/posts/2019-12-17-kubernetes/</link>
+      <pubDate>Mon, 17 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2019-12-17-kubernetes/</guid>
+      <description>升级 kubeadm/kubectl/kubelet 版本 查看该版本的容器镜像版本： kubeadm config images list 输出如下： kubeadm config images list k8s.gcr.io/kube-apiserver:v1.12.1 k8s.gcr.io/kube-controller-manager:v1.12.1 k8s.gcr.io/kube-scheduler:v1.12.1 k8s.gcr.io/kube-proxy:v1.12.1 k8s.gcr.io/pause:3.1 k8s.gcr.io/etcd:3.2.24 k8s.gcr.io/coredns:1.2.2 拉镜像 脚本在此！ 我发现了一个技巧，很多人自己可能有 GCE 的服务，他们</description>
+    </item>
+    
+    <item>
+      <title>kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装</title>
+      <link>http://shenheng.xyz/posts/2018-12-17-kubernetes/</link>
+      <pubDate>Sun, 16 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://shenheng.xyz/posts/2018-12-17-kubernetes/</guid>
+      <description>我上一个 kubernetes 集群已经维持了将近两个多月，最终它承受不住网络的不稳定，暴毙了！😢 下面这篇文章主要会介绍 1.12.1 版本的安装，该安装非常经得起考验，屡试不</description>
+    </item>
+    
+    <item>
       <title>ELK学习笔记7| Lucence 的搜索语法</title>
       <link>http://shenheng.xyz/posts/2018-12-13-elk-7/</link>
       <pubDate>Fri, 14 Dec 2018 00:00:00 +0000</pubDate>

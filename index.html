@@ -132,6 +132,71 @@
                         <article class="post">
                             <header>
                                 <h1 class="post-title">
+                                    <a href="http://shenheng.xyz/posts/2019-12-17-kubernetes/" title="kubernetes学习笔记|从旧版本升级到 1.12.1" >kubernetes学习笔记|从旧版本升级到 1.12.1</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年12月17日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="http://shenheng.xyz/categories/kubernetes">kubernetes</a>
+                                
+                            </div>
+                            
+                            <div class="post-content-index">
+                                <h1 id="升级-kubeadm-kubectl-kubelet-版本">升级 kubeadm/kubectl/kubelet 版本</h1>
+
+<p>查看该版本的容器镜像版本：</p>
+
+<pre><code class="language-bash">kubeadm config images list
+</code></pre>
+
+<p>输出如下：</p>
+
+<pre><code class="language-bash">kubeadm config images list
+k8s.gcr.io/kube-apiserver:v1.12.1 …</code></pre>
+                            </div>
+                            <p class="readmore"><a href="http://shenheng.xyz/posts/2019-12-17-kubernetes/">阅读全文</a></p>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
+                                    <a href="http://shenheng.xyz/posts/2018-12-17-kubernetes/" title="kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装" >kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装</a>
+                                </h1>
+                            </header>
+                            <date class="post-meta meta-date">
+                                2018年12月16日
+                            </date>
+                            
+                            <div class="post-meta meta-category">
+                                |
+                                
+                                    <a href="http://shenheng.xyz/categories/kubernetes">kubernetes</a>
+                                
+                            </div>
+                            
+                            <div class="post-content-index">
+                                <p>我上一个 kubernetes 集群已经维持了将近两个多月，最终它承受不住网络的不稳定，暴毙了！😢</p>
+
+<p>下面这篇文章主要会介绍 <code>1.12.1</code> 版本的安装，该安装非常经得起考验，屡试不爽！下面好戏上场。</p>
+
+<h1 id="拉镜像">拉镜像</h1>
+
+<p>脚本在此！</p>
+
+<blockquote>
+<p>我发现了一个技巧，很多人自己可能有 GCE 的服务，他们利用该服务自动拉取了一些 <code>gcr</code> ，即我们 <code>kubernetes</code> 所需要的镜 …</p></blockquote>
+                            </div>
+                            <p class="readmore"><a href="http://shenheng.xyz/posts/2018-12-17-kubernetes/">阅读全文</a></p>
+                        </article>
+                    
+                        <article class="post">
+                            <header>
+                                <h1 class="post-title">
                                     <a href="http://shenheng.xyz/posts/2018-12-13-elk-7/" title="ELK学习笔记7| Lucence 的搜索语法" >ELK学习笔记7| Lucence 的搜索语法</a>
                                 </h1>
                             </header>
@@ -213,64 +278,6 @@
                             <p class="readmore"><a href="http://shenheng.xyz/posts/2018-12-11-starlight/">阅读全文</a></p>
                         </article>
                     
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="http://shenheng.xyz/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/" title="管道化 SQL" >管道化 SQL</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年12月11日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="http://shenheng.xyz/categories/golang">golang</a>
-                                
-                                    <a href="http://shenheng.xyz/categories/%E5%B7%A5%E4%BD%9C%E6%95%88%E7%8E%87">工作效率</a>
-                                
-                            </div>
-                            
-                            <div class="post-content-index">
-                                <p>本文对原文章有所取舍，如有问题可以详见<a href="https://movio.co/blog/improving-with-sql-and-charts/">原文</a>.</p>
-
-<p>在这篇博文中，我想分享两个工具： <a href="https://github.com/marianogappa/sql">sql</a> 和 <a href="https://github.com/marianogappa/chart">chart</a> ，我们最近一直在使用它们.它们共同组成了一个有趣的模式，用于在终端内单独或同时修改多个数据库，可以非常方便的可视化数据.</p>
-
-<h1 id="mysql">MySQL?</h1>
-
-<p>然而，在使用MySQL时，多年来我们缺乏这些实际的ad-hoc交互.为什么MySQL不一样？</p>
-
-<p>MySQL客户端主 …</p>
-                            </div>
-                            <p class="readmore"><a href="http://shenheng.xyz/posts/2018-12-11-how-to-use-sql-improve-my-work-pipe/">阅读全文</a></p>
-                        </article>
-                    
-                        <article class="post">
-                            <header>
-                                <h1 class="post-title">
-                                    <a href="http://shenheng.xyz/posts/2018-12-11-elk-5/" title="ELK学习笔记5|Kibana可视化-数据表、仪表盘" >ELK学习笔记5|Kibana可视化-数据表、仪表盘</a>
-                                </h1>
-                            </header>
-                            <date class="post-meta meta-date">
-                                2018年12月6日
-                            </date>
-                            
-                            <div class="post-meta meta-category">
-                                |
-                                
-                                    <a href="http://shenheng.xyz/categories/elk">elk</a>
-                                
-                            </div>
-                            
-                            <div class="post-content-index">
-                                <h2 id="数据表-data-table">数据表(Data Table)</h2>
-
-<p>在 Visualize 选择 Data Table 建立数据表，接着选择索引或过滤条件，使用 <code>logstash</code> 作为实例，这时会看到有一个加总的数值。Buckets有两个 选项：Split Rows 和 Split Table。前者是用列的方式分隔字段的统计值，后者可以让使用者自己决定 要用<code>[Row]</code>或<code>[Column]</code>来展示 …</p>
-                            </div>
-                            <p class="readmore"><a href="http://shenheng.xyz/posts/2018-12-11-elk-5/">阅读全文</a></p>
-                        </article>
-                    
 
                     
 
@@ -331,6 +338,14 @@
     </li>
     
     <li>
+        <a href="http://shenheng.xyz/posts/2019-12-17-kubernetes/" title="kubernetes学习笔记|从旧版本升级到 1.12.1">kubernetes学习笔记|从旧版本升级到 1.12.1</a>
+    </li>
+    
+    <li>
+        <a href="http://shenheng.xyz/posts/2018-12-17-kubernetes/" title="kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装">kubernetes学习笔记|增强版 kubeadm 1.12.1 快速安装</a>
+    </li>
+    
+    <li>
         <a href="http://shenheng.xyz/posts/2018-12-13-elk-7/" title="ELK学习笔记7| Lucence 的搜索语法">ELK学习笔记7| Lucence 的搜索语法</a>
     </li>
     
@@ -356,14 +371,6 @@
     
     <li>
         <a href="http://shenheng.xyz/posts/2018-12-11-elk-3/" title="ELK学习笔记3|Kibana可视化-条形图、线图和区域图">ELK学习笔记3|Kibana可视化-条形图、线图和区域图</a>
-    </li>
-    
-    <li>
-        <a href="http://shenheng.xyz/posts/2018-12-11-elk-1/" title="ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana">ELK学习笔记1|安裝ElasticSearch、Logstash、Kibana</a>
-    </li>
-    
-    <li>
-        <a href="http://shenheng.xyz/posts/2018-12-11-elk-2/" title="ELK学习笔记2|数据的导入与查询">ELK学习笔记2|数据的导入与查询</a>
     </li>
     
 </ul>
@@ -440,7 +447,7 @@
     </li>
     
     <li>
-        <a href="http://shenheng.xyz/categories/kubernetes/">kubernetes(1)</a>
+        <a href="http://shenheng.xyz/categories/kubernetes/">kubernetes(3)</a>
     </li>
     
     <li>

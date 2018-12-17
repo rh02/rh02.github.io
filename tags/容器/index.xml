@@ -53,7 +53,7 @@
       <pubDate>Tue, 09 May 2017 00:00:00 +0000</pubDate>
       
       <guid>http://shenheng.xyz/posts/2017-05-09-vm-network/</guid>
-      <description>桥接模式 图１ 桥接模式 .gallery { overflow: hidden; margin: 10px; max-width: 768px; } .gallery .box { float: left; position: relative; width: 100%; padding-bottom: 100%; } @media only screen and (min-width : 365px) { .gallery .box { width: 50%; padding-bottom: 50%; } } @media only screen and (min-width : 480px) { .gallery .box { width: 33.3%; padding-bottom: 33.3%; } } @media only screen and (min-width</description>
+      <description>桥接模式 桥接模式是直连外部网络的模式，一般情况下，小型的机房或者数据中心服务器里面虚拟ip地址都是桥接模式生成的，直接就是外网地址-实际ip</description>
     </item>
     
   </channel>
